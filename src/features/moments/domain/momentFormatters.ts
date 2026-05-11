@@ -23,7 +23,10 @@ export function getMomentDeltaMs(m: Moment, now: Date = new Date()): number {
 }
 
 /** UI label: target in past or now → "Since"; future → "Until". */
-export function formatSinceUntilLabel(m: Moment, now: Date = new Date()): string {
+export function formatSinceUntilLabel(
+  m: Moment,
+  now: Date = new Date(),
+): string {
   return modeFromTargetDate(parseMomentDate(m), now) === "since"
     ? "Since"
     : "Until";
@@ -163,7 +166,10 @@ export function formatMomentUnitLabel(m: Moment): string | null {
 }
 
 /** Next fire time for live ticker based on display unit */
-export function getTickerIntervalMs(unit: DisplayUnit, moment?: Moment): number {
+export function getTickerIntervalMs(
+  unit: DisplayUnit,
+  moment?: Moment,
+): number {
   if (unit === "auto" && moment) {
     const now = new Date();
     const target = parseMomentDate(moment);

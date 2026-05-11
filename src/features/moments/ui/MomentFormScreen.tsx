@@ -80,9 +80,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const [categoryEditorMode, setCategoryEditorMode] = useState<
     "create" | "edit"
   >("create");
-  const [editingCategory, setEditingCategory] = useState<Category | null>(
-    null,
-  );
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showDisplayUnitPicker, setShowDisplayUnitPicker] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -90,8 +88,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const previewAccentSubtle = `${previewAccent}1F`;
 
   const selectedCategory = catList.find((c) => c.id === categoryId);
-  const selectedCategoryTitle =
-    selectedCategory?.title ?? "Moments";
+  const selectedCategoryTitle = selectedCategory?.title ?? "Moments";
 
   const loadCategories = useCallback(async () => {
     setCatList(await categories.listAll());
@@ -516,7 +513,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   size={22}
                   color={previewAccent}
                 />
-                <Text style={[styles.addCategoryLabel, { color: previewAccent }]}>
+                <Text
+                  style={[styles.addCategoryLabel, { color: previewAccent }]}
+                >
                   Add category
                 </Text>
               </Pressable>
