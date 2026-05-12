@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Pressable,
   ScrollView,
   Share,
@@ -13,17 +14,18 @@ import * as Sharing from "expo-sharing";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { format } from "date-fns";
 import type { MomentDetailScreenProps } from "@/app/navigation/types";
 import { useRepositories } from "@/app/database/AppDataProvider";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography } from "@/shared/theme/tokens";
 import type { Moment } from "../domain/moment";
 import {
-  formatMomentPrimaryDisplay,
-  formatMomentUnitLabel,
+  formatDurationRows,
   formatSinceUntilLabel,
   getTickerIntervalMs,
 } from "../domain/momentFormatters";
+import { cancelMilestoneNotifications } from "../data/milestoneNotifications";
 import { MomentBackground } from "./MomentBackground";
 
 export function MomentDetailScreen({
@@ -49,12 +51,20 @@ export function MomentDetailScreen({
     }, [load]),
   );
 
+  const rows = moment ? formatDurationRows(moment, now) : [];
+  const hasSecondsRow = rows.some((r) => r.unit === "Seconds");
+  const sinceUntil = moment ? formatSinceUntilLabel(moment, now) : "Since";
+  const eventDateText = moment
+    ? format(new Date(moment.targetDateTime), "MMMM d, yyyy • h:mm a")
+    : "";
+
   useEffect(() => {
     if (!moment) return;
-    const ms = getTickerIntervalMs(moment.displayUnit, moment);
+    const baseMs = getTickerIntervalMs(moment.displayUnit, moment);
+    const ms = hasSecondsRow ? 1000 : baseMs;
     const id = setInterval(() => setNow(new Date()), ms);
     return () => clearInterval(id);
-  }, [moment]);
+  }, [moment, hasSecondsRow]);
 
   if (!moment) {
     return (
@@ -64,14 +74,12 @@ export function MomentDetailScreen({
     );
   }
 
-  const primary = formatMomentPrimaryDisplay(moment, now, "full");
-  const unit = formatMomentUnitLabel(moment);
-  const sinceUntil = formatSinceUntilLabel(moment, now);
-
   const shareImage = async () => {
-    const body = unit
-      ? `${sinceUntil}\n${primary}\n${unit}`
-      : `${sinceUntil}\n${primary}`;
+    const body = [
+      ...rows.map((r) => `${r.value} ${r.unit}`),
+      sinceUntil,
+      eventDateText,
+    ].join("\n");
     const fallbackText = `${moment.title}\n${body}`;
     if (!shotRef.current) {
       await Share.share({ message: fallbackText });
@@ -97,6 +105,26 @@ export function MomentDetailScreen({
     }
   };
 
+  const onDelete = () => {
+    Alert.alert(
+      "Delete moment?",
+      `"${moment.title}" will be removed.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () =>
+            void (async () => {
+              await cancelMilestoneNotifications(moment.id);
+              await moments.delete(moment.id);
+              navigation.goBack();
+            })(),
+        },
+      ],
+    );
+  };
+
   return (
     <View style={styles.root}>
       <View ref={shotRef} style={styles.capture} collapsable={false}>
@@ -111,19 +139,21 @@ export function MomentDetailScreen({
             style={styles.heroBlock}
           >
             <Text style={styles.title}>{moment.title}</Text>
+            <View style={styles.rowsCol}>
+              {rows.map((r) => (
+                <View key={`${r.value}-${r.unit}`} style={styles.rowStat}>
+                  <Animated.Text entering={FadeInDown.delay(80)} style={styles.rowValue}>
+                    {r.value}
+                  </Animated.Text>
+                  <Text style={styles.rowUnit}>{r.unit}</Text>
+                </View>
+              ))}
+            </View>
             <Text style={styles.sinceUntil}>{sinceUntil}</Text>
-            <Animated.Text
-              entering={FadeInDown.delay(80)}
-              style={
-                moment.displayUnit === "auto"
-                  ? styles.heroCompound
-                  : styles.heroNumber
-              }
-            >
-              {primary}
-            </Animated.Text>
-            {unit ? <Text style={styles.heroUnit}>{unit}</Text> : null}
           </Animated.View>
+          <View style={styles.bottomDateWrap}>
+            <Text style={styles.bottomDate}>{eventDateText}</Text>
+          </View>
         </ScrollView>
       </View>
 
@@ -153,6 +183,9 @@ export function MomentDetailScreen({
           >
             <Ionicons name="create-outline" size={24} color="#fff" />
           </Pressable>
+          <Pressable onPress={onDelete} hitSlop={12} style={styles.iconBtn}>
+            <Ionicons name="trash-outline" size={24} color="#fff" />
+          </Pressable>
         </View>
       </View>
     </View>
@@ -177,41 +210,54 @@ const styles = StyleSheet.create({
     paddingTop: 72,
   },
   heroBlock: {
-    gap: 6,
-    paddingTop: 100,
+    gap: 8,
+    paddingTop: 92,
   },
   title: {
     color: "#fff",
-    fontSize: typography.title,
+    fontSize: 44,
     fontWeight: "700",
-    letterSpacing: -0.5,
+    letterSpacing: -0.8,
+    marginBottom: space.md,
+  },
+  rowsCol: {
+    gap: 6,
+  },
+  rowStat: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 8,
+  },
+  rowValue: {
+    color: "#fff",
+    fontSize: 64,
+    fontWeight: "800",
+    lineHeight: 66,
+    letterSpacing: -1.4,
+    fontVariant: ["tabular-nums"],
+  },
+  rowUnit: {
+    color: "#fff",
+    fontSize: 44,
+    fontWeight: "600",
+    letterSpacing: -0.6,
   },
   sinceUntil: {
     color: "rgba(255,255,255,0.75)",
-    fontSize: typography.caption,
+    fontSize: typography.title2,
     fontWeight: "700",
-    letterSpacing: 1,
+    letterSpacing: -0.1,
     textTransform: "uppercase",
-    marginTop: 8,
-  },
-  heroNumber: {
-    color: "#fff",
-    fontSize: 56,
-    fontWeight: "800",
-    letterSpacing: -1.5,
-    fontVariant: ["tabular-nums"],
     marginTop: space.md,
   },
-  heroCompound: {
-    color: "#fff",
-    fontSize: 28,
-    fontWeight: "700",
-    letterSpacing: -0.3,
-    lineHeight: 36,
-    marginTop: space.md,
+  bottomDateWrap: {
+    flex: 1,
+    justifyContent: "flex-end",
+    minHeight: 180,
+    paddingBottom: space.xl,
   },
-  heroUnit: {
-    color: "rgba(255,255,255,0.85)",
+  bottomDate: {
+    color: "rgba(255,255,255,0.92)",
     fontSize: typography.title2,
     fontWeight: "600",
   },

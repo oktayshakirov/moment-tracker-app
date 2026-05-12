@@ -36,6 +36,11 @@ export function MomentCard({ moment, onPress }: Props) {
   const unitLabel = formatMomentUnitLabel(moment);
   const sinceUntil = formatSinceUntilLabel(moment, now);
   const isAuto = moment.displayUnit === "auto";
+  const split = splitLeadingNumber(primary);
+  const mainValue = split.leading || primary;
+  const subValue = isAuto
+    ? split.trailing
+    : [split.trailing, unitLabel].filter(Boolean).join(" ");
 
   const animStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -66,29 +71,20 @@ export function MomentCard({ moment, onPress }: Props) {
                   {moment.title}
                 </Text>
                 <View style={styles.durationBlock}>
-                  {isAuto ? (
-                    <AnimatedCounterText
-                      value={primary}
-                      animate={false}
-                      compound
-                    />
-                  ) : (
-                    <View style={styles.counterRow}>
-                      <AnimatedCounterText
-                        value={primary}
-                        animate
-                        compound={false}
-                      />
+                  <View style={styles.counterRow}>
+                    <AnimatedCounterText value={mainValue} animate />
+                    {subValue ? (
                       <Text
                         style={[
-                          styles.unit,
-                          { color: "rgba(255,255,255,0.85)" },
+                          styles.durationCompound,
+                          { color: "rgba(255,255,255,0.92)" },
                         ]}
+                        numberOfLines={2}
                       >
-                        {unitLabel}
+                        {subValue}
                       </Text>
-                    </View>
-                  )}
+                    ) : null}
+                  </View>
                   <Text style={styles.sinceUntil}>{sinceUntil}</Text>
                 </View>
               </View>
@@ -111,11 +107,9 @@ function LinearDarkOverlay() {
 function AnimatedCounterText({
   value,
   animate,
-  compound,
 }: {
   value: string;
   animate: boolean;
-  compound: boolean;
 }) {
   const pulse = useSharedValue(1);
 
@@ -133,15 +127,21 @@ function AnimatedCounterText({
   return (
     <Animated.Text
       style={[
-        compound ? styles.durationCompound : styles.counter,
+        styles.counter,
         { color: "#fff" },
         anim,
       ]}
-      numberOfLines={compound ? 3 : 1}
+      numberOfLines={1}
     >
       {value}
     </Animated.Text>
   );
+}
+
+function splitLeadingNumber(value: string): { leading: string; trailing: string } {
+  const m = value.trim().match(/^([−-]?\d[\d,]*)\s*(.*)$/);
+  if (!m) return { leading: "", trailing: value.trim() };
+  return { leading: m[1] ?? "", trailing: m[2] ?? "" };
 }
 
 const styles = StyleSheet.create({
@@ -158,21 +158,22 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   row: {
-    alignItems: "flex-end",
+    alignItems: "flex-start",
     padding: space.lg,
   },
   textCol: {
-    gap: 4,
+    gap: 6,
+    width: "100%",
   },
   title: {
-    fontSize: typography.title2,
-    fontWeight: "600",
-    letterSpacing: -0.3,
+    fontSize: typography.title,
+    fontWeight: "700",
+    letterSpacing: -0.4,
   },
   durationBlock: {
-    alignItems: "flex-end",
-    gap: 6,
-    marginTop: 4,
+    alignItems: "flex-start",
+    gap: 2,
+    marginTop: 6,
     width: "100%",
   },
   sinceUntil: {
@@ -181,27 +182,25 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 0.8,
     textTransform: "uppercase",
+    marginTop: 4,
   },
   counterRow: {
     flexDirection: "row",
     alignItems: "baseline",
-    gap: 6,
+    gap: 8,
+    flexWrap: "wrap",
   },
   counter: {
-    fontSize: 26,
-    fontWeight: "700",
+    fontSize: 58,
+    fontWeight: "800",
     fontVariant: ["tabular-nums"],
-    letterSpacing: -0.5,
+    letterSpacing: -1.1,
+    lineHeight: 62,
   },
   durationCompound: {
-    fontSize: typography.body,
+    fontSize: typography.title2,
     fontWeight: "600",
     letterSpacing: 0,
-    lineHeight: 22,
-    textAlign: "right",
-  },
-  unit: {
-    fontSize: typography.caption,
-    fontWeight: "500",
+    lineHeight: 30,
   },
 });

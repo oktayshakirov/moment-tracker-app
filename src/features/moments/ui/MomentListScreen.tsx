@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import {
+  ActivityIndicator,
   Pressable,
   RefreshControl,
   SectionList,
@@ -37,25 +38,30 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
   const { categories, moments } = useRepositories();
   const [sections, setSections] = useState<Section[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const activeSwipeRef = useRef<InstanceType<typeof Swipeable> | null>(null);
 
   const load = useCallback(async () => {
-    const cats = await categories.listAll();
-    const all = await moments.listAll();
-    const byCat = new Map<string, Moment[]>();
-    for (const m of all) {
-      const list = byCat.get(m.categoryId) ?? [];
-      list.push(m);
-      byCat.set(m.categoryId, list);
-    }
-    const next: Section[] = [];
-    for (const c of cats) {
-      const data = byCat.get(c.id) ?? [];
-      if (data.length > 0) {
-        next.push({ category: c, data });
+    try {
+      const cats = await categories.listAll();
+      const all = await moments.listAll();
+      const byCat = new Map<string | null, Moment[]>();
+      for (const m of all) {
+        const list = byCat.get(m.categoryId) ?? [];
+        list.push(m);
+        byCat.set(m.categoryId, list);
       }
+      const next: Section[] = [];
+      for (const c of cats) {
+        const data = byCat.get(c.id) ?? [];
+        if (data.length > 0) {
+          next.push({ category: c, data });
+        }
+      }
+      setSections(next);
+    } finally {
+      setInitialLoading(false);
     }
-    setSections(next);
   }, [categories, moments]);
 
   useFocusEffect(
@@ -88,6 +94,16 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
       ),
     });
   }, [navigation, theme.accent]);
+
+  if (initialLoading) {
+    return (
+      <Screen edges={["left", "right"]}>
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color={theme.accent} />
+        </View>
+      </Screen>
+    );
+  }
 
   return (
     <Screen edges={["left", "right"]}>
@@ -204,5 +220,10 @@ const styles = StyleSheet.create({
   },
   emptyCta: {
     marginTop: space.md,
+  },
+  loading: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

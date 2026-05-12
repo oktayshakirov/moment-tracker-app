@@ -76,9 +76,36 @@ export function formatUnitLabel(unit: FixedDisplayUnit): string {
 }
 
 export type DurationDisplayVariant = "compact" | "full";
+export type DurationRow = { value: string; unit: string };
 
 function unitWord(n: number, singular: string, plural: string): string {
   return `${n.toLocaleString()} ${n === 1 ? singular : plural}`;
+}
+
+function orderedDurationParts(m: Moment, now: Date) {
+  const target = parseMomentDate(m);
+  const start = target <= now ? target : now;
+  const end = target <= now ? now : target;
+  const totalMs = end.getTime() - start.getTime();
+  const d = intervalToDuration({ start, end });
+  const years = d.years ?? 0;
+  const months = d.months ?? 0;
+  const daysTotal = d.days ?? 0;
+  const hours = d.hours ?? 0;
+  const minutes = d.minutes ?? 0;
+  const seconds = d.seconds ?? 0;
+  const weeks = Math.floor(daysTotal / 7);
+  const remDays = daysTotal % 7;
+  return {
+    totalMs,
+    years,
+    months,
+    weeks,
+    days: remDays,
+    hours,
+    minutes,
+    seconds,
+  };
 }
 
 /** Calendar-based compound phrase for `displayUnit === 'auto'`. */
@@ -87,10 +114,8 @@ export function formatAutoCompoundDuration(
   now: Date,
   variant: DurationDisplayVariant,
 ): string {
-  const target = parseMomentDate(m);
-  const start = target <= now ? target : now;
-  const end = target <= now ? now : target;
-  const totalMs = end.getTime() - start.getTime();
+  const { totalMs, years, months, weeks, days, hours, minutes, seconds } =
+    orderedDurationParts(m, now);
 
   if (totalMs <= 0) {
     return "0 seconds";
@@ -117,22 +142,11 @@ export function formatAutoCompoundDuration(
     return parts.join(" ");
   }
 
-  const d = intervalToDuration({ start, end });
-  const years = d.years ?? 0;
-  const months = d.months ?? 0;
-  const daysTotal = d.days ?? 0;
-  const hours = d.hours ?? 0;
-  const minutes = d.minutes ?? 0;
-  const seconds = d.seconds ?? 0;
-
-  const weeks = Math.floor(daysTotal / 7);
-  const remDays = daysTotal % 7;
-
   const pieces: string[] = [];
   if (years > 0) pieces.push(unitWord(years, "year", "years"));
   if (months > 0) pieces.push(unitWord(months, "month", "months"));
   if (weeks > 0) pieces.push(unitWord(weeks, "week", "weeks"));
-  if (remDays > 0) pieces.push(unitWord(remDays, "day", "days"));
+  if (days > 0) pieces.push(unitWord(days, "day", "days"));
   if (hours > 0) pieces.push(unitWord(hours, "hour", "hours"));
   if (minutes > 0) pieces.push(unitWord(minutes, "minute", "minutes"));
 
@@ -145,6 +159,20 @@ export function formatAutoCompoundDuration(
   }
 
   return pieces.slice(0, maxParts).join(" ");
+}
+
+export function formatDurationRows(m: Moment, now: Date = new Date()): DurationRow[] {
+  const { years, months, weeks, days, hours, minutes, seconds } =
+    orderedDurationParts(m, now);
+  const rows: DurationRow[] = [];
+  if (years > 0) rows.push({ value: years.toLocaleString(), unit: "Years" });
+  if (months > 0) rows.push({ value: months.toLocaleString(), unit: "Months" });
+  if (weeks > 0) rows.push({ value: weeks.toLocaleString(), unit: "Weeks" });
+  if (days > 0) rows.push({ value: days.toLocaleString(), unit: "Days" });
+  if (hours > 0) rows.push({ value: hours.toLocaleString(), unit: "Hours" });
+  if (minutes > 0) rows.push({ value: minutes.toLocaleString(), unit: "Minutes" });
+  if (seconds > 0) rows.push({ value: seconds.toLocaleString(), unit: "Seconds" });
+  return rows;
 }
 
 /** Primary line for list/detail: compound words when auto, else numeric value only. */
