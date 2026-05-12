@@ -158,7 +158,7 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
               Your timeline starts here
             </Text>
             <Text style={[styles.emptySub, { color: theme.textSecondary }]}>
-              Capture a meaningful date — count up from a memory or down to what
+              Capture a meaningful date - count up from a memory or down to what
               is next.
             </Text>
             <PrimaryButton

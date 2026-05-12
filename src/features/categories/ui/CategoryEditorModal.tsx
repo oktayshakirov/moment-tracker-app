@@ -10,7 +10,11 @@ import {
 import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography } from "@/shared/theme/tokens";
 import { PrimaryButton } from "@/shared/ui/PrimaryButton";
-import { SOLID_PRESETS } from "@/features/moments/ui/constants";
+import ColorPicker, {
+  HueSlider,
+  Panel1,
+  Preview,
+} from "reanimated-color-picker";
 import type { Category } from "../domain/category";
 
 type Props = {
@@ -30,8 +34,9 @@ export function CategoryEditorModal({
   onSave,
 }: Props) {
   const theme = useAppTheme();
+  const defaultColor = "#0A84FF";
   const [title, setTitle] = useState("");
-  const [color, setColor] = useState(SOLID_PRESETS[3]);
+  const [color, setColor] = useState(defaultColor);
 
   useEffect(() => {
     if (!visible) return;
@@ -40,7 +45,7 @@ export function CategoryEditorModal({
       setColor(category.colorHex);
     } else {
       setTitle("");
-      setColor(SOLID_PRESETS[3]);
+      setColor(defaultColor);
     }
   }, [visible, mode, category]);
 
@@ -87,19 +92,15 @@ export function CategoryEditorModal({
           <Text style={[styles.label, { color: theme.textSecondary }]}>
             Color
           </Text>
-          <View style={styles.colors}>
-            {SOLID_PRESETS.map((c) => (
-              <Pressable
-                key={c}
-                onPress={() => setColor(c)}
-                style={[
-                  styles.swatch,
-                  { backgroundColor: c },
-                  color === c && styles.swatchActive,
-                ]}
-              />
-            ))}
-          </View>
+          <ColorPicker
+            value={color}
+            style={styles.picker}
+            onChangeJS={(c) => setColor(c.hex)}
+          >
+            <Preview hideInitialColor style={styles.preview} />
+            <Panel1 style={styles.panel} />
+            <HueSlider style={styles.slider} />
+          </ColorPicker>
           <PrimaryButton label={actionLabel} onPress={submit} />
         </Pressable>
       </Pressable>
@@ -134,18 +135,18 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     fontWeight: "600",
   },
-  colors: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
+  picker: {
+    gap: 12,
   },
-  swatch: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  preview: {
+    alignSelf: "stretch",
   },
-  swatchActive: {
-    borderWidth: 3,
-    borderColor: "#fff",
+  panel: {
+    borderRadius: radii.md,
+    minHeight: 160,
+  },
+  slider: {
+    borderRadius: 999,
+    minHeight: 28,
   },
 });

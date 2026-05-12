@@ -14,9 +14,13 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
-import { LinearGradient } from "expo-linear-gradient";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
+import ColorPicker, {
+  HueSlider,
+  Panel1,
+  Preview,
+} from "reanimated-color-picker";
 import type { MomentFormScreenProps } from "@/app/navigation/types";
 import { useRepositories } from "@/app/database/AppDataProvider";
 import {
@@ -32,11 +36,12 @@ import type {
   BackgroundType,
   BackgroundValue,
   DisplayUnit,
+  Moment,
 } from "../domain/moment";
 import { modeFromTargetDate } from "../domain/momentFormatters";
 import { copyImageToAppStorage } from "../data/imageFileService";
 import { scheduleMilestonesForMoment } from "../data/milestoneNotifications";
-import { GRADIENT_PRESETS, SOLID_PRESETS } from "./constants";
+import { MomentCard } from "./MomentCard";
 
 const DISPLAY_UNITS: DisplayUnit[] = [
   "auto",
@@ -48,6 +53,7 @@ const DISPLAY_UNITS: DisplayUnit[] = [
   "months",
   "years",
 ];
+const DEFAULT_SOLID_COLOR = "#0A84FF";
 
 /** Drop seconds so pickers and labels stay minute-precision only. */
 function trimToMinute(d: Date): Date {
@@ -68,7 +74,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const [bgType, setBgType] = useState<BackgroundType>("solid");
   const [bgValue, setBgValue] = useState<BackgroundValue>({
     kind: "solid",
-    color: SOLID_PRESETS[4],
+    color: DEFAULT_SOLID_COLOR,
   });
   const [displayUnit, setDisplayUnit] = useState<DisplayUnit>("auto");
 
@@ -82,8 +88,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   >("create");
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [showDisplayUnitPicker, setShowDisplayUnitPicker] = useState(false);
   const [saving, setSaving] = useState(false);
+  const uiAccent = theme.accent;
   const previewAccent = getBackgroundAccent(bgValue, theme.accent);
   const previewAccentSubtle = `${previewAccent}1F`;
 
@@ -106,8 +114,14 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
       setTitle(m.title);
       setDate(trimToMinute(new Date(m.targetDateTime)));
       setCategoryId(m.categoryId);
-      setBgType(m.backgroundType);
-      setBgValue(m.backgroundValue);
+      if (m.backgroundType === "gradient" && m.backgroundValue.kind === "gradient") {
+        const fallback = m.backgroundValue.colors[m.backgroundValue.colors.length - 1] ?? DEFAULT_SOLID_COLOR;
+        setBgType("solid");
+        setBgValue({ kind: "solid", color: fallback });
+      } else {
+        setBgType(m.backgroundType);
+        setBgValue(m.backgroundValue);
+      }
       setDisplayUnit(m.displayUnit);
     })();
   }, [momentId, moments]);
@@ -191,14 +205,29 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     setBgValue({ kind: "image", uri });
   };
 
-  const setSolid = (color: string) => {
-    setBgType("solid");
-    setBgValue({ kind: "solid", color });
+  const previewMoment: Moment = {
+    id: momentId ?? "preview",
+    title: title.trim() || "New moment",
+    targetDateTime: date.toISOString(),
+    mode: modeFromTargetDate(date),
+    categoryId,
+    backgroundType: bgType,
+    backgroundValue: bgValue,
+    displayUnit,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
 
-  const setGradient = (colors: string[]) => {
-    setBgType("gradient");
-    setBgValue({ kind: "gradient", colors, angle: 160 });
+  const setDatePart = (picked: Date) => {
+    const next = new Date(date);
+    next.setFullYear(picked.getFullYear(), picked.getMonth(), picked.getDate());
+    setDate(trimToMinute(next));
+  };
+
+  const setTimePart = (picked: Date) => {
+    const next = new Date(date);
+    next.setHours(picked.getHours(), picked.getMinutes(), 0, 0);
+    setDate(trimToMinute(next));
   };
 
   return (
@@ -212,6 +241,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
+          <MomentCard moment={previewMoment} onPress={() => {}} />
           <Text style={[styles.label, { color: theme.textSecondary }]}>
             Title
           </Text>
@@ -229,9 +259,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               },
             ]}
           />
-          <Text style={[styles.label, { color: theme.textSecondary }]}>
-            Date & time
-          </Text>
+          <Text style={[styles.label, { color: theme.textSecondary }]}>Date</Text>
           <Pressable
             style={[
               styles.rowBtn,
@@ -249,7 +277,37 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
             />
             <View style={styles.rowBtnCopy}>
               <Text style={[styles.rowBtnText, { color: theme.text }]}>
-                {format(date, "PPp")}
+                {format(date, "PP")}
+              </Text>
+              <Text style={[styles.rowBtnHint, { color: theme.textSecondary }]}>
+                Tap to change
+              </Text>
+            </View>
+            <Ionicons
+              name="chevron-forward"
+              size={18}
+              color={theme.textTertiary}
+            />
+          </Pressable>
+          <Text style={[styles.label, { color: theme.textSecondary }]}>Time</Text>
+          <Pressable
+            style={[
+              styles.rowBtn,
+              {
+                borderColor: theme.separator,
+                backgroundColor: theme.bgElevated,
+              },
+            ]}
+            onPress={() => setShowTimePicker(true)}
+          >
+            <Ionicons
+              name="time-outline"
+              size={20}
+              color={theme.textSecondary}
+            />
+            <View style={styles.rowBtnCopy}>
+              <Text style={[styles.rowBtnText, { color: theme.text }]}>
+                {format(date, "p")}
               </Text>
               <Text style={[styles.rowBtnHint, { color: theme.textSecondary }]}>
                 Tap to change
@@ -264,12 +322,23 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           {Platform.OS === "android" && showDatePicker && (
             <DateTimePicker
               value={date}
-              mode="datetime"
+              mode="date"
+              display="default"
+              onChange={(_, selected) => {
+                setShowDatePicker(false);
+                if (selected) setDatePart(selected);
+              }}
+            />
+          )}
+          {Platform.OS === "android" && showTimePicker && (
+            <DateTimePicker
+              value={date}
+              mode="time"
               display="default"
               minuteInterval={1}
               onChange={(_, selected) => {
-                setShowDatePicker(false);
-                if (selected) setDate(trimToMinute(selected));
+                setShowTimePicker(false);
+                if (selected) setTimePart(selected);
               }}
             />
           )}
@@ -323,7 +392,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
             ]}
             onPress={() => setShowDisplayUnitPicker(true)}
           >
-            <Ionicons name="timer-outline" size={20} color={previewAccent} />
+            <Ionicons name="timer-outline" size={20} color={uiAccent} />
             <View style={styles.rowBtnCopy}>
               <Text style={[styles.rowBtnText, { color: theme.text }]}>
                 {formatDisplayUnitName(displayUnit)}
@@ -342,18 +411,18 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
             Background
           </Text>
           <View style={[styles.segment, styles.backgroundSegment]}>
-            {(["solid", "gradient", "image"] as const).map((b) => (
+            {(["solid", "image"] as const).map((b) => (
               <Pressable
                 key={b}
                 onPress={() => {
                   setBgType(b);
-                  if (b === "solid")
-                    setBgValue({ kind: "solid", color: SOLID_PRESETS[0] });
-                  if (b === "gradient") setGradient(GRADIENT_PRESETS[0].colors);
+                  if (b === "solid" && bgValue.kind !== "solid") {
+                    setBgValue({ kind: "solid", color: DEFAULT_SOLID_COLOR });
+                  }
                 }}
                 style={[
                   styles.segBtn,
-                  bgType === b && { backgroundColor: previewAccent },
+                  bgType === b && { backgroundColor: uiAccent },
                   { borderColor: theme.separator },
                 ]}
               >
@@ -363,61 +432,26 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                     { color: bgType === b ? "#fff" : theme.text },
                   ]}
                 >
-                  {b === "solid"
-                    ? "Color"
-                    : b === "gradient"
-                      ? "Gradient"
-                      : "Photo"}
+                  {b === "solid" ? "Color" : "Photo"}
                 </Text>
               </Pressable>
             ))}
           </View>
           {bgType === "solid" && (
-            <View style={styles.colorGrid}>
-              {SOLID_PRESETS.map((c) => (
-                <Pressable
-                  key={c}
-                  onPress={() => setSolid(c)}
-                  style={[
-                    styles.swatch,
-                    { backgroundColor: c },
-                    bgValue.kind === "solid" &&
-                      bgValue.color === c && [
-                        styles.swatchRing,
-                        { borderColor: previewAccent },
-                      ],
-                  ]}
-                />
-              ))}
-            </View>
-          )}
-          {bgType === "gradient" && (
-            <View style={styles.gradList}>
-              {GRADIENT_PRESETS.map((g) => (
-                <Pressable
-                  key={g.label}
-                  onPress={() => setGradient(g.colors)}
-                  style={[
-                    styles.gradChip,
-                    bgValue.kind === "gradient" &&
-                      g.colors.join() === bgValue.colors.join() && [
-                        styles.gradChipActive,
-                        { borderColor: previewAccent },
-                      ],
-                  ]}
-                >
-                  <LinearGradient
-                    colors={g.colors as [string, string, ...string[]]}
-                    locations={getTightGradientLocations(g.colors.length)}
-                    start={{ x: 0, y: 0.5 }}
-                    end={{ x: 1, y: 0.5 }}
-                    style={StyleSheet.absoluteFill}
-                  />
-                  <View style={styles.gradChipScrim} />
-                  <Text style={styles.gradChipText}>{g.label}</Text>
-                </Pressable>
-              ))}
-            </View>
+            <ColorPicker
+              value={
+                bgValue.kind === "solid" ? bgValue.color : DEFAULT_SOLID_COLOR
+              }
+              style={styles.colorPicker}
+              onChangeJS={(c) => {
+                setBgType("solid");
+                setBgValue({ kind: "solid", color: c.hex });
+              }}
+            >
+              <Preview hideInitialColor style={styles.colorPickerPreview} />
+              <Panel1 style={styles.colorPickerPanel} />
+              <HueSlider style={styles.colorPickerSlider} />
+            </ColorPicker>
           )}
           {bgType === "image" && (
             <View style={styles.imgActions}>
@@ -431,7 +465,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
             label={momentId ? "Save changes" : "Save moment"}
             onPress={() => void onSave()}
             loading={saving}
-            style={{ marginTop: space.xl, backgroundColor: previewAccent }}
+            style={{ marginTop: space.xl, backgroundColor: uiAccent }}
           />
           <View style={{ height: space.xxl }} />
         </ScrollView>
@@ -479,7 +513,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               >
                 <Text
                   style={{
-                    color: previewAccent,
+                    color: uiAccent,
                     fontSize: typography.body,
                     fontWeight: "600",
                   }}
@@ -511,11 +545,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                 <Ionicons
                   name="add-circle-outline"
                   size={22}
-                  color={previewAccent}
+                  color={uiAccent}
                 />
-                <Text
-                  style={[styles.addCategoryLabel, { color: previewAccent }]}
-                >
+                <Text style={[styles.addCategoryLabel, { color: uiAccent }]}>
                   Add category
                 </Text>
               </Pressable>
@@ -635,12 +667,12 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           >
             <View style={styles.dateSheetHeader}>
               <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
-                Choose date & time
+                Choose date
               </Text>
               <Pressable onPress={() => setShowDatePicker(false)} hitSlop={12}>
                 <Text
                   style={{
-                    color: previewAccent,
+                    color: uiAccent,
                     fontSize: typography.body,
                     fontWeight: "600",
                   }}
@@ -668,15 +700,56 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               >
                 <DateTimePicker
                   value={date}
-                  mode="datetime"
+                  mode="date"
                   display="inline"
-                  minuteInterval={1}
                   onChange={(_, selected) => {
-                    if (selected) setDate(trimToMinute(selected));
+                    if (selected) setDatePart(selected);
                   }}
                 />
               </View>
             </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      <Modal
+        visible={Platform.OS === "ios" && showTimePicker}
+        animationType="fade"
+        transparent
+      >
+        <Pressable
+          style={styles.dateBackdrop}
+          onPress={() => setShowTimePicker(false)}
+        >
+          <Pressable
+            style={[styles.dateSheet, { backgroundColor: theme.bgElevated }]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.dateSheetHeader}>
+              <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
+                Choose time
+              </Text>
+              <Pressable onPress={() => setShowTimePicker(false)} hitSlop={12}>
+                <Text
+                  style={{
+                    color: uiAccent,
+                    fontSize: typography.body,
+                    fontWeight: "600",
+                  }}
+                >
+                  Done
+                </Text>
+              </Pressable>
+            </View>
+            <DateTimePicker
+              value={date}
+              mode="time"
+              display="spinner"
+              minuteInterval={1}
+              onChange={(_, selected) => {
+                if (selected) setTimePart(selected);
+              }}
+            />
           </Pressable>
         </Pressable>
       </Modal>
@@ -700,7 +773,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               >
                 <Text
                   style={{
-                    color: previewAccent,
+                    color: uiAccent,
                     fontSize: typography.body,
                     fontWeight: "600",
                   }}
@@ -732,7 +805,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                       <Ionicons
                         name="checkmark-circle"
                         size={22}
-                        color={previewAccent}
+                        color={uiAccent}
                       />
                     )}
                   </Pressable>
@@ -880,42 +953,19 @@ const styles = StyleSheet.create({
   categoryIconSpacer: {
     width: 42,
   },
-  colorGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-  swatch: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-  },
-  swatchRing: {
-    borderWidth: 3,
-    borderColor: "#fff",
-  },
-  gradList: {
-    flexDirection: "row",
-    flexWrap: "wrap",
+  colorPicker: {
     gap: space.sm,
   },
-  gradChip: {
-    overflow: "hidden",
-    paddingHorizontal: space.md,
-    paddingVertical: 10,
-    borderRadius: radii.lg,
+  colorPickerPreview: {
+    alignSelf: "stretch",
   },
-  gradChipActive: {
-    borderWidth: 2,
-    borderColor: "#0A84FF",
+  colorPickerPanel: {
+    borderRadius: radii.md,
+    minHeight: 180,
   },
-  gradChipScrim: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.16)",
-  },
-  gradChipText: {
-    color: "#fff",
-    fontWeight: "600",
+  colorPickerSlider: {
+    borderRadius: 999,
+    minHeight: 28,
   },
   imgActions: {
     gap: 0,
