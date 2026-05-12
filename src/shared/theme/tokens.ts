@@ -28,42 +28,56 @@ export const typography = {
 export const shadows = StyleSheet.create({
   card: Platform.select({
     ios: {
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.08,
-      shadowRadius: 24,
+      shadowColor: "#1A3A5C",
+      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: 0.07,
+      shadowRadius: 28,
     },
-    android: { elevation: 6 },
+    android: { elevation: 5 },
     default: {},
   }),
 });
 
+/** Ambient screen gradient (top → bottom): cool sky wash like frosted UI references */
 export const lightTheme = {
-  bg: "#F2F2F7",
-  bgElevated: "#FFFFFF",
+  appearance: "light" as const,
+  bg: "#E5EDF7",
+  bgElevated: "rgba(255, 255, 255, 0.94)",
   text: "#1C1C1E",
-  textSecondary: "#636366",
-  textTertiary: "#8E8E93",
-  separator: "rgba(60, 60, 67, 0.18)",
-  glassFill: "rgba(255, 255, 255, 0.72)",
-  glassBorder: "rgba(255, 255, 255, 0.55)",
+  textSecondary: "#6C6C72",
+  textTertiary: "#98989E",
+  separator: "rgba(60, 60, 67, 0.14)",
+  glassFill: "rgba(255, 255, 255, 0.52)",
+  glassBorder: "rgba(255, 255, 255, 0.82)",
+  /** Tint layered on blur for glass cards (top → bottom) */
+  glassTintGradient: ["rgba(255,255,255,0.92)", "rgba(210,235,255,0.45)"] as [
+    string,
+    string,
+  ],
+  screenGradient: ["#F7FAFE", "#DBE8FA"] as [string, string],
   overlay: "rgba(0, 0, 0, 0.45)",
-  accent: "#4d0056",
+  accent: "#3BA3F0",
   danger: "#FF3B30",
 };
 
 export const darkTheme = {
-  bg: "#000000",
-  bgElevated: "#1C1C1E",
+  appearance: "dark" as const,
+  bg: "#0C0E14",
+  bgElevated: "rgba(28, 28, 32, 0.94)",
   text: "#F2F2F7",
   textSecondary: "#AEAEB2",
   textTertiary: "#8E8E93",
-  separator: "rgba(84, 84, 88, 0.48)",
-  glassFill: "rgba(28, 28, 30, 0.82)",
-  glassBorder: "rgba(255, 255, 255, 0.08)",
+  separator: "rgba(84, 84, 88, 0.42)",
+  glassFill: "rgba(32, 36, 44, 0.65)",
+  glassBorder: "rgba(255, 255, 255, 0.14)",
+  glassTintGradient: ["rgba(48,56,68,0.78)", "rgba(18,24,34,0.9)"] as [
+    string,
+    string,
+  ],
+  screenGradient: ["#0E1118", "#151B26"] as [string, string],
   overlay: "rgba(0, 0, 0, 0.55)",
-  accent: "#4d0056",
+  accent: "#5EB8FF",
   danger: "#FF453A",
 };
 
-export type Theme = typeof lightTheme;
+export type Theme = typeof lightTheme | typeof darkTheme;

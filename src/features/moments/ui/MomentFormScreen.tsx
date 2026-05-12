@@ -72,6 +72,13 @@ function trimToMinute(d: Date): Date {
   return x;
 }
 
+function randomSolidHex(): string {
+  const h = (u: number) => u.toString(16).padStart(2, "0");
+  return `#${h(Math.floor(Math.random() * 256))}${h(
+    Math.floor(Math.random() * 256),
+  )}${h(Math.floor(Math.random() * 256))}`;
+}
+
 export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const theme = useAppTheme();
   const { height: windowHeight } = useWindowDimensions();
@@ -104,6 +111,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const [onlineQuery, setOnlineQuery] = useState("");
   const [onlineResults, setOnlineResults] = useState<UnsplashPhoto[]>([]);
   const [loadingOnlineResults, setLoadingOnlineResults] = useState(false);
+  const [showColorPickerModal, setShowColorPickerModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const uiAccent = theme.accent;
   const previewAccent = getBackgroundAccent(bgValue, theme.accent);
@@ -298,6 +306,11 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const removeAttachedImage = useCallback(() => {
     setBgType("solid");
     setBgValue({ kind: "solid", color: DEFAULT_SOLID_COLOR });
+  }, []);
+
+  const pickRandomColor = useCallback(() => {
+    setBgType("solid");
+    setBgValue({ kind: "solid", color: randomSolidHex() });
   }, []);
 
   const previewMoment: Moment = {
@@ -600,21 +613,62 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
             </View>
           ) : null}
           {bgType === "solid" && (
-            <ColorPicker
-              value={
-                bgValue.kind === "solid" ? bgValue.color : DEFAULT_SOLID_COLOR
-              }
-              style={styles.colorPicker}
-              onChangeJS={(c) => {
-                setBgType("solid");
-                setBgValue({ kind: "solid", color: c.hex });
-              }}
-            >
-              <Preview hideInitialColor style={styles.colorPickerPreview} />
-              <Panel1 style={styles.colorPickerPanel} />
-              <HueSlider style={styles.colorPickerSlider} />
-            </ColorPicker>
+            <View style={styles.imageActionsRow}>
+              <Pressable
+                style={[
+                  styles.imageActionTile,
+                  {
+                    borderColor: theme.separator,
+                    backgroundColor: theme.bgElevated,
+                  },
+                ]}
+                onPress={pickRandomColor}
+              >
+                <Ionicons name="shuffle-outline" size={28} color={uiAccent} />
+                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
+                  Random
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.imageActionTile,
+                  {
+                    borderColor: theme.separator,
+                    backgroundColor: theme.bgElevated,
+                  },
+                ]}
+                onPress={() => setShowColorPickerModal(true)}
+              >
+                <Ionicons
+                  name="color-palette-outline"
+                  size={28}
+                  color={uiAccent}
+                />
+                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
+                  Pick color
+                </Text>
+              </Pressable>
+            </View>
           )}
+          {bgType === "solid" && bgValue.kind === "solid" ? (
+            <View style={styles.colorPreviewWrap}>
+              <View
+                style={[
+                  styles.colorPreviewFrame,
+                  {
+                    borderColor: theme.separator,
+                  },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.colorPreviewBar,
+                    { backgroundColor: bgValue.color },
+                  ]}
+                />
+              </View>
+            </View>
+          ) : null}
           <PrimaryButton
             label={momentId ? "Save changes" : "Save moment"}
             onPress={() => void onSave()}
@@ -970,6 +1024,65 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
         </Pressable>
       </Modal>
 
+      <Modal visible={showColorPickerModal} animationType="fade" transparent>
+        <Pressable
+          style={styles.dateBackdrop}
+          onPress={() => setShowColorPickerModal(false)}
+        >
+          <Pressable
+            style={[
+              styles.dateSheet,
+              {
+                backgroundColor: theme.bgElevated,
+                maxHeight: windowHeight * 0.88,
+              },
+            ]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.dateSheetHeader}>
+              <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
+                Pick a color
+              </Text>
+              <Pressable
+                onPress={() => setShowColorPickerModal(false)}
+                hitSlop={12}
+              >
+                <Text
+                  style={{
+                    color: uiAccent,
+                    fontSize: typography.body,
+                    fontWeight: "600",
+                  }}
+                >
+                  Done
+                </Text>
+              </Pressable>
+            </View>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              style={{ maxHeight: windowHeight * 0.72 }}
+              contentContainerStyle={styles.colorPickerModalScroll}
+            >
+              <ColorPicker
+                value={
+                  bgValue.kind === "solid" ? bgValue.color : DEFAULT_SOLID_COLOR
+                }
+                style={styles.colorPicker}
+                onChangeJS={(c) => {
+                  setBgType("solid");
+                  setBgValue({ kind: "solid", color: c.hex });
+                }}
+              >
+                <Preview hideInitialColor style={styles.colorPickerPreview} />
+                <Panel1 style={styles.colorPickerPanel} />
+                <HueSlider style={styles.colorPickerSlider} />
+              </ColorPicker>
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
+
       <Modal visible={showOnlineImagePicker} animationType="fade" transparent>
         <Pressable
           style={styles.dateBackdrop}
@@ -1206,6 +1319,10 @@ const styles = StyleSheet.create({
   categoryIconSpacer: {
     width: 42,
   },
+  colorPickerModalScroll: {
+    paddingBottom: space.lg,
+    gap: space.sm,
+  },
   colorPicker: {
     gap: space.sm,
   },
@@ -1236,6 +1353,21 @@ const styles = StyleSheet.create({
   imageActionTitle: {
     fontSize: typography.body,
     fontWeight: "600",
+  },
+  colorPreviewWrap: {
+    marginTop: space.sm,
+    marginBottom: space.sm,
+  },
+  colorPreviewFrame: {
+    width: "100%",
+    height: 36,
+    borderRadius: radii.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: "hidden",
+  },
+  colorPreviewBar: {
+    flex: 1,
+    width: "100%",
   },
   attachedImagePreviewWrap: {
     marginTop: space.sm,

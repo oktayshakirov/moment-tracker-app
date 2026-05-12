@@ -10,6 +10,7 @@ import { MomentListScreen } from "@/features/moments/ui/MomentListScreen";
 import { MomentFormScreen } from "@/features/moments/ui/MomentFormScreen";
 import { MomentDetailScreen } from "@/features/moments/ui/MomentDetailScreen";
 import type { RootStackParamList } from "./types";
+import { darkTheme, lightTheme } from "@/shared/theme/tokens";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -17,13 +18,14 @@ export function RootNavigator() {
   const scheme = useColorScheme();
   const navTheme = scheme === "dark" ? DarkTheme : DefaultTheme;
   const headerIconFallback = scheme === "dark" ? "#fff" : "#000";
+  const ambient = scheme === "dark" ? darkTheme : lightTheme;
   return (
     <NavigationContainer
       theme={{
         ...navTheme,
         colors: {
           ...navTheme.colors,
-          background: scheme === "dark" ? "#000000" : "#F2F2F7",
+          background: ambient.screenGradient[0],
         },
       }}
     >
