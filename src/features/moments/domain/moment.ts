@@ -18,6 +18,12 @@ export const displayUnitSchema = z.enum([
 ]);
 export type DisplayUnit = z.infer<typeof displayUnitSchema>;
 
+const unsplashAttributionSchema = z.object({
+  photographerName: z.string(),
+  photographerHtmlUrl: z.string(),
+  photoHtmlUrl: z.string(),
+});
+
 export const backgroundValueSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('solid'), color: z.string() }),
   z.object({
@@ -25,7 +31,11 @@ export const backgroundValueSchema = z.discriminatedUnion('kind', [
     colors: z.array(z.string()).min(2),
     angle: z.number().optional(),
   }),
-  z.object({ kind: z.literal('image'), uri: z.string() }),
+  z.object({
+    kind: z.literal('image'),
+    uri: z.string(),
+    unsplashAttribution: unsplashAttributionSchema.optional(),
+  }),
 ]);
 
 export type BackgroundValue = z.infer<typeof backgroundValueSchema>;

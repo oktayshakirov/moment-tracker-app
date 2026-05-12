@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Alert,
+  Linking,
   Pressable,
   ScrollView,
   Share,
@@ -74,12 +75,23 @@ export function MomentDetailScreen({
     );
   }
 
+  const unsplashAttr =
+    moment.backgroundValue.kind === "image"
+      ? moment.backgroundValue.unsplashAttribution
+      : undefined;
+
   const shareImage = async () => {
-    const body = [
+    const lines = [
       ...rows.map((r) => `${r.value} ${r.unit}`),
       sinceUntil,
       eventDateText,
-    ].join("\n");
+    ];
+    if (unsplashAttr) {
+      lines.push(
+        `Photo by ${unsplashAttr.photographerName} on Unsplash — ${unsplashAttr.photoHtmlUrl}`,
+      );
+    }
+    const body = lines.join("\n");
     const fallbackText = `${moment.title}\n${body}`;
     if (!shotRef.current) {
       await Share.share({ message: fallbackText });
@@ -131,7 +143,12 @@ export function MomentDetailScreen({
         <MomentBackground moment={moment} />
         <View style={[styles.scrim, { paddingTop: insets.top + 8 }]} />
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={[
+            styles.scroll,
+            unsplashAttr && {
+              paddingBottom: insets.bottom + 52,
+            },
+          ]}
           showsVerticalScrollIndicator={false}
         >
           <Animated.View
@@ -155,6 +172,34 @@ export function MomentDetailScreen({
             <Text style={styles.bottomDate}>{eventDateText}</Text>
           </View>
         </ScrollView>
+        {unsplashAttr ? (
+          <View
+            style={[
+              styles.unsplashFooter,
+              { paddingBottom: Math.max(insets.bottom, 12) + 8 },
+            ]}
+            pointerEvents="box-none"
+          >
+            <Text style={styles.unsplashAttributionText}>
+              Photo by{" "}
+              <Text
+                style={styles.unsplashAttrLink}
+                onPress={() =>
+                  void Linking.openURL(unsplashAttr.photographerHtmlUrl)
+                }
+              >
+                {unsplashAttr.photographerName}
+              </Text>
+              {" on "}
+              <Text
+                style={styles.unsplashAttrLink}
+                onPress={() => void Linking.openURL("https://unsplash.com")}
+              >
+                Unsplash
+              </Text>
+            </Text>
+          </View>
+        ) : null}
       </View>
 
       <View style={[styles.toolbar, { paddingTop: insets.top + 6 }]}>
@@ -260,6 +305,26 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.92)",
     fontSize: typography.title2,
     fontWeight: "600",
+  },
+  unsplashFooter: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: space.xl,
+    paddingTop: space.sm,
+    alignItems: "center",
+    zIndex: 4,
+  },
+  unsplashAttributionText: {
+    color: "rgba(255,255,255,0.72)",
+    fontSize: typography.caption,
+    fontWeight: "500",
+    textAlign: "center",
+  },
+  unsplashAttrLink: {
+    color: "rgba(255,255,255,0.92)",
+    textDecorationLine: "underline",
   },
   toolbar: {
     position: "absolute",

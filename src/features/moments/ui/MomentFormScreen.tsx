@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
+  Linking,
   Modal,
   Platform,
   Pressable,
@@ -13,6 +15,7 @@ import {
   View,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
@@ -41,6 +44,12 @@ import type {
 import { modeFromTargetDate } from "../domain/momentFormatters";
 import { copyImageToAppStorage } from "../data/imageFileService";
 import { scheduleMilestonesForMoment } from "../data/milestoneNotifications";
+import {
+  getUnsplashAccessKey,
+  searchPhotos,
+  trackPhotoDownload,
+  type UnsplashPhoto,
+} from "../data/unsplashApi";
 import { MomentCard } from "./MomentCard";
 
 const DISPLAY_UNITS: DisplayUnit[] = [
@@ -54,6 +63,7 @@ const DISPLAY_UNITS: DisplayUnit[] = [
   "years",
 ];
 const DEFAULT_SOLID_COLOR = "#0A84FF";
+const FALLBACK_IMAGE_SEARCH = "cinematic landscape wallpaper";
 
 /** Drop seconds so pickers and labels stay minute-precision only. */
 function trimToMinute(d: Date): Date {
@@ -90,6 +100,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [showDisplayUnitPicker, setShowDisplayUnitPicker] = useState(false);
+  const [showOnlineImagePicker, setShowOnlineImagePicker] = useState(false);
+  const [onlineQuery, setOnlineQuery] = useState("");
+  const [onlineResults, setOnlineResults] = useState<UnsplashPhoto[]>([]);
+  const [loadingOnlineResults, setLoadingOnlineResults] = useState(false);
   const [saving, setSaving] = useState(false);
   const uiAccent = theme.accent;
   const previewAccent = getBackgroundAccent(bgValue, theme.accent);
@@ -114,8 +128,13 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
       setTitle(m.title);
       setDate(trimToMinute(new Date(m.targetDateTime)));
       setCategoryId(m.categoryId);
-      if (m.backgroundType === "gradient" && m.backgroundValue.kind === "gradient") {
-        const fallback = m.backgroundValue.colors[m.backgroundValue.colors.length - 1] ?? DEFAULT_SOLID_COLOR;
+      if (
+        m.backgroundType === "gradient" &&
+        m.backgroundValue.kind === "gradient"
+      ) {
+        const fallback =
+          m.backgroundValue.colors[m.backgroundValue.colors.length - 1] ??
+          DEFAULT_SOLID_COLOR;
         setBgType("solid");
         setBgValue({ kind: "solid", color: fallback });
       } else {
@@ -133,7 +152,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
       return;
     }
     if (bgType === "image" && bgValue.kind !== "image") {
-      Alert.alert("Photo required", "Choose a gallery photo.");
+      Alert.alert("Image required", "Choose from Gallery or Online.");
       return;
     }
     setSaving(true);
@@ -205,6 +224,82 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     setBgValue({ kind: "image", uri });
   };
 
+  const queryForTitle = useCallback(
+    () => title.trim() || FALLBACK_IMAGE_SEARCH,
+    [title],
+  );
+
+  const fetchOnlinePhotos = useCallback(async (query: string) => {
+    const accessKey = getUnsplashAccessKey();
+    if (!accessKey) {
+      Alert.alert(
+        "Unsplash access key missing",
+        "Create an application at unsplash.com/oauth/applications, copy the Access Key, add EXPO_PUBLIC_UNSPLASH_ACCESS_KEY to a .env file in the project root, then restart Expo. See https://unsplash.com/documentation (Authorization — Public).",
+      );
+      return;
+    }
+    setLoadingOnlineResults(true);
+    try {
+      const data = await searchPhotos({
+        accessKey,
+        query: query.trim() || FALLBACK_IMAGE_SEARCH,
+        perPage: 30,
+      });
+      setOnlineResults(data.results);
+    } catch (e) {
+      Alert.alert(
+        "Unsplash search failed",
+        e instanceof Error ? e.message : "Unknown error",
+      );
+      setOnlineResults([]);
+    } finally {
+      setLoadingOnlineResults(false);
+    }
+  }, []);
+
+  const openOnlineImagePicker = useCallback(() => {
+    setOnlineQuery("");
+    setShowOnlineImagePicker(true);
+    void fetchOnlinePhotos(queryForTitle());
+  }, [fetchOnlinePhotos, queryForTitle]);
+
+  const runOnlineSearch = useCallback(() => {
+    void fetchOnlinePhotos(onlineQuery);
+  }, [fetchOnlinePhotos, onlineQuery]);
+
+  const pickOnlineImage = useCallback(async (photo: UnsplashPhoto) => {
+    const accessKey = getUnsplashAccessKey();
+    if (!accessKey) return;
+    try {
+      await trackPhotoDownload(accessKey, photo.id);
+      const uri = await copyImageToAppStorage(photo.urls.regular);
+      const photographerHtmlUrl =
+        photo.user.links?.html ??
+        `https://unsplash.com/@${photo.user.username}`;
+      setBgType("image");
+      setBgValue({
+        kind: "image",
+        uri,
+        unsplashAttribution: {
+          photographerName: photo.user.name,
+          photographerHtmlUrl,
+          photoHtmlUrl: photo.links.html,
+        },
+      });
+      setShowOnlineImagePicker(false);
+    } catch (e) {
+      Alert.alert(
+        "Could not use image",
+        e instanceof Error ? e.message : "Unknown error",
+      );
+    }
+  }, []);
+
+  const removeAttachedImage = useCallback(() => {
+    setBgType("solid");
+    setBgValue({ kind: "solid", color: DEFAULT_SOLID_COLOR });
+  }, []);
+
   const previewMoment: Moment = {
     id: momentId ?? "preview",
     title: title.trim() || "New moment",
@@ -259,7 +354,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               },
             ]}
           />
-          <Text style={[styles.label, { color: theme.textSecondary }]}>Date</Text>
+          <Text style={[styles.label, { color: theme.textSecondary }]}>
+            Date
+          </Text>
           <Pressable
             style={[
               styles.rowBtn,
@@ -289,7 +386,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               color={theme.textTertiary}
             />
           </Pressable>
-          <Text style={[styles.label, { color: theme.textSecondary }]}>Time</Text>
+          <Text style={[styles.label, { color: theme.textSecondary }]}>
+            Time
+          </Text>
           <Pressable
             style={[
               styles.rowBtn,
@@ -411,7 +510,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
             Background
           </Text>
           <View style={[styles.segment, styles.backgroundSegment]}>
-            {(["solid", "image"] as const).map((b) => (
+            {(["image", "solid"] as const).map((b) => (
               <Pressable
                 key={b}
                 onPress={() => {
@@ -432,11 +531,74 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                     { color: bgType === b ? "#fff" : theme.text },
                   ]}
                 >
-                  {b === "solid" ? "Color" : "Photo"}
+                  {b === "solid" ? "Color" : "Image"}
                 </Text>
               </Pressable>
             ))}
           </View>
+          {bgType === "image" && (
+            <View style={styles.imageActionsRow}>
+              <Pressable
+                style={[
+                  styles.imageActionTile,
+                  {
+                    borderColor: theme.separator,
+                    backgroundColor: theme.bgElevated,
+                  },
+                ]}
+                onPress={() => void pickGallery()}
+              >
+                <Ionicons name="images-outline" size={28} color={uiAccent} />
+                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
+                  Gallery
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.imageActionTile,
+                  {
+                    borderColor: theme.separator,
+                    backgroundColor: theme.bgElevated,
+                  },
+                ]}
+                onPress={openOnlineImagePicker}
+              >
+                <Ionicons name="globe-outline" size={28} color={uiAccent} />
+                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
+                  Online
+                </Text>
+              </Pressable>
+            </View>
+          )}
+          {bgType === "image" && bgValue.kind === "image" ? (
+            <View style={styles.attachedImagePreviewWrap}>
+              <View
+                style={[
+                  styles.attachedImageFrame,
+                  {
+                    borderColor: theme.separator,
+                    backgroundColor: theme.bg,
+                  },
+                ]}
+              >
+                <Image
+                  source={{ uri: bgValue.uri }}
+                  style={styles.attachedImage}
+                  contentFit="cover"
+                  transition={160}
+                />
+                <Pressable
+                  style={styles.attachedImageRemoveBtn}
+                  onPress={removeAttachedImage}
+                  hitSlop={8}
+                  accessibilityLabel="Remove image"
+                  accessibilityHint="Switches background to solid color"
+                >
+                  <Ionicons name="trash-outline" size={18} color="#fff" />
+                </Pressable>
+              </View>
+            </View>
+          ) : null}
           {bgType === "solid" && (
             <ColorPicker
               value={
@@ -452,14 +614,6 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               <Panel1 style={styles.colorPickerPanel} />
               <HueSlider style={styles.colorPickerSlider} />
             </ColorPicker>
-          )}
-          {bgType === "image" && (
-            <View style={styles.imgActions}>
-              <PrimaryButton
-                label="From gallery"
-                onPress={() => void pickGallery()}
-              />
-            </View>
           )}
           <PrimaryButton
             label={momentId ? "Save changes" : "Save moment"}
@@ -815,6 +969,115 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           </Pressable>
         </Pressable>
       </Modal>
+
+      <Modal visible={showOnlineImagePicker} animationType="fade" transparent>
+        <Pressable
+          style={styles.dateBackdrop}
+          onPress={() => setShowOnlineImagePicker(false)}
+        >
+          <Pressable
+            style={[
+              styles.dateSheet,
+              {
+                backgroundColor: theme.bgElevated,
+                maxHeight: windowHeight * 0.88,
+              },
+            ]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.dateSheetHeader}>
+              <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
+                Unsplash Images
+              </Text>
+              <Pressable
+                onPress={() => setShowOnlineImagePicker(false)}
+                hitSlop={12}
+              >
+                <Text
+                  style={{
+                    color: uiAccent,
+                    fontSize: typography.body,
+                    fontWeight: "600",
+                  }}
+                >
+                  Done
+                </Text>
+              </Pressable>
+            </View>
+            <View style={styles.onlineSearchRow}>
+              <TextInput
+                value={onlineQuery}
+                onChangeText={setOnlineQuery}
+                onSubmitEditing={runOnlineSearch}
+                placeholder=""
+                accessibilityLabel="Search Unsplash photos"
+                placeholderTextColor={theme.textTertiary}
+                returnKeyType="search"
+                style={[
+                  styles.onlineSearchInput,
+                  {
+                    color: theme.text,
+                    borderColor: theme.separator,
+                    backgroundColor: theme.bg,
+                  },
+                ]}
+              />
+              <Pressable
+                onPress={runOnlineSearch}
+                style={[styles.onlineSearchBtn, { backgroundColor: uiAccent }]}
+              >
+                <Ionicons name="search-outline" size={20} color="#fff" />
+              </Pressable>
+            </View>
+            <Pressable
+              style={styles.unsplashLink}
+              onPress={() => void Linking.openURL("https://unsplash.com")}
+            >
+              <Text style={[styles.unsplashLinkText, { color: uiAccent }]}>
+                Photos provided by Unsplash
+              </Text>
+            </Pressable>
+            <ScrollView
+              style={{ maxHeight: windowHeight * 0.56 }}
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.onlineGrid}>
+                {loadingOnlineResults ? (
+                  <ActivityIndicator
+                    color={uiAccent}
+                    style={styles.onlineLoading}
+                  />
+                ) : onlineResults.length === 0 ? (
+                  <Text style={{ color: theme.textSecondary }}>
+                    No photos found. Try another search.
+                  </Text>
+                ) : (
+                  onlineResults.map((photo) => (
+                    <Pressable
+                      key={photo.id}
+                      style={[
+                        styles.onlineImageTile,
+                        {
+                          borderColor: theme.separator,
+                          backgroundColor: theme.bg,
+                        },
+                      ]}
+                      onPress={() => void pickOnlineImage(photo)}
+                    >
+                      <Image
+                        source={{ uri: photo.urls.small }}
+                        style={styles.onlineImage}
+                        contentFit="cover"
+                        transition={120}
+                      />
+                    </Pressable>
+                  ))
+                )}
+              </View>
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </Screen>
   );
 }
@@ -829,16 +1092,6 @@ function getBackgroundAccent(value: BackgroundValue, fallback: string): string {
   if (value.kind === "gradient")
     return value.colors[value.colors.length - 1] ?? fallback;
   return fallback;
-}
-
-function getTightGradientLocations(
-  colorCount: number,
-): [number, number, ...number[]] {
-  if (colorCount <= 2) return [0.18, 0.82];
-  return Array.from({ length: colorCount }, (_, index) => {
-    const step = 0.64 / (colorCount - 1);
-    return 0.18 + step * index;
-  }) as [number, number, ...number[]];
 }
 
 const styles = StyleSheet.create({
@@ -967,8 +1220,47 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     minHeight: 28,
   },
-  imgActions: {
-    gap: 0,
+  imageActionsRow: {
+    flexDirection: "row",
+    gap: space.sm,
+  },
+  imageActionTile: {
+    flex: 1,
+    minHeight: 92,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: radii.md,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  imageActionTitle: {
+    fontSize: typography.body,
+    fontWeight: "600",
+  },
+  attachedImagePreviewWrap: {
+    marginTop: space.sm,
+    marginBottom: space.sm,
+  },
+  attachedImageFrame: {
+    width: "100%",
+    aspectRatio: 16 / 9,
+    borderRadius: radii.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: "hidden",
+  },
+  attachedImage: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  attachedImageRemoveBtn: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: "rgba(0,0,0,0.52)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   dateBackdrop: {
     flex: 1,
@@ -1002,6 +1294,53 @@ const styles = StyleSheet.create({
   datePickerMinBox: {
     width: "100%",
     alignSelf: "stretch",
+  },
+  onlineSearchRow: {
+    flexDirection: "row",
+    gap: space.sm,
+    marginBottom: space.sm,
+  },
+  onlineSearchInput: {
+    flex: 1,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: radii.md,
+    paddingHorizontal: space.md,
+    paddingVertical: 12,
+    fontSize: typography.body,
+  },
+  onlineSearchBtn: {
+    width: 48,
+    borderRadius: radii.md,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  unsplashLink: {
+    marginBottom: space.sm,
+  },
+  unsplashLinkText: {
+    fontSize: typography.caption,
+    fontWeight: "600",
+  },
+  onlineGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: space.sm,
+    paddingBottom: space.md,
+    justifyContent: "center",
+  },
+  onlineLoading: {
+    width: "100%",
+    paddingVertical: space.lg,
+  },
+  onlineImageTile: {
+    width: "48%",
+    borderRadius: radii.md,
+    overflow: "hidden",
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  onlineImage: {
+    width: "100%",
+    aspectRatio: 0.65,
   },
   optionList: {
     gap: space.sm,

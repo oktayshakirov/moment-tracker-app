@@ -24,6 +24,10 @@ export async function copyImageToAppStorage(sourceUri: string): Promise<string> 
   const safeExt = ext && ext.length <= 5 ? ext : 'jpg';
   const name = `${createId()}.${safeExt}`;
   const dest = `${dir}/${name}`;
-  await FileSystem.copyAsync({ from: sourceUri, to: dest });
+  if (/^https?:\/\//i.test(sourceUri)) {
+    await FileSystem.downloadAsync(sourceUri, dest);
+  } else {
+    await FileSystem.copyAsync({ from: sourceUri, to: dest });
+  }
   return dest;
 }
