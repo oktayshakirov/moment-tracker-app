@@ -59,5 +59,19 @@ target 'momenttracker' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => ccache_enabled?(podfile_properties),
     )
+
+    # ExpoSQLite: Release builds succeed on device but Debug fails with `exsqlite3_*` not in scope.
+    # CocoaPods' ExpoSQLite Debug xcconfig matches Release; the gap is usually Swift default
+    # optimization (`-Onone` vs `-O`). Match Release Swift optimization for this pod in Debug only.
+    installer.pods_project.targets.each do |target|
+      next unless target.name == "ExpoSQLite"
+
+      target.build_configurations.each do |cfg|
+        cfg.build_settings["SWIFT_ENABLE_EXPLICIT_MODULES"] = "NO"
+        next unless cfg.name == "Debug"
+
+        cfg.build_settings["SWIFT_OPTIMIZATION_LEVEL"] = "-O"
+      end
+    end
   end
 end

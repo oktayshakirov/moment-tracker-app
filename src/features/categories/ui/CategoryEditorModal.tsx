@@ -23,7 +23,10 @@ type Props = {
   mode: "create" | "edit";
   /** When `mode` is `edit`, used to prefill the form. */
   category: Category | null;
-  onSave: (payload: { title: string; colorHex: string }) => void | Promise<void>;
+  onSave: (payload: {
+    title: string;
+    colorHex: string;
+  }) => void | Promise<void>;
 };
 
 export function CategoryEditorModal({
@@ -54,9 +57,7 @@ export function CategoryEditorModal({
     if (!t) return;
     void (async () => {
       try {
-        await Promise.resolve(
-          onSave({ title: t, colorHex: color }),
-        );
+        await Promise.resolve(onSave({ title: t, colorHex: color }));
         onClose();
       } catch {
         /* keep modal open */

@@ -38,30 +38,8 @@ export const shadows = StyleSheet.create({
   }),
 });
 
-/** Ambient screen gradient (top → bottom): cool sky wash like frosted UI references */
-export const lightTheme = {
-  appearance: "light" as const,
-  bg: "#E5EDF7",
-  bgElevated: "rgba(255, 255, 255, 0.94)",
-  text: "#1C1C1E",
-  textSecondary: "#6C6C72",
-  textTertiary: "#98989E",
-  separator: "rgba(60, 60, 67, 0.14)",
-  glassFill: "rgba(255, 255, 255, 0.52)",
-  glassBorder: "rgba(255, 255, 255, 0.82)",
-  /** Tint layered on blur for glass cards (top → bottom) */
-  glassTintGradient: ["rgba(255,255,255,0.92)", "rgba(210,235,255,0.45)"] as [
-    string,
-    string,
-  ],
-  screenGradient: ["#F7FAFE", "#DBE8FA"] as [string, string],
-  overlay: "rgba(0, 0, 0, 0.45)",
-  accent: "#3BA3F0",
-  danger: "#FF3B30",
-};
-
+/** Single app theme — dark only */
 export const darkTheme = {
-  appearance: "dark" as const,
   bg: "#0C0E14",
   bgElevated: "rgba(28, 28, 32, 0.94)",
   text: "#F2F2F7",
@@ -80,4 +58,4 @@ export const darkTheme = {
   danger: "#FF453A",
 };
 
-export type Theme = typeof lightTheme | typeof darkTheme;
+export type Theme = typeof darkTheme;

@@ -19,7 +19,7 @@ import { format } from "date-fns";
 import type { MomentDetailScreenProps } from "@/app/navigation/types";
 import { useRepositories } from "@/app/database/AppDataProvider";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
-import { radii, space, typography } from "@/shared/theme/tokens";
+import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
 import type { Moment } from "../domain/moment";
 import {
   formatDurationRows,
@@ -29,6 +29,10 @@ import {
 import { cancelMilestoneNotifications } from "../data/milestoneNotifications";
 import { MomentBackground } from "./MomentBackground";
 
+function detailChromeBottomInset(topInset: number): number {
+  return topInset + space.xs + 44 + space.sm;
+}
+
 export function MomentDetailScreen({
   navigation,
   route,
@@ -36,10 +40,16 @@ export function MomentDetailScreen({
   const { momentId } = route.params;
   const theme = useAppTheme();
   const insets = useSafeAreaInsets();
+  const chromeBottom = detailChromeBottomInset(insets.top);
   const { moments } = useRepositories();
   const [moment, setMoment] = useState<Moment | null>(null);
   const [now, setNow] = useState(() => new Date());
   const shotRef = useRef<View>(null);
+  const momentRef = useRef<Moment | null>(null);
+  const nowRef = useRef(now);
+
+  momentRef.current = moment;
+  nowRef.current = now;
 
   const load = useCallback(async () => {
     const m = await moments.getById(momentId);
@@ -67,24 +77,21 @@ export function MomentDetailScreen({
     return () => clearInterval(id);
   }, [moment, hasSecondsRow]);
 
-  if (!moment) {
-    return (
-      <View style={[styles.center, { backgroundColor: theme.bg }]}>
-        <Text style={{ color: theme.textSecondary }}>Loading…</Text>
-      </View>
-    );
-  }
-
-  const unsplashAttr =
-    moment.backgroundValue.kind === "image"
-      ? moment.backgroundValue.unsplashAttribution
-      : undefined;
-
-  const shareImage = async () => {
+  const shareImage = useCallback(async () => {
+    const m = momentRef.current;
+    if (!m) return;
+    const n = nowRef.current;
+    const rowLines = formatDurationRows(m, n);
+    const su = formatSinceUntilLabel(m, n);
+    const ed = format(new Date(m.targetDateTime), "MMMM d, yyyy • h:mm a");
+    const unsplashAttr =
+      m.backgroundValue.kind === "image"
+        ? m.backgroundValue.unsplashAttribution
+        : undefined;
     const lines = [
-      ...rows.map((r) => `${r.value} ${r.unit}`),
-      sinceUntil,
-      eventDateText,
+      ...rowLines.map((r) => `${r.value} ${r.unit}`),
+      su,
+      ed,
     ];
     if (unsplashAttr) {
       lines.push(
@@ -92,7 +99,7 @@ export function MomentDetailScreen({
       );
     }
     const body = lines.join("\n");
-    const fallbackText = `${moment.title}\n${body}`;
+    const fallbackText = `${m.title}\n${body}`;
     if (!shotRef.current) {
       await Share.share({ message: fallbackText });
       return;
@@ -107,7 +114,7 @@ export function MomentDetailScreen({
       if (available) {
         await Sharing.shareAsync(uri, {
           mimeType: "image/png",
-          dialogTitle: moment.title,
+          dialogTitle: m.title,
         });
       } else {
         await Share.share({ url: uri });
@@ -115,36 +122,59 @@ export function MomentDetailScreen({
     } catch {
       await Share.share({ message: fallbackText });
     }
-  };
+  }, []);
 
-  const onDelete = () => {
-    Alert.alert(
-      "Delete moment?",
-      `"${moment.title}" will be removed.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: () =>
-            void (async () => {
-              await cancelMilestoneNotifications(moment.id);
-              await moments.delete(moment.id);
-              navigation.goBack();
-            })(),
-        },
-      ],
+  const onDelete = useCallback(() => {
+    const m = momentRef.current;
+    if (!m) return;
+    Alert.alert("Delete moment?", `"${m.title}" will be removed.`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () =>
+          void (async () => {
+            await cancelMilestoneNotifications(m.id);
+            await moments.delete(m.id);
+            navigation.goBack();
+          })(),
+      },
+    ]);
+  }, [moments, navigation]);
+
+  if (!moment) {
+    return (
+      <View style={[styles.root, { backgroundColor: theme.bg }]}>
+        <View style={styles.center}>
+          <Text style={{ color: theme.textSecondary }}>Loading…</Text>
+        </View>
+        <DetailChromeBar
+          theme={theme}
+          topInset={insets.top}
+          onBack={() => navigation.goBack()}
+          showActions={false}
+          onShare={() => {}}
+          onEdit={() => {}}
+          onDelete={() => {}}
+        />
+      </View>
     );
-  };
+  }
+
+  const unsplashAttr =
+    moment.backgroundValue.kind === "image"
+      ? moment.backgroundValue.unsplashAttribution
+      : undefined;
 
   return (
     <View style={styles.root}>
       <View ref={shotRef} style={styles.capture} collapsable={false}>
         <MomentBackground moment={moment} />
-        <View style={[styles.scrim, { paddingTop: insets.top + 8 }]} />
+        <View style={styles.scrim} />
         <ScrollView
           contentContainerStyle={[
             styles.scroll,
+            { paddingTop: chromeBottom + 12 },
             unsplashAttr && {
               paddingBottom: insets.bottom + 52,
             },
@@ -159,7 +189,10 @@ export function MomentDetailScreen({
             <View style={styles.rowsCol}>
               {rows.map((r) => (
                 <View key={`${r.value}-${r.unit}`} style={styles.rowStat}>
-                  <Animated.Text entering={FadeInDown.delay(80)} style={styles.rowValue}>
+                  <Animated.Text
+                    entering={FadeInDown.delay(80)}
+                    style={styles.rowValue}
+                  >
                     {r.value}
                   </Animated.Text>
                   <Text style={styles.rowUnit}>{r.unit}</Text>
@@ -201,43 +234,180 @@ export function MomentDetailScreen({
           </View>
         ) : null}
       </View>
+      <DetailChromeBar
+        theme={theme}
+        topInset={insets.top}
+        onBack={() => navigation.goBack()}
+        showActions
+        onShare={() => void shareImage()}
+        onEdit={() =>
+          navigation.navigate("MomentForm", { momentId: moment.id })
+        }
+        onDelete={onDelete}
+      />
+    </View>
+  );
+}
 
-      <View style={[styles.toolbar, { paddingTop: insets.top + 6 }]}>
+type IconPillProps = {
+  theme: Theme;
+  name: React.ComponentProps<typeof Ionicons>["name"];
+  onPress: () => void;
+  accessibilityLabel: string;
+  color?: string;
+};
+
+function IconPill({
+  theme,
+  name,
+  onPress,
+  accessibilityLabel,
+  color,
+}: IconPillProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      hitSlop={8}
+      style={({ pressed }) => [
+        styles.chromePill,
+        styles.chromeIconPill,
+        {
+          backgroundColor: theme.glassFill,
+          borderColor: theme.glassBorder,
+        },
+        pressed && styles.chromePillPressed,
+      ]}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+    >
+      <Ionicons name={name} size={22} color={color ?? theme.text} />
+    </Pressable>
+  );
+}
+
+type DetailChromeBarProps = {
+  theme: Theme;
+  topInset: number;
+  onBack: () => void;
+  showActions: boolean;
+  onShare: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+};
+
+function DetailChromeBar({
+  theme,
+  topInset,
+  onBack,
+  showActions,
+  onShare,
+  onEdit,
+  onDelete,
+}: DetailChromeBarProps) {
+  const pill = [
+    styles.chromePill,
+    {
+      backgroundColor: theme.glassFill,
+      borderColor: theme.glassBorder,
+    },
+  ];
+
+  return (
+    <View style={styles.chromeOverlay} pointerEvents="box-none">
+      <View style={[styles.chromeBar, { paddingTop: topInset + space.xs }]}>
         <Pressable
-          onPress={() => navigation.goBack()}
+          onPress={onBack}
           hitSlop={12}
-          style={styles.iconBtn}
-          accessibilityLabel="Close"
+          style={({ pressed }) => [
+            ...pill,
+            styles.chromeBackPill,
+            pressed && styles.chromePillPressed,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Back to Moments"
         >
-          <Ionicons name="chevron-back" size={28} color="#fff" />
+          <Ionicons name="chevron-back" size={22} color={theme.text} />
+          <Text style={[styles.chromeBackLabel, { color: theme.text }]}>
+            Moments
+          </Text>
         </Pressable>
-        <View style={styles.toolbarRight}>
-          <Pressable
-            onPress={() => void shareImage()}
-            hitSlop={12}
-            style={styles.iconBtn}
-          >
-            <Ionicons name="share-outline" size={24} color="#fff" />
-          </Pressable>
-          <Pressable
-            onPress={() =>
-              navigation.navigate("MomentForm", { momentId: moment.id })
-            }
-            hitSlop={12}
-            style={styles.iconBtn}
-          >
-            <Ionicons name="create-outline" size={24} color="#fff" />
-          </Pressable>
-          <Pressable onPress={onDelete} hitSlop={12} style={styles.iconBtn}>
-            <Ionicons name="trash-outline" size={24} color="#fff" />
-          </Pressable>
-        </View>
+
+        {showActions ? (
+          <View style={styles.chromeActions}>
+            <IconPill
+              theme={theme}
+              name="share-outline"
+              onPress={onShare}
+              accessibilityLabel="Share"
+            />
+            <IconPill
+              theme={theme}
+              name="create-outline"
+              onPress={onEdit}
+              accessibilityLabel="Edit moment"
+            />
+            <IconPill
+              theme={theme}
+              name="trash-outline"
+              onPress={onDelete}
+              accessibilityLabel="Delete moment"
+              color={theme.danger}
+            />
+          </View>
+        ) : null}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  chromeOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "flex-start",
+    zIndex: 20,
+  },
+  chromeBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: space.lg,
+    paddingBottom: space.sm,
+    gap: space.md,
+  },
+  chromePill: {
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: "hidden",
+  },
+  chromePillPressed: {
+    opacity: 0.82,
+  },
+  chromeBackPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: radii.lg,
+    paddingVertical: space.sm,
+    paddingLeft: space.xs,
+    paddingRight: space.md,
+    gap: 2,
+    maxWidth: "48%",
+  },
+  chromeBackLabel: {
+    fontSize: 17,
+    fontWeight: "600",
+  },
+  chromeActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.sm,
+    flexShrink: 0,
+  },
+  chromeIconPill: {
+    width: 44,
+    height: 44,
+    borderRadius: radii.lg,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   root: {
     flex: 1,
     backgroundColor: "#000",
@@ -252,11 +422,10 @@ const styles = StyleSheet.create({
   scroll: {
     paddingHorizontal: space.xl,
     paddingBottom: space.xxl,
-    paddingTop: 72,
   },
   heroBlock: {
     gap: 8,
-    paddingTop: 92,
+    paddingTop: 16,
   },
   title: {
     color: "#fff",
@@ -325,26 +494,6 @@ const styles = StyleSheet.create({
   unsplashAttrLink: {
     color: "rgba(255,255,255,0.92)",
     textDecorationLine: "underline",
-  },
-  toolbar: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: space.md,
-  },
-  toolbarRight: {
-    flexDirection: "row",
-    gap: space.md,
-  },
-  iconBtn: {
-    padding: 4,
-    backgroundColor: "rgba(0,0,0,0.25)",
-    borderRadius: radii.md,
   },
   center: {
     flex: 1,

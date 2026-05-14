@@ -12,7 +12,6 @@ type Props = {
 
 export function GlassCard({ children, style }: Props) {
   const theme = useAppTheme();
-  const isDark = theme.appearance === "dark";
   const tintLayer = (
     <LinearGradient
       colors={theme.glassTintGradient}
@@ -26,8 +25,8 @@ export function GlassCard({ children, style }: Props) {
   if (Platform.OS === "ios") {
     return (
       <BlurView
-        intensity={isDark ? 52 : 78}
-        tint={isDark ? "dark" : "light"}
+        intensity={52}
+        tint="dark"
         style={[
           styles.card,
           shadows.card,

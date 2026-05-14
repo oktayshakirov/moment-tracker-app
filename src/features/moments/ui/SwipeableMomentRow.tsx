@@ -1,13 +1,16 @@
-import React, { useRef } from 'react';
-import type { MutableRefObject } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Swipeable } from 'react-native-gesture-handler';
+import React, { useRef } from "react";
+import type { MutableRefObject } from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 
 type SwipeableRow = InstanceType<typeof Swipeable>;
-import { Ionicons } from '@expo/vector-icons';
-import type { Moment } from '../domain/moment';
-import { modeFromTargetDate, parseMomentDate } from '../domain/momentFormatters';
-import { MomentCard } from './MomentCard';
+import { Ionicons } from "@expo/vector-icons";
+import type { Moment } from "../domain/moment";
+import {
+  modeFromTargetDate,
+  parseMomentDate,
+} from "../domain/momentFormatters";
+import { MomentCard } from "./MomentCard";
 
 type Props = {
   moment: Moment;
@@ -28,11 +31,11 @@ export function SwipeableMomentRow({
   const ref = useRef<SwipeableRow>(null);
 
   const confirmDelete = () => {
-    Alert.alert('Delete moment?', `"${moment.title}" will be removed.`, [
-      { text: 'Cancel', style: 'cancel', onPress: () => ref.current?.close() },
+    Alert.alert("Delete moment?", `"${moment.title}" will be removed.`, [
+      { text: "Cancel", style: "cancel", onPress: () => ref.current?.close() },
       {
-        text: 'Delete',
-        style: 'destructive',
+        text: "Delete",
+        style: "destructive",
         onPress: () => {
           onDelete();
           ref.current?.close();
@@ -42,10 +45,10 @@ export function SwipeableMomentRow({
   };
 
   const confirmReset = () => {
-    Alert.alert('Start time over?', 'The start date will be set to now.', [
-      { text: 'Cancel', style: 'cancel', onPress: () => ref.current?.close() },
+    Alert.alert("Start time over?", "The start date will be set to now.", [
+      { text: "Cancel", style: "cancel", onPress: () => ref.current?.close() },
       {
-        text: 'Reset',
+        text: "Reset",
         onPress: () => {
           onResetStart();
           ref.current?.close();
@@ -56,10 +59,10 @@ export function SwipeableMomentRow({
 
   const renderRight = () => (
     <View style={styles.actions}>
-      {modeFromTargetDate(parseMomentDate(moment)) === 'since' && (
+      {modeFromTargetDate(parseMomentDate(moment)) === "since" && (
         <Pressable
           onPress={confirmReset}
-          style={[styles.btn, { backgroundColor: '#FF9F0A' }]}
+          style={[styles.btn, { backgroundColor: "#FF9F0A" }]}
           accessibilityLabel="Start time over"
         >
           <Ionicons name="refresh" size={22} color="#fff" />
@@ -68,7 +71,7 @@ export function SwipeableMomentRow({
       )}
       <Pressable
         onPress={confirmDelete}
-        style={[styles.btn, { backgroundColor: '#FF3B30' }]}
+        style={[styles.btn, { backgroundColor: "#FF3B30" }]}
         accessibilityLabel="Delete moment"
       >
         <Ionicons name="trash-outline" size={22} color="#fff" />
@@ -108,22 +111,22 @@ export function SwipeableMomentRow({
 
 const styles = StyleSheet.create({
   actions: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
+    flexDirection: "row",
+    alignItems: "stretch",
     marginBottom: 12,
     marginLeft: 8,
   },
   btn: {
     width: 88,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 16,
     gap: 4,
     marginLeft: 6,
   },
   btnLabel: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

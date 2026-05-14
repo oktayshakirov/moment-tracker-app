@@ -19,6 +19,7 @@ import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { format } from "date-fns";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ColorPicker, {
   HueSlider,
   Panel1,
@@ -34,7 +35,7 @@ import { CategoryEditorModal } from "@/features/categories/ui/CategoryEditorModa
 import { Screen } from "@/shared/ui/Screen";
 import { PrimaryButton } from "@/shared/ui/PrimaryButton";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
-import { radii, space, typography } from "@/shared/theme/tokens";
+import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
 import type {
   BackgroundType,
   BackgroundValue,
@@ -79,8 +80,14 @@ function randomSolidHex(): string {
   )}${h(Math.floor(Math.random() * 256))}`;
 }
 
+function screenChromeBottomInset(topInset: number): number {
+  return topInset + space.xs + 44 + space.sm;
+}
+
 export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const theme = useAppTheme();
+  const insets = useSafeAreaInsets();
+  const chromeBottom = screenChromeBottomInset(insets.top);
   const { height: windowHeight } = useWindowDimensions();
   const { moments, categories } = useRepositories();
   const momentId = route.params?.momentId;
@@ -340,858 +347,938 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
 
   return (
     <Screen edges={["left", "right", "bottom"]}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        style={{ flex: 1 }}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scroll}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+      <View style={styles.shell}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={{ flex: 1 }}
         >
-          <MomentCard moment={previewMoment} onPress={() => {}} />
-          <Text style={[styles.label, { color: theme.textSecondary }]}>
-            Title
-          </Text>
-          <TextInput
-            value={title}
-            onChangeText={setTitle}
-            placeholder="A name you will love seeing"
-            placeholderTextColor={theme.textTertiary}
-            style={[
-              styles.input,
-              {
-                color: theme.text,
-                borderColor: theme.separator,
-                backgroundColor: theme.bgElevated,
-              },
+          <ScrollView
+            contentContainerStyle={[
+              styles.scroll,
+              { paddingTop: chromeBottom + 12 },
             ]}
-          />
-          <Text style={[styles.label, { color: theme.textSecondary }]}>
-            Date
-          </Text>
-          <Pressable
-            style={[
-              styles.rowBtn,
-              {
-                borderColor: theme.separator,
-                backgroundColor: theme.bgElevated,
-              },
-            ]}
-            onPress={() => setShowDatePicker(true)}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
           >
-            <Ionicons
-              name="calendar-outline"
-              size={20}
-              color={theme.textSecondary}
-            />
-            <View style={styles.rowBtnCopy}>
-              <Text style={[styles.rowBtnText, { color: theme.text }]}>
-                {format(date, "PP")}
-              </Text>
-              <Text style={[styles.rowBtnHint, { color: theme.textSecondary }]}>
-                Tap to change
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={theme.textTertiary}
-            />
-          </Pressable>
-          <Text style={[styles.label, { color: theme.textSecondary }]}>
-            Time
-          </Text>
-          <Pressable
-            style={[
-              styles.rowBtn,
-              {
-                borderColor: theme.separator,
-                backgroundColor: theme.bgElevated,
-              },
-            ]}
-            onPress={() => setShowTimePicker(true)}
-          >
-            <Ionicons
-              name="time-outline"
-              size={20}
-              color={theme.textSecondary}
-            />
-            <View style={styles.rowBtnCopy}>
-              <Text style={[styles.rowBtnText, { color: theme.text }]}>
-                {format(date, "p")}
-              </Text>
-              <Text style={[styles.rowBtnHint, { color: theme.textSecondary }]}>
-                Tap to change
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={theme.textTertiary}
-            />
-          </Pressable>
-          {Platform.OS === "android" && showDatePicker && (
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display="default"
-              onChange={(_, selected) => {
-                setShowDatePicker(false);
-                if (selected) setDatePart(selected);
-              }}
-            />
-          )}
-          {Platform.OS === "android" && showTimePicker && (
-            <DateTimePicker
-              value={date}
-              mode="time"
-              display="default"
-              minuteInterval={1}
-              onChange={(_, selected) => {
-                setShowTimePicker(false);
-                if (selected) setTimePart(selected);
-              }}
-            />
-          )}
-
-          <Text style={[styles.label, { color: theme.textSecondary }]}>
-            Category
-          </Text>
-          <Pressable
-            style={[
-              styles.rowBtn,
-              {
-                borderColor: theme.separator,
-                backgroundColor: theme.bgElevated,
-              },
-            ]}
-            onPress={() => setShowCategoryPicker(true)}
-          >
-            <View
+            <Text style={[styles.formScreenHeading, { color: theme.text }]}>
+              {momentId ? "Edit moment" : "New moment"}
+            </Text>
+            <MomentCard moment={previewMoment} onPress={() => {}} />
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Title
+            </Text>
+            <TextInput
+              value={title}
+              onChangeText={setTitle}
+              placeholder="A name you will love seeing"
+              placeholderTextColor={theme.textTertiary}
               style={[
-                styles.categoryDot,
+                styles.input,
                 {
-                  backgroundColor:
-                    selectedCategory?.colorHex ?? theme.textTertiary,
+                  color: theme.text,
+                  borderColor: theme.separator,
+                  backgroundColor: theme.bgElevated,
                 },
               ]}
             />
-            <View style={styles.rowBtnCopy}>
-              <Text style={[styles.rowBtnText, { color: theme.text }]}>
-                {selectedCategoryTitle}
-              </Text>
-              <Text style={[styles.rowBtnHint, { color: theme.textSecondary }]}>
-                Tap to choose category
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={theme.textTertiary}
-            />
-          </Pressable>
-          <Text style={[styles.label, { color: theme.textSecondary }]}>
-            Show as
-          </Text>
-          <Pressable
-            style={[
-              styles.rowBtn,
-              {
-                borderColor: theme.separator,
-                backgroundColor: theme.bgElevated,
-              },
-            ]}
-            onPress={() => setShowDisplayUnitPicker(true)}
-          >
-            <Ionicons name="timer-outline" size={20} color={uiAccent} />
-            <View style={styles.rowBtnCopy}>
-              <Text style={[styles.rowBtnText, { color: theme.text }]}>
-                {formatDisplayUnitName(displayUnit)}
-              </Text>
-              <Text style={[styles.rowBtnHint, { color: theme.textSecondary }]}>
-                Tap to choose unit
-              </Text>
-            </View>
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={theme.textTertiary}
-            />
-          </Pressable>
-          <Text style={[styles.label, { color: theme.textSecondary }]}>
-            Background
-          </Text>
-          <View style={[styles.segment, styles.backgroundSegment]}>
-            {(["image", "solid"] as const).map((b) => (
-              <Pressable
-                key={b}
-                onPress={() => {
-                  setBgType(b);
-                  if (b === "solid" && bgValue.kind !== "solid") {
-                    setBgValue({ kind: "solid", color: DEFAULT_SOLID_COLOR });
-                  }
-                }}
-                style={[
-                  styles.segBtn,
-                  bgType === b && { backgroundColor: uiAccent },
-                  { borderColor: theme.separator },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.segText,
-                    { color: bgType === b ? "#fff" : theme.text },
-                  ]}
-                >
-                  {b === "solid" ? "Color" : "Image"}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-          {bgType === "image" && (
-            <View style={styles.imageActionsRow}>
-              <Pressable
-                style={[
-                  styles.imageActionTile,
-                  {
-                    borderColor: theme.separator,
-                    backgroundColor: theme.bgElevated,
-                  },
-                ]}
-                onPress={() => void pickGallery()}
-              >
-                <Ionicons name="images-outline" size={28} color={uiAccent} />
-                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
-                  Gallery
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.imageActionTile,
-                  {
-                    borderColor: theme.separator,
-                    backgroundColor: theme.bgElevated,
-                  },
-                ]}
-                onPress={openOnlineImagePicker}
-              >
-                <Ionicons name="globe-outline" size={28} color={uiAccent} />
-                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
-                  Online
-                </Text>
-              </Pressable>
-            </View>
-          )}
-          {bgType === "image" && bgValue.kind === "image" ? (
-            <View style={styles.attachedImagePreviewWrap}>
-              <View
-                style={[
-                  styles.attachedImageFrame,
-                  {
-                    borderColor: theme.separator,
-                    backgroundColor: theme.bg,
-                  },
-                ]}
-              >
-                <Image
-                  source={{ uri: bgValue.uri }}
-                  style={styles.attachedImage}
-                  contentFit="cover"
-                  transition={160}
-                />
-                <Pressable
-                  style={styles.attachedImageRemoveBtn}
-                  onPress={removeAttachedImage}
-                  hitSlop={8}
-                  accessibilityLabel="Remove image"
-                  accessibilityHint="Switches background to solid color"
-                >
-                  <Ionicons name="trash-outline" size={18} color="#fff" />
-                </Pressable>
-              </View>
-            </View>
-          ) : null}
-          {bgType === "solid" && (
-            <View style={styles.imageActionsRow}>
-              <Pressable
-                style={[
-                  styles.imageActionTile,
-                  {
-                    borderColor: theme.separator,
-                    backgroundColor: theme.bgElevated,
-                  },
-                ]}
-                onPress={pickRandomColor}
-              >
-                <Ionicons name="shuffle-outline" size={28} color={uiAccent} />
-                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
-                  Random
-                </Text>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.imageActionTile,
-                  {
-                    borderColor: theme.separator,
-                    backgroundColor: theme.bgElevated,
-                  },
-                ]}
-                onPress={() => setShowColorPickerModal(true)}
-              >
-                <Ionicons
-                  name="color-palette-outline"
-                  size={28}
-                  color={uiAccent}
-                />
-                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
-                  Pick color
-                </Text>
-              </Pressable>
-            </View>
-          )}
-          {bgType === "solid" && bgValue.kind === "solid" ? (
-            <View style={styles.colorPreviewWrap}>
-              <View
-                style={[
-                  styles.colorPreviewFrame,
-                  {
-                    borderColor: theme.separator,
-                  },
-                ]}
-              >
-                <View
-                  style={[
-                    styles.colorPreviewBar,
-                    { backgroundColor: bgValue.color },
-                  ]}
-                />
-              </View>
-            </View>
-          ) : null}
-          <PrimaryButton
-            label={momentId ? "Save changes" : "Save moment"}
-            onPress={() => void onSave()}
-            loading={saving}
-            style={{ marginTop: space.xl, backgroundColor: uiAccent }}
-          />
-          <View style={{ height: space.xxl }} />
-        </ScrollView>
-      </KeyboardAvoidingView>
-
-      <CategoryEditorModal
-        visible={showCategoryEditor}
-        onClose={() => {
-          setShowCategoryEditor(false);
-          setEditingCategory(null);
-        }}
-        mode={categoryEditorMode}
-        category={categoryEditorMode === "edit" ? editingCategory : null}
-        onSave={async (payload) => {
-          if (categoryEditorMode === "create") {
-            const c = await categories.create({
-              title: payload.title,
-              colorHex: payload.colorHex,
-            });
-            await loadCategories();
-            setCategoryId(c.id);
-          } else if (editingCategory) {
-            await categories.update(editingCategory.id, payload);
-            await loadCategories();
-          }
-        }}
-      />
-
-      <Modal visible={showCategoryPicker} animationType="fade" transparent>
-        <Pressable
-          style={styles.dateBackdrop}
-          onPress={() => setShowCategoryPicker(false)}
-        >
-          <Pressable
-            style={[styles.dateSheet, { backgroundColor: theme.bgElevated }]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View style={styles.dateSheetHeader}>
-              <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
-                Category
-              </Text>
-              <Pressable
-                onPress={() => setShowCategoryPicker(false)}
-                hitSlop={12}
-              >
-                <Text
-                  style={{
-                    color: uiAccent,
-                    fontSize: typography.body,
-                    fontWeight: "600",
-                  }}
-                >
-                  Done
-                </Text>
-              </Pressable>
-            </View>
-            <ScrollView
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Date
+            </Text>
+            <Pressable
               style={[
-                styles.categoryPickerScroll,
-                { maxHeight: windowHeight * 0.52 },
+                styles.rowBtn,
+                {
+                  borderColor: theme.separator,
+                  backgroundColor: theme.bgElevated,
+                },
               ]}
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator
+              onPress={() => setShowDatePicker(true)}
             >
-              <Pressable
-                onPress={() => {
-                  setCategoryEditorMode("create");
-                  setEditingCategory(null);
-                  setShowCategoryPicker(false);
-                  setShowCategoryEditor(true);
-                }}
-                style={[
-                  styles.addCategoryRow,
-                  { borderColor: theme.separator },
-                ]}
-              >
-                <Ionicons
-                  name="add-circle-outline"
-                  size={22}
-                  color={uiAccent}
-                />
-                <Text style={[styles.addCategoryLabel, { color: uiAccent }]}>
-                  Add category
+              <Ionicons
+                name="calendar-outline"
+                size={20}
+                color={theme.textSecondary}
+              />
+              <View style={styles.rowBtnCopy}>
+                <Text style={[styles.rowBtnText, { color: theme.text }]}>
+                  {format(date, "PP")}
                 </Text>
-              </Pressable>
-              {catList.map((c) => {
-                const isSelected = c.id === categoryId;
-                return (
-                  <View
-                    key={c.id}
-                    style={[
-                      styles.categoryManageRow,
-                      { borderColor: theme.separator },
-                      isSelected && { backgroundColor: previewAccentSubtle },
-                    ]}
-                  >
-                    <Pressable
-                      style={styles.categoryManageMain}
-                      onPress={() => {
-                        setCategoryId(c.id);
-                        setShowCategoryPicker(false);
-                      }}
-                    >
-                      <View
-                        style={[
-                          styles.categoryDotSmall,
-                          { backgroundColor: c.colorHex },
-                        ]}
-                      />
-                      <Text
-                        style={[
-                          styles.optionLabel,
-                          { color: theme.text, flex: 1 },
-                        ]}
-                        numberOfLines={1}
-                      >
-                        {c.title}
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      onPress={() => {
-                        setCategoryEditorMode("edit");
-                        setEditingCategory(c);
-                        setShowCategoryPicker(false);
-                        setShowCategoryEditor(true);
-                      }}
-                      hitSlop={10}
-                      style={styles.categoryIconBtn}
-                      accessibilityLabel={`Edit ${c.title}`}
-                    >
-                      <Ionicons
-                        name="create-outline"
-                        size={22}
-                        color={theme.textSecondary}
-                      />
-                    </Pressable>
-                    {c.id !== DEFAULT_CATEGORY_ID ? (
-                      <Pressable
-                        onPress={() =>
-                          Alert.alert(
-                            "Delete category?",
-                            `Moments in "${c.title}" will move to the default category.`,
-                            [
-                              { text: "Cancel", style: "cancel" },
-                              {
-                                text: "Delete",
-                                style: "destructive",
-                                onPress: () =>
-                                  void (async () => {
-                                    await categories.delete(c.id);
-                                    await loadCategories();
-                                    if (categoryId === c.id) {
-                                      setCategoryId(DEFAULT_CATEGORY_ID);
-                                    }
-                                  })(),
-                              },
-                            ],
-                          )
-                        }
-                        hitSlop={10}
-                        style={styles.categoryIconBtn}
-                        accessibilityLabel={`Delete ${c.title}`}
-                      >
-                        <Ionicons
-                          name="trash-outline"
-                          size={22}
-                          color="#FF3B30"
-                        />
-                      </Pressable>
-                    ) : (
-                      <View style={styles.categoryIconSpacer} />
-                    )}
-                  </View>
-                );
-              })}
-            </ScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
-
-      <Modal
-        visible={Platform.OS === "ios" && showDatePicker}
-        animationType="fade"
-        transparent
-      >
-        <Pressable
-          style={styles.dateBackdrop}
-          onPress={() => setShowDatePicker(false)}
-        >
-          <Pressable
-            style={[
-              styles.dateSheet,
-              {
-                backgroundColor: theme.bgElevated,
-                maxHeight: windowHeight * 0.92,
-              },
-            ]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View style={styles.dateSheetHeader}>
-              <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
-                Choose date
-              </Text>
-              <Pressable onPress={() => setShowDatePicker(false)} hitSlop={12}>
                 <Text
-                  style={{
-                    color: uiAccent,
-                    fontSize: typography.body,
-                    fontWeight: "600",
-                  }}
+                  style={[styles.rowBtnHint, { color: theme.textSecondary }]}
                 >
-                  Done
+                  Tap to change
                 </Text>
-              </Pressable>
-            </View>
-            <ScrollView
-              bounces={false}
-              showsVerticalScrollIndicator
-              style={styles.datePickerScroll}
-              contentContainerStyle={styles.datePickerScrollContent}
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={18}
+                color={theme.textTertiary}
+              />
+            </Pressable>
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Time
+            </Text>
+            <Pressable
+              style={[
+                styles.rowBtn,
+                {
+                  borderColor: theme.separator,
+                  backgroundColor: theme.bgElevated,
+                },
+              ]}
+              onPress={() => setShowTimePicker(true)}
+            >
+              <Ionicons
+                name="time-outline"
+                size={20}
+                color={theme.textSecondary}
+              />
+              <View style={styles.rowBtnCopy}>
+                <Text style={[styles.rowBtnText, { color: theme.text }]}>
+                  {format(date, "p")}
+                </Text>
+                <Text
+                  style={[styles.rowBtnHint, { color: theme.textSecondary }]}
+                >
+                  Tap to change
+                </Text>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={18}
+                color={theme.textTertiary}
+              />
+            </Pressable>
+            {Platform.OS === "android" && showDatePicker && (
+              <DateTimePicker
+                value={date}
+                mode="date"
+                display="default"
+                onChange={(_, selected) => {
+                  setShowDatePicker(false);
+                  if (selected) setDatePart(selected);
+                }}
+              />
+            )}
+            {Platform.OS === "android" && showTimePicker && (
+              <DateTimePicker
+                value={date}
+                mode="time"
+                display="default"
+                minuteInterval={1}
+                onChange={(_, selected) => {
+                  setShowTimePicker(false);
+                  if (selected) setTimePart(selected);
+                }}
+              />
+            )}
+
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Category
+            </Text>
+            <Pressable
+              style={[
+                styles.rowBtn,
+                {
+                  borderColor: theme.separator,
+                  backgroundColor: theme.bgElevated,
+                },
+              ]}
+              onPress={() => setShowCategoryPicker(true)}
             >
               <View
                 style={[
-                  styles.datePickerMinBox,
+                  styles.categoryDot,
                   {
-                    minHeight: Math.min(
-                      560,
-                      Math.max(430, Math.round(windowHeight * 0.48)),
-                    ),
-                  },
-                ]}
-              >
-                <DateTimePicker
-                  value={date}
-                  mode="date"
-                  display="inline"
-                  onChange={(_, selected) => {
-                    if (selected) setDatePart(selected);
-                  }}
-                />
-              </View>
-            </ScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
-
-      <Modal
-        visible={Platform.OS === "ios" && showTimePicker}
-        animationType="fade"
-        transparent
-      >
-        <Pressable
-          style={styles.dateBackdrop}
-          onPress={() => setShowTimePicker(false)}
-        >
-          <Pressable
-            style={[styles.dateSheet, { backgroundColor: theme.bgElevated }]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View style={styles.dateSheetHeader}>
-              <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
-                Choose time
-              </Text>
-              <Pressable onPress={() => setShowTimePicker(false)} hitSlop={12}>
-                <Text
-                  style={{
-                    color: uiAccent,
-                    fontSize: typography.body,
-                    fontWeight: "600",
-                  }}
-                >
-                  Done
-                </Text>
-              </Pressable>
-            </View>
-            <DateTimePicker
-              value={date}
-              mode="time"
-              display="spinner"
-              minuteInterval={1}
-              onChange={(_, selected) => {
-                if (selected) setTimePart(selected);
-              }}
-            />
-          </Pressable>
-        </Pressable>
-      </Modal>
-
-      <Modal visible={showDisplayUnitPicker} animationType="fade" transparent>
-        <Pressable
-          style={styles.dateBackdrop}
-          onPress={() => setShowDisplayUnitPicker(false)}
-        >
-          <Pressable
-            style={[styles.dateSheet, { backgroundColor: theme.bgElevated }]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View style={styles.dateSheetHeader}>
-              <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
-                Show counter as
-              </Text>
-              <Pressable
-                onPress={() => setShowDisplayUnitPicker(false)}
-                hitSlop={12}
-              >
-                <Text
-                  style={{
-                    color: uiAccent,
-                    fontSize: typography.body,
-                    fontWeight: "600",
-                  }}
-                >
-                  Done
-                </Text>
-              </Pressable>
-            </View>
-            <View style={styles.optionList}>
-              {DISPLAY_UNITS.map((unit) => {
-                const isSelected = unit === displayUnit;
-                return (
-                  <Pressable
-                    key={unit}
-                    onPress={() => {
-                      setDisplayUnit(unit);
-                      setShowDisplayUnitPicker(false);
-                    }}
-                    style={[
-                      styles.optionRow,
-                      { borderColor: theme.separator },
-                      isSelected && { backgroundColor: previewAccentSubtle },
-                    ]}
-                  >
-                    <Text style={[styles.optionLabel, { color: theme.text }]}>
-                      {formatDisplayUnitName(unit)}
-                    </Text>
-                    {isSelected && (
-                      <Ionicons
-                        name="checkmark-circle"
-                        size={22}
-                        color={uiAccent}
-                      />
-                    )}
-                  </Pressable>
-                );
-              })}
-            </View>
-          </Pressable>
-        </Pressable>
-      </Modal>
-
-      <Modal visible={showColorPickerModal} animationType="fade" transparent>
-        <Pressable
-          style={styles.dateBackdrop}
-          onPress={() => setShowColorPickerModal(false)}
-        >
-          <Pressable
-            style={[
-              styles.dateSheet,
-              {
-                backgroundColor: theme.bgElevated,
-                maxHeight: windowHeight * 0.88,
-              },
-            ]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View style={styles.dateSheetHeader}>
-              <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
-                Pick a color
-              </Text>
-              <Pressable
-                onPress={() => setShowColorPickerModal(false)}
-                hitSlop={12}
-              >
-                <Text
-                  style={{
-                    color: uiAccent,
-                    fontSize: typography.body,
-                    fontWeight: "600",
-                  }}
-                >
-                  Done
-                </Text>
-              </Pressable>
-            </View>
-            <ScrollView
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-              style={{ maxHeight: windowHeight * 0.72 }}
-              contentContainerStyle={styles.colorPickerModalScroll}
-            >
-              <ColorPicker
-                value={
-                  bgValue.kind === "solid" ? bgValue.color : DEFAULT_SOLID_COLOR
-                }
-                style={styles.colorPicker}
-                onChangeJS={(c) => {
-                  setBgType("solid");
-                  setBgValue({ kind: "solid", color: c.hex });
-                }}
-              >
-                <Preview hideInitialColor style={styles.colorPickerPreview} />
-                <Panel1 style={styles.colorPickerPanel} />
-                <HueSlider style={styles.colorPickerSlider} />
-              </ColorPicker>
-            </ScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
-
-      <Modal visible={showOnlineImagePicker} animationType="fade" transparent>
-        <Pressable
-          style={styles.dateBackdrop}
-          onPress={() => setShowOnlineImagePicker(false)}
-        >
-          <Pressable
-            style={[
-              styles.dateSheet,
-              {
-                backgroundColor: theme.bgElevated,
-                maxHeight: windowHeight * 0.88,
-              },
-            ]}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View style={styles.dateSheetHeader}>
-              <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
-                Unsplash Images
-              </Text>
-              <Pressable
-                onPress={() => setShowOnlineImagePicker(false)}
-                hitSlop={12}
-              >
-                <Text
-                  style={{
-                    color: uiAccent,
-                    fontSize: typography.body,
-                    fontWeight: "600",
-                  }}
-                >
-                  Done
-                </Text>
-              </Pressable>
-            </View>
-            <View style={styles.onlineSearchRow}>
-              <TextInput
-                value={onlineQuery}
-                onChangeText={setOnlineQuery}
-                onSubmitEditing={runOnlineSearch}
-                placeholder=""
-                accessibilityLabel="Search Unsplash photos"
-                placeholderTextColor={theme.textTertiary}
-                returnKeyType="search"
-                style={[
-                  styles.onlineSearchInput,
-                  {
-                    color: theme.text,
-                    borderColor: theme.separator,
-                    backgroundColor: theme.bg,
+                    backgroundColor:
+                      selectedCategory?.colorHex ?? theme.textTertiary,
                   },
                 ]}
               />
-              <Pressable
-                onPress={runOnlineSearch}
-                style={[styles.onlineSearchBtn, { backgroundColor: uiAccent }]}
-              >
-                <Ionicons name="search-outline" size={20} color="#fff" />
-              </Pressable>
-            </View>
-            <Pressable
-              style={styles.unsplashLink}
-              onPress={() => void Linking.openURL("https://unsplash.com")}
-            >
-              <Text style={[styles.unsplashLinkText, { color: uiAccent }]}>
-                Photos provided by Unsplash
-              </Text>
-            </Pressable>
-            <ScrollView
-              style={{ maxHeight: windowHeight * 0.56 }}
-              showsVerticalScrollIndicator={false}
-            >
-              <View style={styles.onlineGrid}>
-                {loadingOnlineResults ? (
-                  <ActivityIndicator
-                    color={uiAccent}
-                    style={styles.onlineLoading}
-                  />
-                ) : onlineResults.length === 0 ? (
-                  <Text style={{ color: theme.textSecondary }}>
-                    No photos found. Try another search.
-                  </Text>
-                ) : (
-                  onlineResults.map((photo) => (
-                    <Pressable
-                      key={photo.id}
-                      style={[
-                        styles.onlineImageTile,
-                        {
-                          borderColor: theme.separator,
-                          backgroundColor: theme.bg,
-                        },
-                      ]}
-                      onPress={() => void pickOnlineImage(photo)}
-                    >
-                      <Image
-                        source={{ uri: photo.urls.small }}
-                        style={styles.onlineImage}
-                        contentFit="cover"
-                        transition={120}
-                      />
-                    </Pressable>
-                  ))
-                )}
+              <View style={styles.rowBtnCopy}>
+                <Text style={[styles.rowBtnText, { color: theme.text }]}>
+                  {selectedCategoryTitle}
+                </Text>
+                <Text
+                  style={[styles.rowBtnHint, { color: theme.textSecondary }]}
+                >
+                  Tap to choose category
+                </Text>
               </View>
-            </ScrollView>
+              <Ionicons
+                name="chevron-forward"
+                size={18}
+                color={theme.textTertiary}
+              />
+            </Pressable>
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Show as
+            </Text>
+            <Pressable
+              style={[
+                styles.rowBtn,
+                {
+                  borderColor: theme.separator,
+                  backgroundColor: theme.bgElevated,
+                },
+              ]}
+              onPress={() => setShowDisplayUnitPicker(true)}
+            >
+              <Ionicons name="timer-outline" size={20} color={uiAccent} />
+              <View style={styles.rowBtnCopy}>
+                <Text style={[styles.rowBtnText, { color: theme.text }]}>
+                  {formatDisplayUnitName(displayUnit)}
+                </Text>
+                <Text
+                  style={[styles.rowBtnHint, { color: theme.textSecondary }]}
+                >
+                  Tap to choose unit
+                </Text>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={18}
+                color={theme.textTertiary}
+              />
+            </Pressable>
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Background
+            </Text>
+            <View style={[styles.segment, styles.backgroundSegment]}>
+              {(["image", "solid"] as const).map((b) => (
+                <Pressable
+                  key={b}
+                  onPress={() => {
+                    setBgType(b);
+                    if (b === "solid" && bgValue.kind !== "solid") {
+                      setBgValue({ kind: "solid", color: DEFAULT_SOLID_COLOR });
+                    }
+                  }}
+                  style={[
+                    styles.segBtn,
+                    bgType === b && { backgroundColor: uiAccent },
+                    { borderColor: theme.separator },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.segText,
+                      { color: bgType === b ? "#fff" : theme.text },
+                    ]}
+                  >
+                    {b === "solid" ? "Color" : "Image"}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            {bgType === "image" && (
+              <View style={styles.imageActionsRow}>
+                <Pressable
+                  style={[
+                    styles.imageActionTile,
+                    {
+                      borderColor: theme.separator,
+                      backgroundColor: theme.bgElevated,
+                    },
+                  ]}
+                  onPress={() => void pickGallery()}
+                >
+                  <Ionicons name="images-outline" size={28} color={uiAccent} />
+                  <Text
+                    style={[styles.imageActionTitle, { color: theme.text }]}
+                  >
+                    Gallery
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.imageActionTile,
+                    {
+                      borderColor: theme.separator,
+                      backgroundColor: theme.bgElevated,
+                    },
+                  ]}
+                  onPress={openOnlineImagePicker}
+                >
+                  <Ionicons name="globe-outline" size={28} color={uiAccent} />
+                  <Text
+                    style={[styles.imageActionTitle, { color: theme.text }]}
+                  >
+                    Online
+                  </Text>
+                </Pressable>
+              </View>
+            )}
+            {bgType === "image" && bgValue.kind === "image" ? (
+              <View style={styles.attachedImagePreviewWrap}>
+                <View
+                  style={[
+                    styles.attachedImageFrame,
+                    {
+                      borderColor: theme.separator,
+                      backgroundColor: theme.bg,
+                    },
+                  ]}
+                >
+                  <Image
+                    source={{ uri: bgValue.uri }}
+                    style={styles.attachedImage}
+                    contentFit="cover"
+                    transition={160}
+                  />
+                  <Pressable
+                    style={styles.attachedImageRemoveBtn}
+                    onPress={removeAttachedImage}
+                    hitSlop={8}
+                    accessibilityLabel="Remove image"
+                    accessibilityHint="Switches background to solid color"
+                  >
+                    <Ionicons name="trash-outline" size={18} color="#fff" />
+                  </Pressable>
+                </View>
+              </View>
+            ) : null}
+            {bgType === "solid" && (
+              <View style={styles.imageActionsRow}>
+                <Pressable
+                  style={[
+                    styles.imageActionTile,
+                    {
+                      borderColor: theme.separator,
+                      backgroundColor: theme.bgElevated,
+                    },
+                  ]}
+                  onPress={pickRandomColor}
+                >
+                  <Ionicons name="shuffle-outline" size={28} color={uiAccent} />
+                  <Text
+                    style={[styles.imageActionTitle, { color: theme.text }]}
+                  >
+                    Random
+                  </Text>
+                </Pressable>
+                <Pressable
+                  style={[
+                    styles.imageActionTile,
+                    {
+                      borderColor: theme.separator,
+                      backgroundColor: theme.bgElevated,
+                    },
+                  ]}
+                  onPress={() => setShowColorPickerModal(true)}
+                >
+                  <Ionicons
+                    name="color-palette-outline"
+                    size={28}
+                    color={uiAccent}
+                  />
+                  <Text
+                    style={[styles.imageActionTitle, { color: theme.text }]}
+                  >
+                    Pick color
+                  </Text>
+                </Pressable>
+              </View>
+            )}
+            {bgType === "solid" && bgValue.kind === "solid" ? (
+              <View style={styles.colorPreviewWrap}>
+                <View
+                  style={[
+                    styles.colorPreviewFrame,
+                    {
+                      borderColor: theme.separator,
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.colorPreviewBar,
+                      { backgroundColor: bgValue.color },
+                    ]}
+                  />
+                </View>
+              </View>
+            ) : null}
+            <PrimaryButton
+              label={momentId ? "Save changes" : "Save moment"}
+              onPress={() => void onSave()}
+              loading={saving}
+              style={{ marginTop: space.xl, backgroundColor: uiAccent }}
+            />
+            <View style={{ height: space.xxl }} />
+          </ScrollView>
+        </KeyboardAvoidingView>
+
+        <FormChromeBar
+          theme={theme}
+          topInset={insets.top}
+          onBack={() => navigation.goBack()}
+        />
+
+        <CategoryEditorModal
+          visible={showCategoryEditor}
+          onClose={() => {
+            setShowCategoryEditor(false);
+            setEditingCategory(null);
+          }}
+          mode={categoryEditorMode}
+          category={categoryEditorMode === "edit" ? editingCategory : null}
+          onSave={async (payload) => {
+            if (categoryEditorMode === "create") {
+              const c = await categories.create({
+                title: payload.title,
+                colorHex: payload.colorHex,
+              });
+              await loadCategories();
+              setCategoryId(c.id);
+            } else if (editingCategory) {
+              await categories.update(editingCategory.id, payload);
+              await loadCategories();
+            }
+          }}
+        />
+
+        <Modal visible={showCategoryPicker} animationType="fade" transparent>
+          <Pressable
+            style={styles.dateBackdrop}
+            onPress={() => setShowCategoryPicker(false)}
+          >
+            <Pressable
+              style={[styles.dateSheet, { backgroundColor: theme.bgElevated }]}
+              onPress={(e) => e.stopPropagation()}
+            >
+              <View style={styles.dateSheetHeader}>
+                <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
+                  Category
+                </Text>
+                <Pressable
+                  onPress={() => setShowCategoryPicker(false)}
+                  hitSlop={12}
+                >
+                  <Text
+                    style={{
+                      color: uiAccent,
+                      fontSize: typography.body,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Done
+                  </Text>
+                </Pressable>
+              </View>
+              <ScrollView
+                style={[
+                  styles.categoryPickerScroll,
+                  { maxHeight: windowHeight * 0.52 },
+                ]}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator
+              >
+                <Pressable
+                  onPress={() => {
+                    setCategoryEditorMode("create");
+                    setEditingCategory(null);
+                    setShowCategoryPicker(false);
+                    setShowCategoryEditor(true);
+                  }}
+                  style={[
+                    styles.addCategoryRow,
+                    { borderColor: theme.separator },
+                  ]}
+                >
+                  <Ionicons
+                    name="add-circle-outline"
+                    size={22}
+                    color={uiAccent}
+                  />
+                  <Text style={[styles.addCategoryLabel, { color: uiAccent }]}>
+                    Add category
+                  </Text>
+                </Pressable>
+                {catList.map((c) => {
+                  const isSelected = c.id === categoryId;
+                  return (
+                    <View
+                      key={c.id}
+                      style={[
+                        styles.categoryManageRow,
+                        { borderColor: theme.separator },
+                        isSelected && { backgroundColor: previewAccentSubtle },
+                      ]}
+                    >
+                      <Pressable
+                        style={styles.categoryManageMain}
+                        onPress={() => {
+                          setCategoryId(c.id);
+                          setShowCategoryPicker(false);
+                        }}
+                      >
+                        <View
+                          style={[
+                            styles.categoryDotSmall,
+                            { backgroundColor: c.colorHex },
+                          ]}
+                        />
+                        <Text
+                          style={[
+                            styles.optionLabel,
+                            { color: theme.text, flex: 1 },
+                          ]}
+                          numberOfLines={1}
+                        >
+                          {c.title}
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={() => {
+                          setCategoryEditorMode("edit");
+                          setEditingCategory(c);
+                          setShowCategoryPicker(false);
+                          setShowCategoryEditor(true);
+                        }}
+                        hitSlop={10}
+                        style={styles.categoryIconBtn}
+                        accessibilityLabel={`Edit ${c.title}`}
+                      >
+                        <Ionicons
+                          name="create-outline"
+                          size={22}
+                          color={theme.textSecondary}
+                        />
+                      </Pressable>
+                      {c.id !== DEFAULT_CATEGORY_ID ? (
+                        <Pressable
+                          onPress={() =>
+                            Alert.alert(
+                              "Delete category?",
+                              `Moments in "${c.title}" will move to the default category.`,
+                              [
+                                { text: "Cancel", style: "cancel" },
+                                {
+                                  text: "Delete",
+                                  style: "destructive",
+                                  onPress: () =>
+                                    void (async () => {
+                                      await categories.delete(c.id);
+                                      await loadCategories();
+                                      if (categoryId === c.id) {
+                                        setCategoryId(DEFAULT_CATEGORY_ID);
+                                      }
+                                    })(),
+                                },
+                              ],
+                            )
+                          }
+                          hitSlop={10}
+                          style={styles.categoryIconBtn}
+                          accessibilityLabel={`Delete ${c.title}`}
+                        >
+                          <Ionicons
+                            name="trash-outline"
+                            size={22}
+                            color="#FF3B30"
+                          />
+                        </Pressable>
+                      ) : (
+                        <View style={styles.categoryIconSpacer} />
+                      )}
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            </Pressable>
           </Pressable>
-        </Pressable>
-      </Modal>
+        </Modal>
+
+        <Modal
+          visible={Platform.OS === "ios" && showDatePicker}
+          animationType="fade"
+          transparent
+        >
+          <Pressable
+            style={styles.dateBackdrop}
+            onPress={() => setShowDatePicker(false)}
+          >
+            <Pressable
+              style={[
+                styles.dateSheet,
+                {
+                  backgroundColor: theme.bgElevated,
+                  maxHeight: windowHeight * 0.92,
+                },
+              ]}
+              onPress={(e) => e.stopPropagation()}
+            >
+              <View style={styles.dateSheetHeader}>
+                <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
+                  Choose date
+                </Text>
+                <Pressable
+                  onPress={() => setShowDatePicker(false)}
+                  hitSlop={12}
+                >
+                  <Text
+                    style={{
+                      color: uiAccent,
+                      fontSize: typography.body,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Done
+                  </Text>
+                </Pressable>
+              </View>
+              <ScrollView
+                bounces={false}
+                showsVerticalScrollIndicator
+                style={styles.datePickerScroll}
+                contentContainerStyle={styles.datePickerScrollContent}
+              >
+                <View
+                  style={[
+                    styles.datePickerMinBox,
+                    {
+                      minHeight: Math.min(
+                        560,
+                        Math.max(430, Math.round(windowHeight * 0.48)),
+                      ),
+                    },
+                  ]}
+                >
+                  <DateTimePicker
+                    value={date}
+                    mode="date"
+                    display="inline"
+                    onChange={(_, selected) => {
+                      if (selected) setDatePart(selected);
+                    }}
+                  />
+                </View>
+              </ScrollView>
+            </Pressable>
+          </Pressable>
+        </Modal>
+
+        <Modal
+          visible={Platform.OS === "ios" && showTimePicker}
+          animationType="fade"
+          transparent
+        >
+          <Pressable
+            style={styles.dateBackdrop}
+            onPress={() => setShowTimePicker(false)}
+          >
+            <Pressable
+              style={[styles.dateSheet, { backgroundColor: theme.bgElevated }]}
+              onPress={(e) => e.stopPropagation()}
+            >
+              <View style={styles.dateSheetHeader}>
+                <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
+                  Choose time
+                </Text>
+                <Pressable
+                  onPress={() => setShowTimePicker(false)}
+                  hitSlop={12}
+                >
+                  <Text
+                    style={{
+                      color: uiAccent,
+                      fontSize: typography.body,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Done
+                  </Text>
+                </Pressable>
+              </View>
+              <DateTimePicker
+                value={date}
+                mode="time"
+                display="spinner"
+                minuteInterval={1}
+                onChange={(_, selected) => {
+                  if (selected) setTimePart(selected);
+                }}
+              />
+            </Pressable>
+          </Pressable>
+        </Modal>
+
+        <Modal visible={showDisplayUnitPicker} animationType="fade" transparent>
+          <Pressable
+            style={styles.dateBackdrop}
+            onPress={() => setShowDisplayUnitPicker(false)}
+          >
+            <Pressable
+              style={[styles.dateSheet, { backgroundColor: theme.bgElevated }]}
+              onPress={(e) => e.stopPropagation()}
+            >
+              <View style={styles.dateSheetHeader}>
+                <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
+                  Show counter as
+                </Text>
+                <Pressable
+                  onPress={() => setShowDisplayUnitPicker(false)}
+                  hitSlop={12}
+                >
+                  <Text
+                    style={{
+                      color: uiAccent,
+                      fontSize: typography.body,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Done
+                  </Text>
+                </Pressable>
+              </View>
+              <View style={styles.optionList}>
+                {DISPLAY_UNITS.map((unit) => {
+                  const isSelected = unit === displayUnit;
+                  return (
+                    <Pressable
+                      key={unit}
+                      onPress={() => {
+                        setDisplayUnit(unit);
+                        setShowDisplayUnitPicker(false);
+                      }}
+                      style={[
+                        styles.optionRow,
+                        { borderColor: theme.separator },
+                        isSelected && { backgroundColor: previewAccentSubtle },
+                      ]}
+                    >
+                      <Text style={[styles.optionLabel, { color: theme.text }]}>
+                        {formatDisplayUnitName(unit)}
+                      </Text>
+                      {isSelected && (
+                        <Ionicons
+                          name="checkmark-circle"
+                          size={22}
+                          color={uiAccent}
+                        />
+                      )}
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </Pressable>
+          </Pressable>
+        </Modal>
+
+        <Modal visible={showColorPickerModal} animationType="fade" transparent>
+          <Pressable
+            style={styles.dateBackdrop}
+            onPress={() => setShowColorPickerModal(false)}
+          >
+            <Pressable
+              style={[
+                styles.dateSheet,
+                {
+                  backgroundColor: theme.bgElevated,
+                  maxHeight: windowHeight * 0.88,
+                },
+              ]}
+              onPress={(e) => e.stopPropagation()}
+            >
+              <View style={styles.dateSheetHeader}>
+                <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
+                  Pick a color
+                </Text>
+                <Pressable
+                  onPress={() => setShowColorPickerModal(false)}
+                  hitSlop={12}
+                >
+                  <Text
+                    style={{
+                      color: uiAccent,
+                      fontSize: typography.body,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Done
+                  </Text>
+                </Pressable>
+              </View>
+              <ScrollView
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+                style={{ maxHeight: windowHeight * 0.72 }}
+                contentContainerStyle={styles.colorPickerModalScroll}
+              >
+                <ColorPicker
+                  value={
+                    bgValue.kind === "solid"
+                      ? bgValue.color
+                      : DEFAULT_SOLID_COLOR
+                  }
+                  style={styles.colorPicker}
+                  onChangeJS={(c) => {
+                    setBgType("solid");
+                    setBgValue({ kind: "solid", color: c.hex });
+                  }}
+                >
+                  <Preview hideInitialColor style={styles.colorPickerPreview} />
+                  <Panel1 style={styles.colorPickerPanel} />
+                  <HueSlider style={styles.colorPickerSlider} />
+                </ColorPicker>
+              </ScrollView>
+            </Pressable>
+          </Pressable>
+        </Modal>
+
+        <Modal visible={showOnlineImagePicker} animationType="fade" transparent>
+          <Pressable
+            style={styles.dateBackdrop}
+            onPress={() => setShowOnlineImagePicker(false)}
+          >
+            <Pressable
+              style={[
+                styles.dateSheet,
+                {
+                  backgroundColor: theme.bgElevated,
+                  maxHeight: windowHeight * 0.88,
+                },
+              ]}
+              onPress={(e) => e.stopPropagation()}
+            >
+              <View style={styles.dateSheetHeader}>
+                <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
+                  Unsplash Images
+                </Text>
+                <Pressable
+                  onPress={() => setShowOnlineImagePicker(false)}
+                  hitSlop={12}
+                >
+                  <Text
+                    style={{
+                      color: uiAccent,
+                      fontSize: typography.body,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Done
+                  </Text>
+                </Pressable>
+              </View>
+              <View style={styles.onlineSearchRow}>
+                <TextInput
+                  value={onlineQuery}
+                  onChangeText={setOnlineQuery}
+                  onSubmitEditing={runOnlineSearch}
+                  placeholder=""
+                  accessibilityLabel="Search Unsplash photos"
+                  placeholderTextColor={theme.textTertiary}
+                  returnKeyType="search"
+                  style={[
+                    styles.onlineSearchInput,
+                    {
+                      color: theme.text,
+                      borderColor: theme.separator,
+                      backgroundColor: theme.bg,
+                    },
+                  ]}
+                />
+                <Pressable
+                  onPress={runOnlineSearch}
+                  style={[
+                    styles.onlineSearchBtn,
+                    { backgroundColor: uiAccent },
+                  ]}
+                >
+                  <Ionicons name="search-outline" size={20} color="#fff" />
+                </Pressable>
+              </View>
+              <Pressable
+                style={styles.unsplashLink}
+                onPress={() => void Linking.openURL("https://unsplash.com")}
+              >
+                <Text style={[styles.unsplashLinkText, { color: uiAccent }]}>
+                  Photos provided by Unsplash
+                </Text>
+              </Pressable>
+              <ScrollView
+                style={{ maxHeight: windowHeight * 0.56 }}
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={styles.onlineGrid}>
+                  {loadingOnlineResults ? (
+                    <ActivityIndicator
+                      color={uiAccent}
+                      style={styles.onlineLoading}
+                    />
+                  ) : onlineResults.length === 0 ? (
+                    <Text style={{ color: theme.textSecondary }}>
+                      No photos found. Try another search.
+                    </Text>
+                  ) : (
+                    onlineResults.map((photo) => (
+                      <Pressable
+                        key={photo.id}
+                        style={[
+                          styles.onlineImageTile,
+                          {
+                            borderColor: theme.separator,
+                            backgroundColor: theme.bg,
+                          },
+                        ]}
+                        onPress={() => void pickOnlineImage(photo)}
+                      >
+                        <Image
+                          source={{ uri: photo.urls.small }}
+                          style={styles.onlineImage}
+                          contentFit="cover"
+                          transition={120}
+                        />
+                      </Pressable>
+                    ))
+                  )}
+                </View>
+              </ScrollView>
+            </Pressable>
+          </Pressable>
+        </Modal>
+      </View>
     </Screen>
+  );
+}
+
+type FormChromeBarProps = {
+  theme: Theme;
+  topInset: number;
+  onBack: () => void;
+};
+
+function FormChromeBar({ theme, topInset, onBack }: FormChromeBarProps) {
+  const pill = [
+    styles.formChromePill,
+    {
+      backgroundColor: theme.glassFill,
+      borderColor: theme.glassBorder,
+    },
+  ];
+
+  return (
+    <View style={styles.formChromeOverlay} pointerEvents="box-none">
+      <View style={[styles.formChromeBar, { paddingTop: topInset + space.xs }]}>
+        <Pressable
+          onPress={onBack}
+          hitSlop={12}
+          style={({ pressed }) => [
+            ...pill,
+            styles.formChromeBackPill,
+            pressed && styles.formChromePillPressed,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Back to Moments"
+        >
+          <Ionicons name="chevron-back" size={22} color={theme.text} />
+          <Text style={[styles.formChromeBackLabel, { color: theme.text }]}>
+            Moments
+          </Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
@@ -1208,10 +1295,50 @@ function getBackgroundAccent(value: BackgroundValue, fallback: string): string {
 }
 
 const styles = StyleSheet.create({
+  shell: {
+    flex: 1,
+  },
+  formScreenHeading: {
+    fontSize: typography.title2,
+    fontWeight: "700",
+    marginBottom: space.md,
+  },
+  formChromeOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "flex-start",
+    zIndex: 20,
+  },
+  formChromeBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingHorizontal: space.lg,
+    paddingBottom: space.sm,
+  },
+  formChromePill: {
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: "hidden",
+  },
+  formChromePillPressed: {
+    opacity: 0.82,
+  },
+  formChromeBackPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: radii.lg,
+    paddingVertical: space.sm,
+    paddingLeft: space.xs,
+    paddingRight: space.md,
+    gap: 2,
+    maxWidth: "48%",
+  },
+  formChromeBackLabel: {
+    fontSize: 17,
+    fontWeight: "600",
+  },
   scroll: {
     paddingHorizontal: space.lg,
     paddingBottom: space.xxl,
-    paddingTop: space.md,
   },
   label: {
     fontSize: typography.caption,
