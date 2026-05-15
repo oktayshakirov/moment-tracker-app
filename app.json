@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Time Keeper",
-    "slug": "moment-tracker",
+    "slug": "time-keeper",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,7 +17,7 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Choose a photo as the background for your moments."
       },
-      "bundleIdentifier": "com.shadev.momenttracker"
+      "bundleIdentifier": "com.shadev.timekeeper"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +27,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": ["android.permission.RECORD_AUDIO"],
-      "package": "com.shadev.momenttracker"
+      "package": "com.shadev.timekeeper"
     },
     "web": {
       "favicon": "./assets/favicon.png"
