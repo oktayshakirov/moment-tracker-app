@@ -70,7 +70,10 @@ export function CategoryEditorModal({
 
   return (
     <Modal visible={visible} animationType="fade" transparent>
-      <Pressable style={styles.backdrop} onPress={onClose}>
+      <Pressable
+        style={[styles.backdrop, { backgroundColor: theme.bg }]}
+        onPress={onClose}
+      >
         <Pressable
           style={[styles.sheet, { backgroundColor: theme.bgElevated }]}
           onPress={(e) => e.stopPropagation()}
@@ -112,7 +115,6 @@ export function CategoryEditorModal({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
     justifyContent: "center",
     padding: space.xl,
   },

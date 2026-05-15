@@ -160,11 +160,10 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
           ListEmptyComponent={
             <View style={styles.empty}>
               <Text style={[styles.emptyTitle, { color: theme.text }]}>
-                Your timeline starts here
+                Start tracking time
               </Text>
               <Text style={[styles.emptySub, { color: theme.textSecondary }]}>
-                Capture a meaningful date - count up from a memory or down to
-                what is next.
+                Create your first moment and count the days that matter.
               </Text>
               <PrimaryButton
                 label="Create a moment"

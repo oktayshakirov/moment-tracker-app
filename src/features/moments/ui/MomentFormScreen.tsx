@@ -370,7 +370,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
             <TextInput
               value={title}
               onChangeText={setTitle}
-              placeholder="A name you will love seeing"
+              placeholder="Moment name"
               placeholderTextColor={theme.textTertiary}
               style={[
                 styles.input,
@@ -740,7 +740,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
 
         <Modal visible={showCategoryPicker} animationType="fade" transparent>
           <Pressable
-            style={styles.dateBackdrop}
+            style={[styles.dateBackdrop, { backgroundColor: theme.bg }]}
             onPress={() => setShowCategoryPicker(false)}
           >
             <Pressable
@@ -896,17 +896,11 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           transparent
         >
           <Pressable
-            style={styles.dateBackdrop}
+            style={[styles.dateBackdrop, { backgroundColor: theme.bg }]}
             onPress={() => setShowDatePicker(false)}
           >
             <Pressable
-              style={[
-                styles.dateSheet,
-                {
-                  backgroundColor: theme.bgElevated,
-                  maxHeight: windowHeight * 0.92,
-                },
-              ]}
+              style={[styles.dateSheet, { backgroundColor: theme.bgElevated }]}
               onPress={(e) => e.stopPropagation()}
             >
               <View style={styles.dateSheetHeader}>
@@ -928,33 +922,14 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   </Text>
                 </Pressable>
               </View>
-              <ScrollView
-                bounces={false}
-                showsVerticalScrollIndicator
-                style={styles.datePickerScroll}
-                contentContainerStyle={styles.datePickerScrollContent}
-              >
-                <View
-                  style={[
-                    styles.datePickerMinBox,
-                    {
-                      minHeight: Math.min(
-                        560,
-                        Math.max(430, Math.round(windowHeight * 0.48)),
-                      ),
-                    },
-                  ]}
-                >
-                  <DateTimePicker
-                    value={date}
-                    mode="date"
-                    display="inline"
-                    onChange={(_, selected) => {
-                      if (selected) setDatePart(selected);
-                    }}
-                  />
-                </View>
-              </ScrollView>
+              <DateTimePicker
+                value={date}
+                mode="date"
+                display="spinner"
+                onChange={(_, selected) => {
+                  if (selected) setDatePart(selected);
+                }}
+              />
             </Pressable>
           </Pressable>
         </Modal>
@@ -965,7 +940,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           transparent
         >
           <Pressable
-            style={styles.dateBackdrop}
+            style={[styles.dateBackdrop, { backgroundColor: theme.bg }]}
             onPress={() => setShowTimePicker(false)}
           >
             <Pressable
@@ -1006,7 +981,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
 
         <Modal visible={showDisplayUnitPicker} animationType="fade" transparent>
           <Pressable
-            style={styles.dateBackdrop}
+            style={[styles.dateBackdrop, { backgroundColor: theme.bg }]}
             onPress={() => setShowDisplayUnitPicker(false)}
           >
             <Pressable
@@ -1068,7 +1043,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
 
         <Modal visible={showColorPickerModal} animationType="fade" transparent>
           <Pressable
-            style={styles.dateBackdrop}
+            style={[styles.dateBackdrop, { backgroundColor: theme.bg }]}
             onPress={() => setShowColorPickerModal(false)}
           >
             <Pressable
@@ -1129,7 +1104,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
 
         <Modal visible={showOnlineImagePicker} animationType="fade" transparent>
           <Pressable
-            style={styles.dateBackdrop}
+            style={[styles.dateBackdrop, { backgroundColor: theme.bg }]}
             onPress={() => setShowOnlineImagePicker(false)}
           >
             <Pressable
@@ -1523,7 +1498,6 @@ const styles = StyleSheet.create({
   },
   dateBackdrop: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.42)",
     justifyContent: "flex-end",
   },
   dateSheet: {
@@ -1542,17 +1516,6 @@ const styles = StyleSheet.create({
   dateSheetTitle: {
     fontSize: typography.title2,
     fontWeight: "700",
-  },
-  datePickerScroll: {
-    flexGrow: 0,
-  },
-  datePickerScrollContent: {
-    flexGrow: 1,
-    alignItems: "stretch",
-  },
-  datePickerMinBox: {
-    width: "100%",
-    alignSelf: "stretch",
   },
   onlineSearchRow: {
     flexDirection: "row",

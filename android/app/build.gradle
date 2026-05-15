@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.oktay.shakirov.momenttracker'
+    namespace 'com.shadev.momenttracker'
     defaultConfig {
-        applicationId 'com.oktay.shakirov.momenttracker'
+        applicationId 'com.shadev.momenttracker'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

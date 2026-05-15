@@ -1,4 +1,4 @@
-package com.oktay.shakirov.momenttracker
+package com.shadev.momenttracker
 
 import android.os.Build
 import android.os.Bundle
