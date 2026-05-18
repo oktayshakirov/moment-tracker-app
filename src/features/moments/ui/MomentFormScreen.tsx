@@ -44,11 +44,12 @@ import type {
 } from "../domain/moment";
 import { modeFromTargetDate } from "../domain/momentFormatters";
 import { copyImageToAppStorage } from "../data/imageFileService";
-import { scheduleMilestonesForMoment } from "../data/milestoneNotifications";
 import {
   getUnsplashAccessKey,
   searchPhotos,
   trackPhotoDownload,
+  unsplashHomeUrl,
+  withUnsplashReferral,
   type UnsplashPhoto,
 } from "../data/unsplashApi";
 import { MomentCard } from "./MomentCard";
@@ -185,10 +186,8 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           backgroundValue: bgValue,
           displayUnit,
         });
-        const updated = await moments.getById(momentId);
-        if (updated) await scheduleMilestonesForMoment(updated);
       } else {
-        const created = await moments.create({
+        await moments.create({
           title: t,
           targetDateTime: iso,
           mode,
@@ -197,7 +196,6 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           backgroundValue: bgValue,
           displayUnit,
         });
-        await scheduleMilestonesForMoment(created);
       }
       navigation.goBack();
     } catch (e) {
@@ -288,9 +286,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     try {
       await trackPhotoDownload(accessKey, photo.id);
       const uri = await copyImageToAppStorage(photo.urls.regular);
-      const photographerHtmlUrl =
+      const photographerHtmlUrl = withUnsplashReferral(
         photo.user.links?.html ??
-        `https://unsplash.com/@${photo.user.username}`;
+          `https://unsplash.com/@${photo.user.username}`,
+      );
       setBgType("image");
       setBgValue({
         kind: "image",
@@ -298,7 +297,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
         unsplashAttribution: {
           photographerName: photo.user.name,
           photographerHtmlUrl,
-          photoHtmlUrl: photo.links.html,
+          photoHtmlUrl: withUnsplashReferral(photo.links.html),
         },
       });
       setShowOnlineImagePicker(false);
@@ -1119,7 +1118,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
             >
               <View style={styles.dateSheetHeader}>
                 <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
-                  Unsplash Images
+                  Search
                 </Text>
                 <Pressable
                   onPress={() => setShowOnlineImagePicker(false)}
@@ -1166,10 +1165,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               </View>
               <Pressable
                 style={styles.unsplashLink}
-                onPress={() => void Linking.openURL("https://unsplash.com")}
+                onPress={() => void Linking.openURL(unsplashHomeUrl())}
               >
                 <Text style={[styles.unsplashLinkText, { color: uiAccent }]}>
-                  Photos provided by Unsplash
+                  Photos by Unsplash
                 </Text>
               </Pressable>
               <ScrollView

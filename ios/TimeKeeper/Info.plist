@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.shadev.momenttracker</string>
+          <string>com.shadev.timekeeper</string>
         </array>
       </dict>
     </array>

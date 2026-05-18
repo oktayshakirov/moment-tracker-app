@@ -7,29 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B0C4ECA0AFAFD81940E15FC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 68A8EBA908D692C112DE980C /* PrivacyInfo.xcprivacy */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		B028B08297F6FF7DADF1A2CA /* libPods-momenttracker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 276B5E7EB99B043F4E258D3B /* libPods-momenttracker.a */; };
-		B2F0BF153F60E8D8F526F841 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 672A228140E485D4D3ED2CEC /* ExpoModulesProvider.swift */; };
+		4259E896A861274DA0457900 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A7DAAA562FEC0FC889762F /* ExpoModulesProvider.swift */; };
+		573D5A8D80BF5A150160B496 /* libPods-TimeKeeper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 459944824535C2EC2C77208F /* libPods-TimeKeeper.a */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		F411B8AECDEE578B46247C48 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 244B5477F9A96FF767F43A26 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		13B07F961A680F5B00A75B9A /* momenttracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = momenttracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = momenttracker/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = momenttracker/Info.plist; sourceTree = "<group>"; };
-		14A20729030839EAEFE5AB40 /* Pods-momenttracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-momenttracker.debug.xcconfig"; path = "Target Support Files/Pods-momenttracker/Pods-momenttracker.debug.xcconfig"; sourceTree = "<group>"; };
-		244B5477F9A96FF767F43A26 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = momenttracker/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		276B5E7EB99B043F4E258D3B /* libPods-momenttracker.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-momenttracker.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		672A228140E485D4D3ED2CEC /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-momenttracker/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = momenttracker/SplashScreen.storyboard; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* TimeKeeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeKeeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TimeKeeper/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TimeKeeper/Info.plist; sourceTree = "<group>"; };
+		459944824535C2EC2C77208F /* libPods-TimeKeeper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TimeKeeper.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		60AE64992E86E9C6D33F2CFB /* Pods-TimeKeeper.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TimeKeeper.release.xcconfig"; path = "Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper.release.xcconfig"; sourceTree = "<group>"; };
+		68A8EBA908D692C112DE980C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = TimeKeeper/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		70A7DAAA562FEC0FC889762F /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-TimeKeeper/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = TimeKeeper/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		CAE0872A68EEF500D6FB7980 /* Pods-momenttracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-momenttracker.release.xcconfig"; path = "Target Support Files/Pods-momenttracker/Pods-momenttracker.release.xcconfig"; sourceTree = "<group>"; };
+		D2BA410EE5BBF2087340532C /* Pods-TimeKeeper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TimeKeeper.debug.xcconfig"; path = "Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = momenttracker/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* momenttracker-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "momenttracker-Bridging-Header.h"; path = "momenttracker/momenttracker-Bridging-Header.h"; sourceTree = "<group>"; };
+		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TimeKeeper/AppDelegate.swift; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* TimeKeeper-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "TimeKeeper-Bridging-Header.h"; path = "TimeKeeper/TimeKeeper-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,34 +37,59 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B028B08297F6FF7DADF1A2CA /* libPods-momenttracker.a in Frameworks */,
+				573D5A8D80BF5A150160B496 /* libPods-TimeKeeper.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* momenttracker */ = {
+		13B07FAE1A68108700A75B9A /* TimeKeeper */ = {
 			isa = PBXGroup;
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
-				F11748442D0722820044C1D9 /* momenttracker-Bridging-Header.h */,
+				F11748442D0722820044C1D9 /* TimeKeeper-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				244B5477F9A96FF767F43A26 /* PrivacyInfo.xcprivacy */,
+				68A8EBA908D692C112DE980C /* PrivacyInfo.xcprivacy */,
 			);
-			name = momenttracker;
+			name = TimeKeeper;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				276B5E7EB99B043F4E258D3B /* libPods-momenttracker.a */,
+				459944824535C2EC2C77208F /* libPods-TimeKeeper.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		37CEE9CE7E4214724E5947C6 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				6AA88FA0419E9B49190F3BAD /* TimeKeeper */,
+			);
+			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		632B356C01C83F568B07919F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D2BA410EE5BBF2087340532C /* Pods-TimeKeeper.debug.xcconfig */,
+				60AE64992E86E9C6D33F2CFB /* Pods-TimeKeeper.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		6AA88FA0419E9B49190F3BAD /* TimeKeeper */ = {
+			isa = PBXGroup;
+			children = (
+				70A7DAAA562FEC0FC889762F /* ExpoModulesProvider.swift */,
+			);
+			name = TimeKeeper;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -77,12 +102,12 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* momenttracker */,
+				13B07FAE1A68108700A75B9A /* TimeKeeper */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				AA32A535C1FE75E59209B7B3 /* Pods */,
-				CF669A10E7ECE523461E0F55 /* ExpoModulesProviders */,
+				632B356C01C83F568B07919F /* Pods */,
+				37CEE9CE7E4214724E5947C6 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -92,18 +117,9 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* momenttracker.app */,
+				13B07F961A680F5B00A75B9A /* TimeKeeper.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		AA32A535C1FE75E59209B7B3 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				14A20729030839EAEFE5AB40 /* Pods-momenttracker.debug.xcconfig */,
-				CAE0872A68EEF500D6FB7980 /* Pods-momenttracker.release.xcconfig */,
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -112,48 +128,32 @@
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
 			);
 			name = Supporting;
-			path = momenttracker/Supporting;
-			sourceTree = "<group>";
-		};
-		CF669A10E7ECE523461E0F55 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				F83D0520F8843C02B5C2206D /* momenttracker */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
-		F83D0520F8843C02B5C2206D /* momenttracker */ = {
-			isa = PBXGroup;
-			children = (
-				672A228140E485D4D3ED2CEC /* ExpoModulesProvider.swift */,
-			);
-			name = momenttracker;
+			path = TimeKeeper/Supporting;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* momenttracker */ = {
+		13B07F861A680F5B00A75B9A /* TimeKeeper */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "momenttracker" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TimeKeeper" */;
 			buildPhases = (
-				825D82B7D0E8E690659ED751 /* [CP] Check Pods Manifest.lock */,
-				E3E5342E5B6EA0D06B598402 /* [Expo] Configure project */,
+				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
+				C56718A3F3681DD4439D86A2 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				AA3EA10C9FF032ED6B5C5EBE /* [CP] Embed Pods Frameworks */,
-				C3494E9CFB50C85080061873 /* [CP] Copy Pods Resources */,
+				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
+				5F38D5BAE81582B09A899C0D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = momenttracker;
-			productName = momenttracker;
-			productReference = 13B07F961A680F5B00A75B9A /* momenttracker.app */;
+			name = TimeKeeper;
+			productName = TimeKeeper;
+			productReference = 13B07F961A680F5B00A75B9A /* TimeKeeper.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -169,7 +169,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "momenttracker" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "TimeKeeper" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -182,7 +182,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* momenttracker */,
+				13B07F861A680F5B00A75B9A /* TimeKeeper */,
 			);
 		};
 /* End PBXProject section */
@@ -195,7 +195,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				F411B8AECDEE578B46247C48 /* PrivacyInfo.xcprivacy in Resources */,
+				0B0C4ECA0AFAFD81940E15FC /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,7 +219,7 @@
 			shellPath = /bin/sh;
 			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" \"$PROJECT_ROOT\" ios absolute | tail -n 1)\"\nfi\n\nif [[ -z \"$CLI_PATH\" ]]; then\n  # Use Expo CLI\n  export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\nfi\nif [[ -z \"$BUNDLE_COMMAND\" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND=\"export:embed\"\nfi\n\n# Source .xcode.env.updates if it exists to allow\n# SKIP_BUNDLING to be unset if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.updates\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.updates\"\nfi\n# Source local changes to allow overrides\n# if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
 		};
-		825D82B7D0E8E690659ED751 /* [CP] Check Pods Manifest.lock */ = {
+		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -234,20 +234,20 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-momenttracker-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-TimeKeeper-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		AA3EA10C9FF032ED6B5C5EBE /* [CP] Embed Pods Frameworks */ = {
+		5F38D5BAE81582B09A899C0D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-momenttracker/Pods-momenttracker-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
@@ -260,21 +260,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-momenttracker/Pods-momenttracker-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C3494E9CFB50C85080061873 /* [CP] Copy Pods Resources */ = {
+		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-momenttracker/Pods-momenttracker-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/AsyncStorage/AsyncStorage_resources.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXApplication/ExpoApplication_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXNotifications/ExpoNotifications_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
@@ -283,10 +281,8 @@
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AsyncStorage_resources.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoApplication_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoNotifications_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
@@ -294,10 +290,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-momenttracker/Pods-momenttracker-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E3E5342E5B6EA0D06B598402 /* [Expo] Configure project */ = {
+		C56718A3F3681DD4439D86A2 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -308,18 +304,18 @@
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env",
 				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/momenttracker/momenttracker.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-momenttracker/expo-configure-project.sh",
+				"$(SRCROOT)/TimeKeeper/TimeKeeper.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-TimeKeeper/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-momenttracker/ExpoModulesProvider.swift",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-TimeKeeper/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-momenttracker/expo-configure-project.sh\"\n";
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-TimeKeeper/expo-configure-project.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -329,7 +325,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				B2F0BF153F60E8D8F526F841 /* ExpoModulesProvider.swift in Sources */,
+				4259E896A861274DA0457900 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,11 +334,11 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 14A20729030839EAEFE5AB40 /* Pods-momenttracker.debug.xcconfig */;
+			baseConfigurationReference = D2BA410EE5BBF2087340532C /* Pods-TimeKeeper.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = momenttracker/momenttracker.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TimeKeeper/TimeKeeper.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2UNNRK9L5Q;
 				ENABLE_BITCODE = NO;
@@ -350,7 +346,7 @@
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = momenttracker/Info.plist;
+				INFOPLIST_FILE = TimeKeeper/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -363,9 +359,9 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.shadev.momenttracker";
-				PRODUCT_NAME = "TimeKeeper";
-				SWIFT_OBJC_BRIDGING_HEADER = "momenttracker/momenttracker-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = com.shadev.timekeeper;
+				PRODUCT_NAME = TimeKeeper;
+				SWIFT_OBJC_BRIDGING_HEADER = "TimeKeeper/TimeKeeper-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -375,14 +371,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CAE0872A68EEF500D6FB7980 /* Pods-momenttracker.release.xcconfig */;
+			baseConfigurationReference = 60AE64992E86E9C6D33F2CFB /* Pods-TimeKeeper.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = momenttracker/momenttracker.entitlements;
+				CODE_SIGN_ENTITLEMENTS = TimeKeeper/TimeKeeper.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2UNNRK9L5Q;
-				INFOPLIST_FILE = momenttracker/Info.plist;
+				INFOPLIST_FILE = TimeKeeper/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -395,9 +391,9 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.shadev.momenttracker";
-				PRODUCT_NAME = "TimeKeeper";
-				SWIFT_OBJC_BRIDGING_HEADER = "momenttracker/momenttracker-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = com.shadev.timekeeper;
+				PRODUCT_NAME = TimeKeeper;
+				SWIFT_OBJC_BRIDGING_HEADER = "TimeKeeper/TimeKeeper-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -525,7 +521,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "momenttracker" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TimeKeeper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -534,7 +530,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "momenttracker" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "TimeKeeper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

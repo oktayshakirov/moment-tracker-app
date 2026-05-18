@@ -19,7 +19,6 @@ import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
 import type { Category } from "@/features/categories/domain/category";
 import type { Moment } from "../domain/moment";
-import { cancelMilestoneNotifications } from "../data/milestoneNotifications";
 import { Swipeable } from "react-native-gesture-handler";
 import { SwipeableMomentRow } from "./SwipeableMomentRow";
 
@@ -147,7 +146,6 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
               }
               onDelete={() =>
                 void (async () => {
-                  await cancelMilestoneNotifications(item.id);
                   await moments.delete(item.id);
                   await load();
                 })()

@@ -5,6 +5,27 @@
 
 const API_ROOT = "https://api.unsplash.com";
 
+/** Registered app slug — used in Unsplash referral links (API attribution guideline). */
+export const UNSPLASH_UTM_SOURCE = "time-keeper";
+
+const UNSPLASH_HOME = "https://unsplash.com/";
+
+/** Append required `utm_source` / `utm_medium` to Unsplash and photographer profile links. */
+export function withUnsplashReferral(url: string): string {
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.set("utm_source", UNSPLASH_UTM_SOURCE);
+    parsed.searchParams.set("utm_medium", "referral");
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
+export function unsplashHomeUrl(): string {
+  return withUnsplashReferral(UNSPLASH_HOME);
+}
+
 export type UnsplashPhoto = {
   id: string;
   urls: {

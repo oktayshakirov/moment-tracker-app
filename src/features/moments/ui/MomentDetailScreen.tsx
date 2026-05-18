@@ -26,7 +26,7 @@ import {
   formatSinceUntilLabel,
   getTickerIntervalMs,
 } from "../domain/momentFormatters";
-import { cancelMilestoneNotifications } from "../data/milestoneNotifications";
+import { unsplashHomeUrl, withUnsplashReferral } from "../data/unsplashApi";
 import { MomentBackground } from "./MomentBackground";
 
 function detailChromeBottomInset(topInset: number): number {
@@ -95,7 +95,7 @@ export function MomentDetailScreen({
     ];
     if (unsplashAttr) {
       lines.push(
-        `Photo by ${unsplashAttr.photographerName} on Unsplash — ${unsplashAttr.photoHtmlUrl}`,
+        `Photo by ${unsplashAttr.photographerName} on Unsplash — ${withUnsplashReferral(unsplashAttr.photoHtmlUrl)}`,
       );
     }
     const body = lines.join("\n");
@@ -134,7 +134,6 @@ export function MomentDetailScreen({
         style: "destructive",
         onPress: () =>
           void (async () => {
-            await cancelMilestoneNotifications(m.id);
             await moments.delete(m.id);
             navigation.goBack();
           })(),
@@ -218,7 +217,9 @@ export function MomentDetailScreen({
               <Text
                 style={styles.unsplashAttrLink}
                 onPress={() =>
-                  void Linking.openURL(unsplashAttr.photographerHtmlUrl)
+                  void Linking.openURL(
+                    withUnsplashReferral(unsplashAttr.photographerHtmlUrl),
+                  )
                 }
               >
                 {unsplashAttr.photographerName}
@@ -226,7 +227,7 @@ export function MomentDetailScreen({
               {" on "}
               <Text
                 style={styles.unsplashAttrLink}
-                onPress={() => void Linking.openURL("https://unsplash.com")}
+                onPress={() => void Linking.openURL(unsplashHomeUrl())}
               >
                 Unsplash
               </Text>
