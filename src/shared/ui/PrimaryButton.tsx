@@ -40,7 +40,7 @@ export function PrimaryButton({
       }}
       style={({ pressed }) => [
         styles.base,
-        variant === 'filled' && { backgroundColor: theme.accent },
+        variant === 'filled' && { backgroundColor: theme.accentButton },
         variant === 'ghost' && {
           backgroundColor: 'transparent',
           borderWidth: StyleSheet.hairlineWidth,

@@ -34,7 +34,6 @@ import {
 import { CategoryEditorModal } from "@/features/categories/ui/CategoryEditorModal";
 import { KeyboardDismissScrollView } from "@/shared/ui/KeyboardDismissScrollView";
 import { Screen } from "@/shared/ui/Screen";
-import { PrimaryButton } from "@/shared/ui/PrimaryButton";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
 import type {
@@ -82,14 +81,9 @@ function randomSolidHex(): string {
   )}${h(Math.floor(Math.random() * 256))}`;
 }
 
-function screenChromeBottomInset(topInset: number): number {
-  return topInset + space.xs + 44 + space.sm;
-}
-
 export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const theme = useAppTheme();
   const insets = useSafeAreaInsets();
-  const chromeBottom = screenChromeBottomInset(insets.top);
   const { height: windowHeight } = useWindowDimensions();
   const { moments, categories } = useRepositories();
   const momentId = route.params?.momentId;
@@ -123,6 +117,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const [showColorPickerModal, setShowColorPickerModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const uiAccent = theme.accent;
+  const uiAccentButton = theme.accentButton;
   const previewAccent = getBackgroundAccent(bgValue, theme.accent);
   const previewAccentSubtle = `${previewAccent}1F`;
 
@@ -348,20 +343,23 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   return (
     <Screen edges={["left", "right", "bottom"]}>
       <View style={styles.shell}>
+        <FormChromeBar
+          theme={theme}
+          topInset={insets.top}
+          title={momentId ? "Edit moment" : "New moment"}
+          saveLabel="Save"
+          saving={saving}
+          onBack={() => navigation.goBack()}
+          onSave={() => void onSave()}
+        />
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={{ flex: 1 }}
         >
           <KeyboardDismissScrollView
-            contentContainerStyle={[
-              styles.scroll,
-              { paddingTop: chromeBottom + 12 },
-            ]}
+            contentContainerStyle={styles.scroll}
             showsVerticalScrollIndicator={false}
           >
-            <Text style={[styles.formScreenHeading, { color: theme.text }]}>
-              {momentId ? "Edit moment" : "New moment"}
-            </Text>
             <MomentCard moment={previewMoment} onPress={() => {}} />
             <Text style={[styles.label, { color: theme.textSecondary }]}>
               Title
@@ -558,7 +556,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   }}
                   style={[
                     styles.segBtn,
-                    bgType === b && { backgroundColor: uiAccent },
+                    bgType === b && { backgroundColor: uiAccentButton },
                     { borderColor: theme.separator },
                   ]}
                 >
@@ -701,21 +699,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                 </View>
               </View>
             ) : null}
-            <PrimaryButton
-              label={momentId ? "Save changes" : "Save moment"}
-              onPress={() => void onSave()}
-              loading={saving}
-              style={{ marginTop: space.xl, backgroundColor: uiAccent }}
-            />
-            <View style={{ height: space.xxl }} />
+            <View style={{ height: space.xl }} />
           </KeyboardDismissScrollView>
         </KeyboardAvoidingView>
-
-        <FormChromeBar
-          theme={theme}
-          topInset={insets.top}
-          onBack={() => navigation.goBack()}
-        />
 
         <CategoryEditorModal
           visible={showCategoryEditor}
@@ -1160,7 +1146,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   onPress={runOnlineSearch}
                   style={[
                     styles.onlineSearchBtn,
-                    { backgroundColor: uiAccent },
+                    { backgroundColor: uiAccentButton },
                   ]}
                 >
                   <Ionicons name="search-outline" size={20} color="#fff" />
@@ -1224,38 +1210,86 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
 type FormChromeBarProps = {
   theme: Theme;
   topInset: number;
+  title: string;
+  saveLabel: string;
+  saving: boolean;
   onBack: () => void;
+  onSave: () => void;
 };
 
-function FormChromeBar({ theme, topInset, onBack }: FormChromeBarProps) {
-  const pill = [
-    styles.formChromePill,
-    {
-      backgroundColor: theme.glassFill,
-      borderColor: theme.glassBorder,
-    },
-  ];
-
+function FormChromeBar({
+  theme,
+  topInset,
+  title,
+  saveLabel,
+  saving,
+  onBack,
+  onSave,
+}: FormChromeBarProps) {
   return (
-    <View style={styles.formChromeOverlay} pointerEvents="box-none">
-      <View style={[styles.formChromeBar, { paddingTop: topInset + space.xs }]}>
-        <Pressable
-          onPress={onBack}
-          hitSlop={12}
-          style={({ pressed }) => [
-            ...pill,
-            styles.formChromeBackPill,
-            pressed && styles.formChromePillPressed,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Back to Moments"
-        >
-          <Ionicons name="chevron-back" size={22} color={theme.text} />
-          <Text style={[styles.formChromeBackLabel, { color: theme.text }]}>
-            Moments
+    <View
+      style={[
+        styles.formChromeBar,
+        {
+          paddingTop: topInset,
+          backgroundColor: theme.bg,
+          borderBottomColor: theme.separator,
+        },
+      ]}
+    >
+        <View style={styles.formChromeRow}>
+          <View style={styles.formChromeSide}>
+            <Pressable
+              onPress={onBack}
+              hitSlop={12}
+              style={({ pressed }) => [
+                styles.formChromeBackBtn,
+                pressed && styles.formChromePillPressed,
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Back to Moments"
+            >
+              <Ionicons name="chevron-back" size={22} color={theme.text} />
+              <Text
+                style={[styles.formChromeBackLabel, { color: theme.text }]}
+                numberOfLines={1}
+              >
+                Moments
+              </Text>
+            </Pressable>
+          </View>
+
+          <Text
+            style={[styles.formChromeTitle, { color: theme.text }]}
+            numberOfLines={1}
+            pointerEvents="none"
+          >
+            {title}
           </Text>
-        </Pressable>
-      </View>
+
+          <View style={[styles.formChromeSide, styles.formChromeSideEnd]}>
+            <Pressable
+              onPress={onSave}
+              disabled={saving}
+              hitSlop={8}
+              style={({ pressed }) => [
+                styles.formChromeSaveBtn,
+                pressed && !saving && styles.formChromePillPressed,
+                saving && styles.formChromeSaveBtnDisabled,
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={saveLabel}
+            >
+              {saving ? (
+                <ActivityIndicator size="small" color={theme.accent} />
+              ) : (
+                <Text style={[styles.formChromeSaveLabel, { color: theme.accent }]}>
+                  {saveLabel}
+                </Text>
+              )}
+            </Pressable>
+          </View>
+        </View>
     </View>
   );
 }
@@ -1276,43 +1310,64 @@ const styles = StyleSheet.create({
   shell: {
     flex: 1,
   },
-  formScreenHeading: {
-    fontSize: typography.title2,
-    fontWeight: "700",
-    marginBottom: space.md,
-  },
-  formChromeOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "flex-start",
-    zIndex: 20,
-  },
   formChromeBar: {
+    paddingHorizontal: space.md,
+    paddingBottom: space.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  formChromeRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: space.lg,
-    paddingBottom: space.sm,
+    justifyContent: "space-between",
+    minHeight: 44,
+    position: "relative",
   },
-  formChromePill: {
-    borderWidth: StyleSheet.hairlineWidth,
-    overflow: "hidden",
+  formChromeSide: {
+    flex: 1,
+    zIndex: 1,
+  },
+  formChromeSideEnd: {
+    alignItems: "flex-end",
+  },
+  formChromeBackBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexShrink: 0,
+    marginLeft: -6,
+  },
+  formChromeTitle: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    textAlign: "center",
+    lineHeight: 44,
+    fontSize: 17,
+    fontWeight: "600",
+  },
+  formChromeSaveBtn: {
+    flexShrink: 0,
+    minWidth: 52,
+    minHeight: 44,
+    alignItems: "flex-end",
+    justifyContent: "center",
+    paddingHorizontal: space.xs,
+  },
+  formChromeSaveBtnDisabled: {
+    opacity: 0.55,
+  },
+  formChromeSaveLabel: {
+    fontSize: 17,
+    fontWeight: "600",
   },
   formChromePillPressed: {
     opacity: 0.82,
   },
-  formChromeBackPill: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: radii.lg,
-    paddingVertical: space.sm,
-    paddingLeft: space.xs,
-    paddingRight: space.md,
-    gap: 2,
-    maxWidth: "48%",
-  },
   formChromeBackLabel: {
     fontSize: 17,
     fontWeight: "600",
+    marginLeft: -2,
   },
   scroll: {
     paddingHorizontal: space.lg,

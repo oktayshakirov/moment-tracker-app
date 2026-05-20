@@ -34,7 +34,12 @@ export function RootNavigator() {
         <Stack.Screen
           name="MomentForm"
           component={MomentFormScreen}
-          options={{ headerShown: false }}
+          options={{
+            headerShown: false,
+            headerLargeTitle: false,
+            presentation: "fullScreenModal",
+            animation: "slide_from_right",
+          }}
         />
         <Stack.Screen
           name="MomentDetail"

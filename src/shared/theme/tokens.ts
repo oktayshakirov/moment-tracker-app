@@ -28,7 +28,7 @@ export const typography = {
 export const shadows = StyleSheet.create({
   card: Platform.select({
     ios: {
-      shadowColor: "#1A3A5C",
+      shadowColor: "#2A6080",
       shadowOffset: { width: 0, height: 10 },
       shadowOpacity: 0.07,
       shadowRadius: 28,
@@ -38,23 +38,25 @@ export const shadows = StyleSheet.create({
   }),
 });
 
-/** Single app theme — dark only */
+/** Single app theme — dark only; palette sampled from assets/icon.png */
 export const darkTheme = {
-  bg: "#0C0E14",
-  bgElevated: "rgba(28, 28, 32, 0.94)",
+  bg: "#1C2127",
+  bgElevated: "rgba(36, 42, 50, 0.94)",
   text: "#F2F2F7",
   textSecondary: "#AEAEB2",
   textTertiary: "#8E8E93",
   separator: "rgba(84, 84, 88, 0.42)",
-  glassFill: "rgba(32, 36, 44, 0.65)",
+  glassFill: "rgba(38, 44, 52, 0.65)",
   glassBorder: "rgba(255, 255, 255, 0.14)",
-  glassTintGradient: ["rgba(48,56,68,0.78)", "rgba(18,24,34,0.9)"] as [
+  glassTintGradient: ["rgba(48, 58, 68, 0.78)", "rgba(20, 25, 27, 0.9)"] as [
     string,
     string,
   ],
-  screenGradient: ["#0E1118", "#151B26"] as [string, string],
+  screenGradient: ["#1C2127", "#14191B"] as [string, string],
   overlay: "rgba(0, 0, 0, 0.55)",
-  accent: "#5EB8FF",
+  accent: "#60D4FC",
+  /** Darker icon blue for filled buttons — better contrast with white label text */
+  accentButton: "#2898CB",
   danger: "#FF453A",
 };
 
