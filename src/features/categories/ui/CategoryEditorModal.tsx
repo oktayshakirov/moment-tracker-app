@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Keyboard,
   Modal,
   Pressable,
   StyleSheet,
@@ -76,14 +77,18 @@ export function CategoryEditorModal({
       >
         <Pressable
           style={[styles.sheet, { backgroundColor: theme.bgElevated }]}
-          onPress={(e) => e.stopPropagation()}
+          onPress={Keyboard.dismiss}
         >
+          <Pressable onPress={(e) => e.stopPropagation()}>
           <Text style={[styles.heading, { color: theme.text }]}>{heading}</Text>
           <TextInput
             value={title}
             onChangeText={setTitle}
             placeholder="Title"
             placeholderTextColor={theme.textTertiary}
+            returnKeyType="done"
+            blurOnSubmit
+            onSubmitEditing={Keyboard.dismiss}
             style={[
               styles.input,
               {
@@ -106,6 +111,7 @@ export function CategoryEditorModal({
             <HueSlider style={styles.slider} />
           </ColorPicker>
           <PrimaryButton label={actionLabel} onPress={submit} />
+          </Pressable>
         </Pressable>
       </Pressable>
     </Modal>

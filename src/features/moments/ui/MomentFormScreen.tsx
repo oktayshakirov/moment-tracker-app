@@ -2,12 +2,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Keyboard,
   KeyboardAvoidingView,
   Linking,
   Modal,
   Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -32,6 +32,7 @@ import {
   type Category,
 } from "@/features/categories/domain/category";
 import { CategoryEditorModal } from "@/features/categories/ui/CategoryEditorModal";
+import { KeyboardDismissScrollView } from "@/shared/ui/KeyboardDismissScrollView";
 import { Screen } from "@/shared/ui/Screen";
 import { PrimaryButton } from "@/shared/ui/PrimaryButton";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
@@ -351,12 +352,11 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={{ flex: 1 }}
         >
-          <ScrollView
+          <KeyboardDismissScrollView
             contentContainerStyle={[
               styles.scroll,
               { paddingTop: chromeBottom + 12 },
             ]}
-            keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
             <Text style={[styles.formScreenHeading, { color: theme.text }]}>
@@ -371,6 +371,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               onChangeText={setTitle}
               placeholder="Moment name"
               placeholderTextColor={theme.textTertiary}
+              returnKeyType="done"
+              blurOnSubmit
+              onSubmitEditing={Keyboard.dismiss}
               style={[
                 styles.input,
                 {
@@ -705,7 +708,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               style={{ marginTop: space.xl, backgroundColor: uiAccent }}
             />
             <View style={{ height: space.xxl }} />
-          </ScrollView>
+          </KeyboardDismissScrollView>
         </KeyboardAvoidingView>
 
         <FormChromeBar
@@ -765,12 +768,12 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   </Text>
                 </Pressable>
               </View>
-              <ScrollView
+              <KeyboardDismissScrollView
                 style={[
                   styles.categoryPickerScroll,
                   { maxHeight: windowHeight * 0.52 },
                 ]}
-                keyboardShouldPersistTaps="handled"
+                persistTaps="handled"
                 showsVerticalScrollIndicator
               >
                 <Pressable
@@ -884,7 +887,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                     </View>
                   );
                 })}
-              </ScrollView>
+              </KeyboardDismissScrollView>
             </Pressable>
           </Pressable>
         </Modal>
@@ -1074,8 +1077,8 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   </Text>
                 </Pressable>
               </View>
-              <ScrollView
-                keyboardShouldPersistTaps="handled"
+              <KeyboardDismissScrollView
+                persistTaps="handled"
                 showsVerticalScrollIndicator={false}
                 style={{ maxHeight: windowHeight * 0.72 }}
                 contentContainerStyle={styles.colorPickerModalScroll}
@@ -1096,7 +1099,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   <Panel1 style={styles.colorPickerPanel} />
                   <HueSlider style={styles.colorPickerSlider} />
                 </ColorPicker>
-              </ScrollView>
+              </KeyboardDismissScrollView>
             </Pressable>
           </Pressable>
         </Modal>
@@ -1171,8 +1174,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   Photos by Unsplash
                 </Text>
               </Pressable>
-              <ScrollView
+              <KeyboardDismissScrollView
                 style={{ maxHeight: windowHeight * 0.56 }}
+                persistTaps="handled"
                 showsVerticalScrollIndicator={false}
               >
                 <View style={styles.onlineGrid}>
@@ -1208,7 +1212,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                     ))
                   )}
                 </View>
-              </ScrollView>
+              </KeyboardDismissScrollView>
             </Pressable>
           </Pressable>
         </Modal>
