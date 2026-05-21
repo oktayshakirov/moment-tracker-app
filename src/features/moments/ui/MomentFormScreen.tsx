@@ -42,7 +42,9 @@ import type {
   DisplayUnit,
   Moment,
 } from "../domain/moment";
+import { getBackgroundAccent } from "../domain/momentAccent";
 import { modeFromTargetDate } from "../domain/momentFormatters";
+import { syncAllWidgets } from "@/widgets/syncWidgets";
 import { copyImageToAppStorage } from "../data/imageFileService";
 import {
   getUnsplashAccessKey,
@@ -193,6 +195,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           displayUnit,
         });
       }
+      await syncAllWidgets(moments);
       navigation.goBack();
     } catch (e) {
       Alert.alert(
@@ -1297,13 +1300,6 @@ function FormChromeBar({
 function formatDisplayUnitName(unit: DisplayUnit): string {
   if (unit === "auto") return "Automatic";
   return unit[0].toUpperCase() + unit.slice(1);
-}
-
-function getBackgroundAccent(value: BackgroundValue, fallback: string): string {
-  if (value.kind === "solid") return value.color;
-  if (value.kind === "gradient")
-    return value.colors[value.colors.length - 1] ?? fallback;
-  return fallback;
 }
 
 const styles = StyleSheet.create({

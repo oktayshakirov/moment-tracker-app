@@ -3,6 +3,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { openAppDatabase } from '@/shared/persistence/db';
 import { CategoryRepository } from '@/features/categories/data/categoryRepository';
 import { MomentRepository } from '@/features/moments/data/momentRepository';
+import { syncAllWidgets } from '@/widgets/syncWidgets';
 
 export type AppRepositories = {
   categories: CategoryRepository;
@@ -19,10 +20,12 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
     (async () => {
       const db = await openAppDatabase();
       if (cancelled) return;
+      const moments = new MomentRepository(db);
       setRepos({
         categories: new CategoryRepository(db),
-        moments: new MomentRepository(db),
+        moments,
       });
+      void syncAllWidgets(moments);
     })();
     return () => {
       cancelled = true;

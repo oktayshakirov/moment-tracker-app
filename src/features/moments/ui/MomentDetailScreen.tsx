@@ -27,6 +27,7 @@ import {
   getTickerIntervalMs,
 } from "../domain/momentFormatters";
 import { unsplashHomeUrl, withUnsplashReferral } from "../data/unsplashApi";
+import { syncAllWidgets } from "@/widgets/syncWidgets";
 import { MomentBackground } from "./MomentBackground";
 
 function detailChromeBottomInset(topInset: number): number {
@@ -135,6 +136,7 @@ export function MomentDetailScreen({
         onPress: () =>
           void (async () => {
             await moments.delete(m.id);
+            await syncAllWidgets(moments);
             navigation.goBack();
           })(),
       },

@@ -20,6 +20,7 @@ import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
 import type { Category } from "@/features/categories/domain/category";
 import type { Moment } from "../domain/moment";
 import { Swipeable } from "react-native-gesture-handler";
+import { syncAllWidgets } from "@/widgets/syncWidgets";
 import { SwipeableMomentRow } from "./SwipeableMomentRow";
 
 type Section = {
@@ -147,11 +148,15 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
               onDelete={() =>
                 void (async () => {
                   await moments.delete(item.id);
+                  await syncAllWidgets(moments);
                   await load();
                 })()
               }
               onResetStart={() =>
-                void moments.resetStartTime(item.id).then(load)
+                void moments.resetStartTime(item.id).then(async () => {
+                  await syncAllWidgets(moments);
+                  await load();
+                })
               }
             />
           )}

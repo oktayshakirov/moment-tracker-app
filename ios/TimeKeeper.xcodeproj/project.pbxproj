@@ -7,29 +7,141 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0AC98B091F856F9F5DC4A0D8 /* PreviewWidgetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A9C74C89294681FD5A1D79 /* PreviewWidgetView.swift */; };
 		0B0C4ECA0AFAFD81940E15FC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 68A8EBA908D692C112DE980C /* PrivacyInfo.xcprivacy */; };
+		0D6E3D833E9C7F6568B3DFD9 /* TimeKeeperWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FC02F35E3F45AF0C500BA32 /* TimeKeeperWidgetBundle.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		3B3C67E7FDA833CDA99A2E10 /* WidgetConfigurationResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4232FFF4B90451C527402A7 /* WidgetConfigurationResolver.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		4259E896A861274DA0457900 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A7DAAA562FEC0FC889762F /* ExpoModulesProvider.swift */; };
+		4D2D70D0DA7B2FDA3C16FC30 /* WidgetBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40032E6416BCEC269F9145A /* WidgetBackground.swift */; };
+		538AF100D50B1BBAD973EB3A /* WidgetSnapshotBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1BC06758B8BC858AB0C8C2 /* WidgetSnapshotBridge.m */; };
+		564813198C6AB02A35E30680 /* WidgetSnapshotSharedStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACFAE17D3299152ED261301F /* WidgetSnapshotSharedStorage.swift */; };
 		573D5A8D80BF5A150160B496 /* libPods-TimeKeeper.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 459944824535C2EC2C77208F /* libPods-TimeKeeper.a */; };
+		5A004E67BD2B8642892E2EBA /* WidgetSnapshotStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A04A35D15431087ADE51114A /* WidgetSnapshotStorage.swift */; };
+		6B949C5352C7152EEA21F6CF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EC92CCD094E773C50B54C6F6 /* Foundation.framework */; };
+		8586E976FB0E93C5099BFA20 /* WidgetCatalogLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3216A26C6C5491B72BBCC8 /* WidgetCatalogLoader.swift */; };
+		8B58A19A10B20C07E87A9CF5 /* WidgetSnapshotBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA44F2407C162673012F9F7 /* WidgetSnapshotBridge.swift */; };
+		8CB745ED47CA460A46D35ED1 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CAE17CF672D9E677F3BBB5D /* PreviewProvider.swift */; };
+		9D523898853362D4EB5FABE2 /* WidgetLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A7E87E8C51CCB424E8DF68 /* WidgetLog.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		BBE7866EE1E44BE4287B9E93 /* TimeKeeperWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0A95E4A86F1244EE3DAD8412 /* TimeKeeperWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BDCFA1A9874385B53CF855E8 /* WidgetMomentConfigurationIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 951125D024466840FC1AF08E /* WidgetMomentConfigurationIntent.swift */; };
+		DF00AFD6537966A9540A11BF /* WidgetLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EE614C21C41CACD802F491A /* WidgetLog.swift */; };
+		DF22130345AFD944A5AF0F96 /* PreviewEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F57A15B94D11064070927B0 /* PreviewEntry.swift */; };
+		E77B299A81B9B8ABDF1089C8 /* WidgetSnapshotSharedStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D4962710971A1606DC957C /* WidgetSnapshotSharedStorage.swift */; };
+		EBD95AB246DA30A70B3A9B9B /* MomentEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C8C192EC8A927AED6A6600 /* MomentEntity.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		F7F5EB53C99D60C633909A48 /* WidgetDisplayMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00129B18363BD6D5AE79494 /* WidgetDisplayMode.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		98E114882B08D2A956D85FF6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 513E09246EA26EDF9C30BF29;
+			remoteInfo = TimeKeeperWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C161E957613E73E91B94800E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BBE7866EE1E44BE4287B9E93 /* TimeKeeperWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		05F678BAFF18799477DB83B7 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
+		06F85BC2926AF3130CB69E54 /* WidgetSnapshotStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotStorage.swift; path = TimeKeeperWidget/WidgetSnapshotStorage.swift; sourceTree = "<group>"; };
+		0A95E4A86F1244EE3DAD8412 /* TimeKeeperWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TimeKeeperWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		1003F08D910DDE589ABBD501 /* WidgetSnapshotBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotBridge.swift; path = TimeKeeper/WidgetSnapshotBridge.swift; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* TimeKeeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeKeeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TimeKeeper/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TimeKeeper/Info.plist; sourceTree = "<group>"; };
+		1435905EB0F2952C26E04965 /* WidgetBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBackground.swift; path = TimeKeeperWidget/WidgetBackground.swift; sourceTree = "<group>"; };
+		1F57A15B94D11064070927B0 /* PreviewEntry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PreviewEntry.swift; path = TimeKeeperWidget/PreviewEntry.swift; sourceTree = "<group>"; };
+		22ECDF177281A02A0696EA5E /* WidgetSnapshotStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotStorage.swift; path = TimeKeeperWidget/WidgetSnapshotStorage.swift; sourceTree = "<group>"; };
+		2508E0CA146A38EA2B121F17 /* WidgetBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBackground.swift; path = TimeKeeperWidget/WidgetBackground.swift; sourceTree = "<group>"; };
+		28E4D7A6C6D1EA0F1A8358B7 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
+		2BC2B468BE990CD5BA9302BB /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
+		33DDD162C48DD14A83C00353 /* WidgetSnapshotBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotBridge.swift; path = TimeKeeper/WidgetSnapshotBridge.swift; sourceTree = "<group>"; };
+		342A44FDC5A59F30C6A0C5F5 /* WidgetSnapshotStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotStorage.swift; path = TimeKeeperWidget/WidgetSnapshotStorage.swift; sourceTree = "<group>"; };
 		459944824535C2EC2C77208F /* libPods-TimeKeeper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TimeKeeper.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4B8B68476F82AD86530D29BD /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = TimeKeeperWidget/Info.plist; sourceTree = "<group>"; };
+		4F65F76AE5BD4672AA4266F0 /* WidgetSnapshotBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotBridge.swift; path = TimeKeeper/WidgetSnapshotBridge.swift; sourceTree = "<group>"; };
+		57B39C26C84C58C5B873B792 /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
+		5878E09B41A45413270BB7B6 /* MomentEntity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MomentEntity.swift; path = TimeKeeperWidget/MomentEntity.swift; sourceTree = "<group>"; };
+		596D1353AF1DB08AB3A85B0B /* WidgetSnapshotStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotStorage.swift; path = TimeKeeperWidget/WidgetSnapshotStorage.swift; sourceTree = "<group>"; };
+		59CF3CA5108212F345826F65 /* WidgetDisplayMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetDisplayMode.swift; path = TimeKeeperWidget/WidgetDisplayMode.swift; sourceTree = "<group>"; };
+		5B1BC06758B8BC858AB0C8C2 /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
+		5BC17895EC02F9D522600127 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
+		5BF563D6BAED7361D106B89E /* WidgetBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBackground.swift; path = TimeKeeperWidget/WidgetBackground.swift; sourceTree = "<group>"; };
+		5CC7024152EDB9E7FE64DFF0 /* WidgetConfigurationResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetConfigurationResolver.swift; path = TimeKeeperWidget/WidgetConfigurationResolver.swift; sourceTree = "<group>"; };
+		5DAF78461FE813F6C651A1B7 /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
+		602A2B684353DD7A98AC42D9 /* WidgetSnapshotBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotBridge.swift; path = TimeKeeper/WidgetSnapshotBridge.swift; sourceTree = "<group>"; };
 		60AE64992E86E9C6D33F2CFB /* Pods-TimeKeeper.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TimeKeeper.release.xcconfig"; path = "Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper.release.xcconfig"; sourceTree = "<group>"; };
+		62A9C74C89294681FD5A1D79 /* PreviewWidgetView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PreviewWidgetView.swift; path = TimeKeeperWidget/PreviewWidgetView.swift; sourceTree = "<group>"; };
+		64D99C76C509E46C43C74E3D /* WidgetSnapshotStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotStorage.swift; path = TimeKeeperWidget/WidgetSnapshotStorage.swift; sourceTree = "<group>"; };
 		68A8EBA908D692C112DE980C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = TimeKeeper/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		70A7DAAA562FEC0FC889762F /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-TimeKeeper/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		716157F306285221E653AFA2 /* WidgetCatalogLoader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetCatalogLoader.swift; path = TimeKeeperWidget/WidgetCatalogLoader.swift; sourceTree = "<group>"; };
+		7A3216A26C6C5491B72BBCC8 /* WidgetCatalogLoader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetCatalogLoader.swift; path = TimeKeeperWidget/WidgetCatalogLoader.swift; sourceTree = "<group>"; };
+		7CA44F2407C162673012F9F7 /* WidgetSnapshotBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotBridge.swift; path = TimeKeeper/WidgetSnapshotBridge.swift; sourceTree = "<group>"; };
+		7F133EDCD7E2D505D1A567D4 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
+		80A67C0F79AF8863EB8BD6E0 /* WidgetMomentConfigurationIntent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetMomentConfigurationIntent.swift; path = TimeKeeperWidget/WidgetMomentConfigurationIntent.swift; sourceTree = "<group>"; };
+		85A473AECD1E713619BD100D /* WidgetMomentConfigurationIntent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetMomentConfigurationIntent.swift; path = TimeKeeperWidget/WidgetMomentConfigurationIntent.swift; sourceTree = "<group>"; };
+		8F1A013970BB6C586526826E /* TimeKeeperWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; name = TimeKeeperWidget.entitlements; path = TimeKeeperWidget/TimeKeeperWidget.entitlements; sourceTree = "<group>"; };
+		9089571BDD3D28F1DF23F90C /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
+		91D4962710971A1606DC957C /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
+		92AE3B587F64072E4286D5DE /* WidgetLog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetLog.swift; path = TimeKeeperWidget/WidgetLog.swift; sourceTree = "<group>"; };
+		951125D024466840FC1AF08E /* WidgetMomentConfigurationIntent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetMomentConfigurationIntent.swift; path = TimeKeeperWidget/WidgetMomentConfigurationIntent.swift; sourceTree = "<group>"; };
+		9CAE17CF672D9E677F3BBB5D /* PreviewProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PreviewProvider.swift; path = TimeKeeperWidget/PreviewProvider.swift; sourceTree = "<group>"; };
+		9E3CC50F693CC8362E7A6984 /* WidgetBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBackground.swift; path = TimeKeeperWidget/WidgetBackground.swift; sourceTree = "<group>"; };
+		9EDF8E63245C511CA7C1E95F /* WidgetConfigurationResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetConfigurationResolver.swift; path = TimeKeeperWidget/WidgetConfigurationResolver.swift; sourceTree = "<group>"; };
+		9EE614C21C41CACD802F491A /* WidgetLog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetLog.swift; path = TimeKeeperWidget/WidgetLog.swift; sourceTree = "<group>"; };
+		9FC02F35E3F45AF0C500BA32 /* TimeKeeperWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TimeKeeperWidgetBundle.swift; path = TimeKeeperWidget/TimeKeeperWidgetBundle.swift; sourceTree = "<group>"; };
+		A04A35D15431087ADE51114A /* WidgetSnapshotStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotStorage.swift; path = TimeKeeperWidget/WidgetSnapshotStorage.swift; sourceTree = "<group>"; };
+		A9650F3126DCFC4188BDFF9B /* WidgetCatalogLoader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetCatalogLoader.swift; path = TimeKeeperWidget/WidgetCatalogLoader.swift; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = TimeKeeper/SplashScreen.storyboard; sourceTree = "<group>"; };
+		ACFAE17D3299152ED261301F /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
+		AF90DDE157F240EDF4C1ADC4 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
+		B2A7E87E8C51CCB424E8DF68 /* WidgetLog.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetLog.swift; path = TimeKeeperWidget/WidgetLog.swift; sourceTree = "<group>"; };
+		B6C7C42CE5B438CA97D3AFEE /* MomentEntity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MomentEntity.swift; path = TimeKeeperWidget/MomentEntity.swift; sourceTree = "<group>"; };
+		BADA5C600A6E0A53C5A01237 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		C00129B18363BD6D5AE79494 /* WidgetDisplayMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetDisplayMode.swift; path = TimeKeeperWidget/WidgetDisplayMode.swift; sourceTree = "<group>"; };
+		C40032E6416BCEC269F9145A /* WidgetBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBackground.swift; path = TimeKeeperWidget/WidgetBackground.swift; sourceTree = "<group>"; };
+		C4A879CE5B9821F58170B029 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
 		D2BA410EE5BBF2087340532C /* Pods-TimeKeeper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TimeKeeper.debug.xcconfig"; path = "Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper.debug.xcconfig"; sourceTree = "<group>"; };
+		D4B4E74A3F92C0E68170A629 /* WidgetDisplayMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetDisplayMode.swift; path = TimeKeeperWidget/WidgetDisplayMode.swift; sourceTree = "<group>"; };
+		D66E6D0BDED9630AEE1D1D37 /* WidgetSnapshotStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotStorage.swift; path = TimeKeeperWidget/WidgetSnapshotStorage.swift; sourceTree = "<group>"; };
+		D73D46922D1D2E9FBD513B0E /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
+		DC4B90DAB88ECCEC28794751 /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
+		DC857E22A1284E7016369F4B /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
+		E2C8C192EC8A927AED6A6600 /* MomentEntity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MomentEntity.swift; path = TimeKeeperWidget/MomentEntity.swift; sourceTree = "<group>"; };
+		E3E326B7060D029835263EB2 /* WidgetBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBackground.swift; path = TimeKeeperWidget/WidgetBackground.swift; sourceTree = "<group>"; };
+		E8984A9061845C6E194C392D /* WidgetSnapshotStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotStorage.swift; path = TimeKeeperWidget/WidgetSnapshotStorage.swift; sourceTree = "<group>"; };
+		EB442865F0A824A186665BEC /* WidgetSnapshotBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotBridge.swift; path = TimeKeeper/WidgetSnapshotBridge.swift; sourceTree = "<group>"; };
+		EC92CCD094E773C50B54C6F6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		EE51C56FB867A9A54E8E182D /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TimeKeeper/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* TimeKeeper-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "TimeKeeper-Bridging-Header.h"; path = "TimeKeeper/TimeKeeper-Bridging-Header.h"; sourceTree = "<group>"; };
+		F14C055CE0F46F61096C3C45 /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
+		F1BC9794E8E85B144996A44E /* WidgetSnapshotBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotBridge.swift; path = TimeKeeper/WidgetSnapshotBridge.swift; sourceTree = "<group>"; };
+		F2555E73E64B51AEE53B7926 /* WidgetBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBackground.swift; path = TimeKeeperWidget/WidgetBackground.swift; sourceTree = "<group>"; };
+		F4232FFF4B90451C527402A7 /* WidgetConfigurationResolver.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetConfigurationResolver.swift; path = TimeKeeperWidget/WidgetConfigurationResolver.swift; sourceTree = "<group>"; };
+		F9EEC2AC3740B9C38BA7C6E7 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
+		FD05D4C4BC708FA99A4CC7F0 /* WidgetSnapshotBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotBridge.swift; path = TimeKeeper/WidgetSnapshotBridge.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +150,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				573D5A8D80BF5A150160B496 /* libPods-TimeKeeper.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CC93F032DA201521951127A6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6B949C5352C7152EEA21F6CF /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,8 +174,32 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				68A8EBA908D692C112DE980C /* PrivacyInfo.xcprivacy */,
+				7CA44F2407C162673012F9F7 /* WidgetSnapshotBridge.swift */,
+				5B1BC06758B8BC858AB0C8C2 /* WidgetSnapshotBridge.m */,
+				33DDD162C48DD14A83C00353 /* WidgetSnapshotBridge.swift */,
+				D73D46922D1D2E9FBD513B0E /* WidgetSnapshotBridge.m */,
+				4F65F76AE5BD4672AA4266F0 /* WidgetSnapshotBridge.swift */,
+				DC857E22A1284E7016369F4B /* WidgetSnapshotBridge.m */,
+				F1BC9794E8E85B144996A44E /* WidgetSnapshotBridge.swift */,
+				F14C055CE0F46F61096C3C45 /* WidgetSnapshotBridge.m */,
+				602A2B684353DD7A98AC42D9 /* WidgetSnapshotBridge.swift */,
+				9089571BDD3D28F1DF23F90C /* WidgetSnapshotBridge.m */,
+				1003F08D910DDE589ABBD501 /* WidgetSnapshotBridge.swift */,
+				57B39C26C84C58C5B873B792 /* WidgetSnapshotBridge.m */,
+				FD05D4C4BC708FA99A4CC7F0 /* WidgetSnapshotBridge.swift */,
+				DC4B90DAB88ECCEC28794751 /* WidgetSnapshotBridge.m */,
+				EB442865F0A824A186665BEC /* WidgetSnapshotBridge.swift */,
+				5DAF78461FE813F6C651A1B7 /* WidgetSnapshotBridge.m */,
 			);
 			name = TimeKeeper;
+			sourceTree = "<group>";
+		};
+		1A27C5A5F3BE0A108433618A /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				EC92CCD094E773C50B54C6F6 /* Foundation.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -63,6 +207,7 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				459944824535C2EC2C77208F /* libPods-TimeKeeper.a */,
+				1A27C5A5F3BE0A108433618A /* iOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -73,6 +218,64 @@
 				6AA88FA0419E9B49190F3BAD /* TimeKeeper */,
 			);
 			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		5AFDE3093ED81E8ED528695B /* TimeKeeperWidget */ = {
+			isa = PBXGroup;
+			children = (
+				1F57A15B94D11064070927B0 /* PreviewEntry.swift */,
+				9CAE17CF672D9E677F3BBB5D /* PreviewProvider.swift */,
+				62A9C74C89294681FD5A1D79 /* PreviewWidgetView.swift */,
+				9FC02F35E3F45AF0C500BA32 /* TimeKeeperWidgetBundle.swift */,
+				4B8B68476F82AD86530D29BD /* Info.plist */,
+				8F1A013970BB6C586526826E /* TimeKeeperWidget.entitlements */,
+				A04A35D15431087ADE51114A /* WidgetSnapshotStorage.swift */,
+				596D1353AF1DB08AB3A85B0B /* WidgetSnapshotStorage.swift */,
+				C40032E6416BCEC269F9145A /* WidgetBackground.swift */,
+				91D4962710971A1606DC957C /* WidgetSnapshotSharedStorage.swift */,
+				06F85BC2926AF3130CB69E54 /* WidgetSnapshotStorage.swift */,
+				ACFAE17D3299152ED261301F /* WidgetSnapshotSharedStorage.swift */,
+				F2555E73E64B51AEE53B7926 /* WidgetBackground.swift */,
+				5BC17895EC02F9D522600127 /* WidgetSnapshotSharedStorage.swift */,
+				342A44FDC5A59F30C6A0C5F5 /* WidgetSnapshotStorage.swift */,
+				BADA5C600A6E0A53C5A01237 /* WidgetSnapshotSharedStorage.swift */,
+				2508E0CA146A38EA2B121F17 /* WidgetBackground.swift */,
+				EE51C56FB867A9A54E8E182D /* WidgetSnapshotSharedStorage.swift */,
+				E8984A9061845C6E194C392D /* WidgetSnapshotStorage.swift */,
+				7F133EDCD7E2D505D1A567D4 /* WidgetSnapshotSharedStorage.swift */,
+				E3E326B7060D029835263EB2 /* WidgetBackground.swift */,
+				F9EEC2AC3740B9C38BA7C6E7 /* WidgetSnapshotSharedStorage.swift */,
+				D66E6D0BDED9630AEE1D1D37 /* WidgetSnapshotStorage.swift */,
+				C4A879CE5B9821F58170B029 /* WidgetSnapshotSharedStorage.swift */,
+				1435905EB0F2952C26E04965 /* WidgetBackground.swift */,
+				C00129B18363BD6D5AE79494 /* WidgetDisplayMode.swift */,
+				E2C8C192EC8A927AED6A6600 /* MomentEntity.swift */,
+				7A3216A26C6C5491B72BBCC8 /* WidgetCatalogLoader.swift */,
+				951125D024466840FC1AF08E /* WidgetMomentConfigurationIntent.swift */,
+				F4232FFF4B90451C527402A7 /* WidgetConfigurationResolver.swift */,
+				05F678BAFF18799477DB83B7 /* WidgetSnapshotSharedStorage.swift */,
+				9EE614C21C41CACD802F491A /* WidgetLog.swift */,
+				64D99C76C509E46C43C74E3D /* WidgetSnapshotStorage.swift */,
+				2BC2B468BE990CD5BA9302BB /* WidgetSnapshotSharedStorage.swift */,
+				9E3CC50F693CC8362E7A6984 /* WidgetBackground.swift */,
+				D4B4E74A3F92C0E68170A629 /* WidgetDisplayMode.swift */,
+				5878E09B41A45413270BB7B6 /* MomentEntity.swift */,
+				A9650F3126DCFC4188BDFF9B /* WidgetCatalogLoader.swift */,
+				85A473AECD1E713619BD100D /* WidgetMomentConfigurationIntent.swift */,
+				5CC7024152EDB9E7FE64DFF0 /* WidgetConfigurationResolver.swift */,
+				B2A7E87E8C51CCB424E8DF68 /* WidgetLog.swift */,
+				AF90DDE157F240EDF4C1ADC4 /* WidgetSnapshotSharedStorage.swift */,
+				92AE3B587F64072E4286D5DE /* WidgetLog.swift */,
+				22ECDF177281A02A0696EA5E /* WidgetSnapshotStorage.swift */,
+				28E4D7A6C6D1EA0F1A8358B7 /* WidgetSnapshotSharedStorage.swift */,
+				5BF563D6BAED7361D106B89E /* WidgetBackground.swift */,
+				59CF3CA5108212F345826F65 /* WidgetDisplayMode.swift */,
+				B6C7C42CE5B438CA97D3AFEE /* MomentEntity.swift */,
+				716157F306285221E653AFA2 /* WidgetCatalogLoader.swift */,
+				80A67C0F79AF8863EB8BD6E0 /* WidgetMomentConfigurationIntent.swift */,
+				9EDF8E63245C511CA7C1E95F /* WidgetConfigurationResolver.swift */,
+			);
+			name = TimeKeeperWidget;
 			sourceTree = "<group>";
 		};
 		632B356C01C83F568B07919F /* Pods */ = {
@@ -108,6 +311,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				632B356C01C83F568B07919F /* Pods */,
 				37CEE9CE7E4214724E5947C6 /* ExpoModulesProviders */,
+				5AFDE3093ED81E8ED528695B /* TimeKeeperWidget */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -118,6 +322,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* TimeKeeper.app */,
+				0A95E4A86F1244EE3DAD8412 /* TimeKeeperWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -146,15 +351,34 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
 				5F38D5BAE81582B09A899C0D /* [CP] Embed Pods Frameworks */,
+				C161E957613E73E91B94800E /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				88AC5E493009DD0EDCD491BC /* PBXTargetDependency */,
 			);
 			name = TimeKeeper;
 			productName = TimeKeeper;
 			productReference = 13B07F961A680F5B00A75B9A /* TimeKeeper.app */;
 			productType = "com.apple.product-type.application";
+		};
+		513E09246EA26EDF9C30BF29 /* TimeKeeperWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B32E0F6F738C3DF284F7CB6E /* Build configuration list for PBXNativeTarget "TimeKeeperWidget" */;
+			buildPhases = (
+				C01D8AFA9E36DB81BDDF93C3 /* Sources */,
+				CC93F032DA201521951127A6 /* Frameworks */,
+				D338A8A3677F26F3FC649F74 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TimeKeeperWidget;
+			productName = TimeKeeperWidget;
+			productReference = 0A95E4A86F1244EE3DAD8412 /* TimeKeeperWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -183,6 +407,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* TimeKeeper */,
+				513E09246EA26EDF9C30BF29 /* TimeKeeperWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -196,6 +421,13 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				0B0C4ECA0AFAFD81940E15FC /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D338A8A3677F26F3FC649F74 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,10 +558,43 @@
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
 				4259E896A861274DA0457900 /* ExpoModulesProvider.swift in Sources */,
+				8B58A19A10B20C07E87A9CF5 /* WidgetSnapshotBridge.swift in Sources */,
+				538AF100D50B1BBAD973EB3A /* WidgetSnapshotBridge.m in Sources */,
+				E77B299A81B9B8ABDF1089C8 /* WidgetSnapshotSharedStorage.swift in Sources */,
+				9D523898853362D4EB5FABE2 /* WidgetLog.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C01D8AFA9E36DB81BDDF93C3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF22130345AFD944A5AF0F96 /* PreviewEntry.swift in Sources */,
+				8CB745ED47CA460A46D35ED1 /* PreviewProvider.swift in Sources */,
+				0AC98B091F856F9F5DC4A0D8 /* PreviewWidgetView.swift in Sources */,
+				0D6E3D833E9C7F6568B3DFD9 /* TimeKeeperWidgetBundle.swift in Sources */,
+				5A004E67BD2B8642892E2EBA /* WidgetSnapshotStorage.swift in Sources */,
+				4D2D70D0DA7B2FDA3C16FC30 /* WidgetBackground.swift in Sources */,
+				564813198C6AB02A35E30680 /* WidgetSnapshotSharedStorage.swift in Sources */,
+				F7F5EB53C99D60C633909A48 /* WidgetDisplayMode.swift in Sources */,
+				EBD95AB246DA30A70B3A9B9B /* MomentEntity.swift in Sources */,
+				8586E976FB0E93C5099BFA20 /* WidgetCatalogLoader.swift in Sources */,
+				BDCFA1A9874385B53CF855E8 /* WidgetMomentConfigurationIntent.swift in Sources */,
+				3B3C67E7FDA833CDA99A2E10 /* WidgetConfigurationResolver.swift in Sources */,
+				DF00AFD6537966A9540A11BF /* WidgetLog.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		88AC5E493009DD0EDCD491BC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TimeKeeperWidget;
+			target = 513E09246EA26EDF9C30BF29 /* TimeKeeperWidget */;
+			targetProxy = 98E114882B08D2A956D85FF6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
@@ -360,7 +625,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.shadev.timekeeper;
-				PRODUCT_NAME = "TimeKeeper";
+				PRODUCT_NAME = TimeKeeper;
 				SWIFT_OBJC_BRIDGING_HEADER = "TimeKeeper/TimeKeeper-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -392,11 +657,33 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.shadev.timekeeper;
-				PRODUCT_NAME = "TimeKeeper";
+				PRODUCT_NAME = TimeKeeper;
 				SWIFT_OBJC_BRIDGING_HEADER = "TimeKeeper/TimeKeeper-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		2E9AD0093E58AE543D1CB280 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = TimeKeeperWidget/TimeKeeperWidget.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2UNNRK9L5Q;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TimeKeeperWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.shadev.timekeeper.TimeKeeperWidget;
+				PRODUCT_NAME = TimeKeeperWidget;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -518,6 +805,27 @@
 			};
 			name = Release;
 		};
+		E29DB0053EF7013C73F48662 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = TimeKeeperWidget/TimeKeeperWidget.entitlements;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2UNNRK9L5Q;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TimeKeeperWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.shadev.timekeeper.TimeKeeperWidget;
+				PRODUCT_NAME = TimeKeeperWidget;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -535,6 +843,15 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B32E0F6F738C3DF284F7CB6E /* Build configuration list for PBXNativeTarget "TimeKeeperWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2E9AD0093E58AE543D1CB280 /* Release */,
+				E29DB0053EF7013C73F48662 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

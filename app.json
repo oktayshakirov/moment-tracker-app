@@ -2,6 +2,7 @@
   "expo": {
     "name": "Time Keeper",
     "slug": "time-keeper",
+    "scheme": "timekeeper",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,6 +15,9 @@
     },
     "ios": {
       "supportsTablet": true,
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.com.shadev.timekeeper"]
+      },
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Choose a photo as the background for your moments."
       },
@@ -50,7 +54,26 @@
           "photosPermission": "Allow Moment Tracker to use photos for your moment backgrounds."
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "Preview",
+              "label": "Time Keeper",
+              "description": "Choose a moment to show on your home screen",
+              "minWidth": "110dp",
+              "minHeight": "110dp",
+              "targetCellWidth": 2,
+              "targetCellHeight": 2,
+              "resizeMode": "none",
+              "updatePeriodMillis": 0,
+              "widgetFeatures": "reconfigurable|configuration_optional"
+            }
+          ]
+        }
+      ]
     ]
   }
 }
