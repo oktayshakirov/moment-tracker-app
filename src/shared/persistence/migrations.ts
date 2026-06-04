@@ -1,6 +1,6 @@
 import type * as SQLite from "expo-sqlite";
 
-const CURRENT_VERSION = 1;
+const CURRENT_VERSION = 2;
 
 export async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {
   await db.execAsync(`
@@ -45,6 +45,20 @@ export async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {
       [1],
     );
     v = 1;
+  }
+
+  if (v < 2) {
+    await db.execAsync(`
+      ALTER TABLE moments ADD COLUMN accent_color TEXT NOT NULL DEFAULT '#2898CB';
+    `);
+    await db.execAsync(`
+      UPDATE moments SET accent_color = CASE
+        WHEN background_type = 'solid' THEN json_extract(background_json, '$.color')
+        ELSE '#2898CB'
+      END;
+    `);
+    await db.runAsync("INSERT INTO schema_migrations (version) VALUES (?)", [2]);
+    v = 2;
   }
 
   if (v !== CURRENT_VERSION) {

@@ -93,6 +93,24 @@ export function getUnsplashAccessKey(): string | undefined {
 }
 
 /**
+ * GET /photos — returns the editorial feed ordered by popularity.
+ * Used when no search query is available.
+ * https://unsplash.com/documentation#list-photos
+ */
+export async function listPopularPhotos(params: {
+  accessKey: string;
+  page?: number;
+  perPage?: number;
+}): Promise<UnsplashPhoto[]> {
+  const { accessKey, page = 1, perPage = 30 } = params;
+  const q = new URLSearchParams();
+  q.set("order_by", "popular");
+  q.set("page", String(page));
+  q.set("per_page", String(Math.min(30, Math.max(1, perPage))));
+  return unsplashFetch<UnsplashPhoto[]>(`/photos?${q.toString()}`, accessKey);
+}
+
+/**
  * GET /search/photos — https://unsplash.com/documentation#search-photos
  */
 export async function searchPhotos(params: {

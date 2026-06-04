@@ -19,7 +19,4 @@ enum WidgetCatalogLoader {
     return entries.map { MomentEntity(id: $0.id, title: $0.title) }
   }
 
-  static func recentMomentId() -> String? {
-    loadMoments().first?.id
-  }
 }

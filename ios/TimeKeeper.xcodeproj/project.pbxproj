@@ -32,7 +32,6 @@
 		E77B299A81B9B8ABDF1089C8 /* WidgetSnapshotSharedStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D4962710971A1606DC957C /* WidgetSnapshotSharedStorage.swift */; };
 		EBD95AB246DA30A70B3A9B9B /* MomentEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C8C192EC8A927AED6A6600 /* MomentEntity.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
-		F7F5EB53C99D60C633909A48 /* WidgetDisplayMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00129B18363BD6D5AE79494 /* WidgetDisplayMode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,7 +80,6 @@
 		57B39C26C84C58C5B873B792 /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
 		5878E09B41A45413270BB7B6 /* MomentEntity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MomentEntity.swift; path = TimeKeeperWidget/MomentEntity.swift; sourceTree = "<group>"; };
 		596D1353AF1DB08AB3A85B0B /* WidgetSnapshotStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotStorage.swift; path = TimeKeeperWidget/WidgetSnapshotStorage.swift; sourceTree = "<group>"; };
-		59CF3CA5108212F345826F65 /* WidgetDisplayMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetDisplayMode.swift; path = TimeKeeperWidget/WidgetDisplayMode.swift; sourceTree = "<group>"; };
 		5B1BC06758B8BC858AB0C8C2 /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
 		5BC17895EC02F9D522600127 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
 		5BF563D6BAED7361D106B89E /* WidgetBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBackground.swift; path = TimeKeeperWidget/WidgetBackground.swift; sourceTree = "<group>"; };
@@ -118,11 +116,9 @@
 		B6C7C42CE5B438CA97D3AFEE /* MomentEntity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MomentEntity.swift; path = TimeKeeperWidget/MomentEntity.swift; sourceTree = "<group>"; };
 		BADA5C600A6E0A53C5A01237 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C00129B18363BD6D5AE79494 /* WidgetDisplayMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetDisplayMode.swift; path = TimeKeeperWidget/WidgetDisplayMode.swift; sourceTree = "<group>"; };
 		C40032E6416BCEC269F9145A /* WidgetBackground.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBackground.swift; path = TimeKeeperWidget/WidgetBackground.swift; sourceTree = "<group>"; };
 		C4A879CE5B9821F58170B029 /* WidgetSnapshotSharedStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotSharedStorage.swift; path = TimeKeeperWidget/WidgetSnapshotSharedStorage.swift; sourceTree = "<group>"; };
 		D2BA410EE5BBF2087340532C /* Pods-TimeKeeper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TimeKeeper.debug.xcconfig"; path = "Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper.debug.xcconfig"; sourceTree = "<group>"; };
-		D4B4E74A3F92C0E68170A629 /* WidgetDisplayMode.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetDisplayMode.swift; path = TimeKeeperWidget/WidgetDisplayMode.swift; sourceTree = "<group>"; };
 		D66E6D0BDED9630AEE1D1D37 /* WidgetSnapshotStorage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotStorage.swift; path = TimeKeeperWidget/WidgetSnapshotStorage.swift; sourceTree = "<group>"; };
 		D73D46922D1D2E9FBD513B0E /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
 		DC4B90DAB88ECCEC28794751 /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = TimeKeeper/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
@@ -248,7 +244,6 @@
 				D66E6D0BDED9630AEE1D1D37 /* WidgetSnapshotStorage.swift */,
 				C4A879CE5B9821F58170B029 /* WidgetSnapshotSharedStorage.swift */,
 				1435905EB0F2952C26E04965 /* WidgetBackground.swift */,
-				C00129B18363BD6D5AE79494 /* WidgetDisplayMode.swift */,
 				E2C8C192EC8A927AED6A6600 /* MomentEntity.swift */,
 				7A3216A26C6C5491B72BBCC8 /* WidgetCatalogLoader.swift */,
 				951125D024466840FC1AF08E /* WidgetMomentConfigurationIntent.swift */,
@@ -258,7 +253,6 @@
 				64D99C76C509E46C43C74E3D /* WidgetSnapshotStorage.swift */,
 				2BC2B468BE990CD5BA9302BB /* WidgetSnapshotSharedStorage.swift */,
 				9E3CC50F693CC8362E7A6984 /* WidgetBackground.swift */,
-				D4B4E74A3F92C0E68170A629 /* WidgetDisplayMode.swift */,
 				5878E09B41A45413270BB7B6 /* MomentEntity.swift */,
 				A9650F3126DCFC4188BDFF9B /* WidgetCatalogLoader.swift */,
 				85A473AECD1E713619BD100D /* WidgetMomentConfigurationIntent.swift */,
@@ -269,7 +263,6 @@
 				22ECDF177281A02A0696EA5E /* WidgetSnapshotStorage.swift */,
 				28E4D7A6C6D1EA0F1A8358B7 /* WidgetSnapshotSharedStorage.swift */,
 				5BF563D6BAED7361D106B89E /* WidgetBackground.swift */,
-				59CF3CA5108212F345826F65 /* WidgetDisplayMode.swift */,
 				B6C7C42CE5B438CA97D3AFEE /* MomentEntity.swift */,
 				716157F306285221E653AFA2 /* WidgetCatalogLoader.swift */,
 				80A67C0F79AF8863EB8BD6E0 /* WidgetMomentConfigurationIntent.swift */,
@@ -576,7 +569,6 @@
 				5A004E67BD2B8642892E2EBA /* WidgetSnapshotStorage.swift in Sources */,
 				4D2D70D0DA7B2FDA3C16FC30 /* WidgetBackground.swift in Sources */,
 				564813198C6AB02A35E30680 /* WidgetSnapshotSharedStorage.swift in Sources */,
-				F7F5EB53C99D60C633909A48 /* WidgetDisplayMode.swift in Sources */,
 				EBD95AB246DA30A70B3A9B9B /* MomentEntity.swift in Sources */,
 				8586E976FB0E93C5099BFA20 /* WidgetCatalogLoader.swift in Sources */,
 				BDCFA1A9874385B53CF855E8 /* WidgetMomentConfigurationIntent.swift in Sources */,

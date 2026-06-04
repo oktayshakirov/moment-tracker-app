@@ -1,6 +1,5 @@
 import { Platform } from "react-native";
 import type { MomentRepository } from "@/features/moments/data/momentRepository";
-import { getBackgroundAccent } from "@/features/moments/domain/momentAccent";
 import {
   pushCatalogToIos,
   pushSnapshotToIos,
@@ -14,8 +13,6 @@ import {
 } from "./widgetSnapshotStore";
 import type { WidgetCatalogEntry } from "./widgetCatalog";
 import { buildMomentPayload, payloadToIosJson } from "./widgetSnapshot";
-import { DEFAULT_ACCENT } from "./widgetConstants";
-
 /** Rebuild catalog + per-moment snapshot files from the database. */
 export async function syncWidgetCatalog(
   moments: MomentRepository,
@@ -24,7 +21,7 @@ export async function syncWidgetCatalog(
   const catalog: WidgetCatalogEntry[] = list.map((m) => ({
     id: m.id,
     title: m.title,
-    backgroundColor: getBackgroundAccent(m.backgroundValue, DEFAULT_ACCENT),
+    backgroundColor: m.accentColor,
   }));
 
   const activeIds = new Set(list.map((m) => m.id));

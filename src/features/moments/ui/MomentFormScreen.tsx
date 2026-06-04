@@ -37,17 +37,16 @@ import { Screen } from "@/shared/ui/Screen";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
 import type {
-  BackgroundType,
   BackgroundValue,
   DisplayUnit,
   Moment,
 } from "../domain/moment";
-import { getBackgroundAccent } from "../domain/momentAccent";
 import { modeFromTargetDate } from "../domain/momentFormatters";
 import { syncAllWidgets } from "@/widgets/syncWidgets";
 import { copyImageToAppStorage } from "../data/imageFileService";
 import {
   getUnsplashAccessKey,
+  listPopularPhotos,
   searchPhotos,
   trackPhotoDownload,
   unsplashHomeUrl,
@@ -67,7 +66,6 @@ const DISPLAY_UNITS: DisplayUnit[] = [
   "years",
 ];
 const DEFAULT_SOLID_COLOR = "#0A84FF";
-const FALLBACK_IMAGE_SEARCH = "cinematic landscape wallpaper";
 
 /** Drop seconds so pickers and labels stay minute-precision only. */
 function trimToMinute(d: Date): Date {
@@ -93,11 +91,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(() => trimToMinute(new Date()));
   const [categoryId, setCategoryId] = useState(DEFAULT_CATEGORY_ID);
-  const [bgType, setBgType] = useState<BackgroundType>("solid");
-  const [bgValue, setBgValue] = useState<BackgroundValue>({
-    kind: "solid",
-    color: DEFAULT_SOLID_COLOR,
-  });
+  type ImageValue = Extract<BackgroundValue, { kind: "image" }>;
+  const [imageValue, setImageValue] = useState<ImageValue | null>(null);
+  const [accentColor, setAccentColor] = useState(DEFAULT_SOLID_COLOR);
   const [displayUnit, setDisplayUnit] = useState<DisplayUnit>("auto");
 
   const [catList, setCatList] = useState<
@@ -120,7 +116,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const [saving, setSaving] = useState(false);
   const uiAccent = theme.accent;
   const uiAccentButton = theme.accentButton;
-  const previewAccent = getBackgroundAccent(bgValue, theme.accent);
+  const previewAccent = accentColor;
   const previewAccentSubtle = `${previewAccent}1F`;
 
   const selectedCategory = catList.find((c) => c.id === categoryId);
@@ -142,19 +138,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
       setTitle(m.title);
       setDate(trimToMinute(new Date(m.targetDateTime)));
       setCategoryId(m.categoryId);
-      if (
-        m.backgroundType === "gradient" &&
-        m.backgroundValue.kind === "gradient"
-      ) {
-        const fallback =
-          m.backgroundValue.colors[m.backgroundValue.colors.length - 1] ??
-          DEFAULT_SOLID_COLOR;
-        setBgType("solid");
-        setBgValue({ kind: "solid", color: fallback });
-      } else {
-        setBgType(m.backgroundType);
-        setBgValue(m.backgroundValue);
-      }
+      setImageValue(
+        m.backgroundValue.kind === "image" ? m.backgroundValue : null,
+      );
+      setAccentColor(m.accentColor);
       setDisplayUnit(m.displayUnit);
     })();
   }, [momentId, moments]);
@@ -165,23 +152,22 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
       Alert.alert("Title required", "Give this moment a name.");
       return;
     }
-    if (bgType === "image" && bgValue.kind !== "image") {
-      Alert.alert("Image required", "Choose from Gallery or Online.");
-      return;
-    }
     setSaving(true);
     try {
       const atMinute = trimToMinute(date);
       const iso = atMinute.toISOString();
       const mode = modeFromTargetDate(atMinute);
+      const backgroundValue: BackgroundValue = imageValue ?? { kind: "solid", color: accentColor };
+      const backgroundType = imageValue ? "image" : "solid";
       if (momentId) {
         await moments.update(momentId, {
           title: t,
           targetDateTime: iso,
           mode,
           categoryId,
-          backgroundType: bgType,
-          backgroundValue: bgValue,
+          backgroundType,
+          backgroundValue,
+          accentColor,
           displayUnit,
         });
       } else {
@@ -190,8 +176,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           targetDateTime: iso,
           mode,
           categoryId,
-          backgroundType: bgType,
-          backgroundValue: bgValue,
+          backgroundType,
+          backgroundValue,
+          accentColor,
           displayUnit,
         });
       }
@@ -209,8 +196,8 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     title,
     date,
     categoryId,
-    bgType,
-    bgValue,
+    imageValue,
+    accentColor,
     displayUnit,
     momentId,
     moments,
@@ -232,14 +219,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     });
     if (res.canceled || !res.assets[0]) return;
     const uri = await copyImageToAppStorage(res.assets[0].uri);
-    setBgType("image");
-    setBgValue({ kind: "image", uri });
+    setImageValue({ kind: "image", uri });
   };
 
-  const queryForTitle = useCallback(
-    () => title.trim() || FALLBACK_IMAGE_SEARCH,
-    [title],
-  );
+  const queryForTitle = useCallback(() => title.trim(), [title]);
 
   const fetchOnlinePhotos = useCallback(async (query: string) => {
     const accessKey = getUnsplashAccessKey();
@@ -252,12 +235,11 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     }
     setLoadingOnlineResults(true);
     try {
-      const data = await searchPhotos({
-        accessKey,
-        query: query.trim() || FALLBACK_IMAGE_SEARCH,
-        perPage: 30,
-      });
-      setOnlineResults(data.results);
+      const trimmed = query.trim();
+      const photos = trimmed
+        ? (await searchPhotos({ accessKey, query: trimmed, perPage: 30 })).results
+        : await listPopularPhotos({ accessKey, perPage: 30 });
+      setOnlineResults(photos);
     } catch (e) {
       Alert.alert(
         "Unsplash search failed",
@@ -289,8 +271,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
         photo.user.links?.html ??
           `https://unsplash.com/@${photo.user.username}`,
       );
-      setBgType("image");
-      setBgValue({
+      setImageValue({
         kind: "image",
         uri,
         unsplashAttribution: {
@@ -309,13 +290,11 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   }, []);
 
   const removeAttachedImage = useCallback(() => {
-    setBgType("solid");
-    setBgValue({ kind: "solid", color: DEFAULT_SOLID_COLOR });
+    setImageValue(null);
   }, []);
 
   const pickRandomColor = useCallback(() => {
-    setBgType("solid");
-    setBgValue({ kind: "solid", color: randomSolidHex() });
+    setAccentColor(randomSolidHex());
   }, []);
 
   const previewMoment: Moment = {
@@ -324,8 +303,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     targetDateTime: date.toISOString(),
     mode: modeFromTargetDate(date),
     categoryId,
-    backgroundType: bgType,
-    backgroundValue: bgValue,
+    backgroundType: imageValue ? "image" : "solid",
+    backgroundValue: imageValue ?? { kind: "solid", color: accentColor },
+    accentColor,
     displayUnit,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -544,87 +524,46 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                 color={theme.textTertiary}
               />
             </Pressable>
+            {/* ── Image (optional) ── */}
             <Text style={[styles.label, { color: theme.textSecondary }]}>
-              Background
+              Image
             </Text>
-            <View style={[styles.segment, styles.backgroundSegment]}>
-              {(["image", "solid"] as const).map((b) => (
-                <Pressable
-                  key={b}
-                  onPress={() => {
-                    setBgType(b);
-                    if (b === "solid" && bgValue.kind !== "solid") {
-                      setBgValue({ kind: "solid", color: DEFAULT_SOLID_COLOR });
-                    }
-                  }}
-                  style={[
-                    styles.segBtn,
-                    bgType === b && { backgroundColor: uiAccentButton },
-                    { borderColor: theme.separator },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.segText,
-                      { color: bgType === b ? "#fff" : theme.text },
-                    ]}
-                  >
-                    {b === "solid" ? "Color" : "Image"}
-                  </Text>
-                </Pressable>
-              ))}
+            <View style={styles.imageActionsRow}>
+              <Pressable
+                style={[
+                  styles.imageActionTile,
+                  { borderColor: theme.separator, backgroundColor: theme.bgElevated },
+                ]}
+                onPress={() => void pickGallery()}
+              >
+                <Ionicons name="images-outline" size={28} color={uiAccent} />
+                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
+                  Gallery
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.imageActionTile,
+                  { borderColor: theme.separator, backgroundColor: theme.bgElevated },
+                ]}
+                onPress={openOnlineImagePicker}
+              >
+                <Ionicons name="globe-outline" size={28} color={uiAccent} />
+                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
+                  Online
+                </Text>
+              </Pressable>
             </View>
-            {bgType === "image" && (
-              <View style={styles.imageActionsRow}>
-                <Pressable
-                  style={[
-                    styles.imageActionTile,
-                    {
-                      borderColor: theme.separator,
-                      backgroundColor: theme.bgElevated,
-                    },
-                  ]}
-                  onPress={() => void pickGallery()}
-                >
-                  <Ionicons name="images-outline" size={28} color={uiAccent} />
-                  <Text
-                    style={[styles.imageActionTitle, { color: theme.text }]}
-                  >
-                    Gallery
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={[
-                    styles.imageActionTile,
-                    {
-                      borderColor: theme.separator,
-                      backgroundColor: theme.bgElevated,
-                    },
-                  ]}
-                  onPress={openOnlineImagePicker}
-                >
-                  <Ionicons name="globe-outline" size={28} color={uiAccent} />
-                  <Text
-                    style={[styles.imageActionTitle, { color: theme.text }]}
-                  >
-                    Online
-                  </Text>
-                </Pressable>
-              </View>
-            )}
-            {bgType === "image" && bgValue.kind === "image" ? (
+            {imageValue ? (
               <View style={styles.attachedImagePreviewWrap}>
                 <View
                   style={[
                     styles.attachedImageFrame,
-                    {
-                      borderColor: theme.separator,
-                      backgroundColor: theme.bg,
-                    },
+                    { borderColor: theme.separator, backgroundColor: theme.bg },
                   ]}
                 >
                   <Image
-                    source={{ uri: bgValue.uri }}
+                    source={{ uri: imageValue.uri }}
                     style={styles.attachedImage}
                     contentFit="cover"
                     transition={160}
@@ -634,74 +573,52 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                     onPress={removeAttachedImage}
                     hitSlop={8}
                     accessibilityLabel="Remove image"
-                    accessibilityHint="Switches background to solid color"
                   >
                     <Ionicons name="trash-outline" size={18} color="#fff" />
                   </Pressable>
                 </View>
               </View>
             ) : null}
-            {bgType === "solid" && (
-              <View style={styles.imageActionsRow}>
-                <Pressable
-                  style={[
-                    styles.imageActionTile,
-                    {
-                      borderColor: theme.separator,
-                      backgroundColor: theme.bgElevated,
-                    },
-                  ]}
-                  onPress={pickRandomColor}
-                >
-                  <Ionicons name="shuffle-outline" size={28} color={uiAccent} />
-                  <Text
-                    style={[styles.imageActionTitle, { color: theme.text }]}
-                  >
-                    Random
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={[
-                    styles.imageActionTile,
-                    {
-                      borderColor: theme.separator,
-                      backgroundColor: theme.bgElevated,
-                    },
-                  ]}
-                  onPress={() => setShowColorPickerModal(true)}
-                >
-                  <Ionicons
-                    name="color-palette-outline"
-                    size={28}
-                    color={uiAccent}
-                  />
-                  <Text
-                    style={[styles.imageActionTitle, { color: theme.text }]}
-                  >
-                    Pick color
-                  </Text>
-                </Pressable>
-              </View>
-            )}
-            {bgType === "solid" && bgValue.kind === "solid" ? (
-              <View style={styles.colorPreviewWrap}>
+
+            {/* ── Color (always, used for widget + fallback) ── */}
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Color
+            </Text>
+            <View style={styles.imageActionsRow}>
+              <Pressable
+                style={[
+                  styles.imageActionTile,
+                  { borderColor: theme.separator, backgroundColor: theme.bgElevated },
+                ]}
+                onPress={pickRandomColor}
+              >
+                <Ionicons name="shuffle-outline" size={28} color={uiAccent} />
+                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
+                  Random
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.imageActionTile,
+                  { borderColor: theme.separator, backgroundColor: theme.bgElevated },
+                ]}
+                onPress={() => setShowColorPickerModal(true)}
+              >
+                <Ionicons name="color-palette-outline" size={28} color={uiAccent} />
+                <Text style={[styles.imageActionTitle, { color: theme.text }]}>
+                  Pick color
+                </Text>
+              </Pressable>
+            </View>
+            <View style={styles.colorPreviewWrap}>
+              <View
+                style={[styles.colorPreviewFrame, { borderColor: theme.separator }]}
+              >
                 <View
-                  style={[
-                    styles.colorPreviewFrame,
-                    {
-                      borderColor: theme.separator,
-                    },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.colorPreviewBar,
-                      { backgroundColor: bgValue.color },
-                    ]}
-                  />
-                </View>
+                  style={[styles.colorPreviewBar, { backgroundColor: accentColor }]}
+                />
               </View>
-            ) : null}
+            </View>
             <View style={{ height: space.xl }} />
           </KeyboardDismissScrollView>
         </KeyboardAvoidingView>
@@ -1073,15 +990,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                 contentContainerStyle={styles.colorPickerModalScroll}
               >
                 <ColorPicker
-                  value={
-                    bgValue.kind === "solid"
-                      ? bgValue.color
-                      : DEFAULT_SOLID_COLOR
-                  }
+                  value={accentColor}
                   style={styles.colorPicker}
                   onChangeJS={(c) => {
-                    setBgType("solid");
-                    setBgValue({ kind: "solid", color: c.hex });
+                    setAccentColor(c.hex);
                   }}
                 >
                   <Preview hideInitialColor style={styles.colorPickerPreview} />

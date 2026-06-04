@@ -22,9 +22,12 @@ import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
 import type { Moment } from "../domain/moment";
 import {
+  formatDisplayUnit,
   formatDurationRows,
   formatSinceUntilLabel,
+  getMomentDeltaMs,
   getTickerIntervalMs,
+  type FixedDisplayUnit,
 } from "../domain/momentFormatters";
 import { unsplashHomeUrl, withUnsplashReferral } from "../data/unsplashApi";
 import { syncAllWidgets } from "@/widgets/syncWidgets";
@@ -45,6 +48,7 @@ export function MomentDetailScreen({
   const { moments } = useRepositories();
   const [moment, setMoment] = useState<Moment | null>(null);
   const [now, setNow] = useState(() => new Date());
+  const [viewIndex, setViewIndex] = useState(0);
   const shotRef = useRef<View>(null);
   const momentRef = useRef<Moment | null>(null);
   const nowRef = useRef(now);
@@ -187,21 +191,17 @@ export function MomentDetailScreen({
             style={styles.heroBlock}
           >
             <Text style={styles.title}>{moment.title}</Text>
-            <View style={styles.rowsCol}>
-              {rows.map((r) => (
-                <View key={`${r.value}-${r.unit}`} style={styles.rowStat}>
-                  <Animated.Text
-                    entering={FadeInDown.delay(80)}
-                    style={styles.rowValue}
-                  >
-                    {r.value}
-                  </Animated.Text>
-                  <Text style={styles.rowUnit}>{r.unit}</Text>
-                </View>
-              ))}
-            </View>
-            <Text style={styles.sinceUntil}>{sinceUntil}</Text>
+
+            <UnitCarousel
+              moment={moment}
+              now={now}
+              rows={rows}
+              viewIndex={viewIndex}
+              onIndexChange={setViewIndex}
+              sinceUntil={sinceUntil}
+            />
           </Animated.View>
+
           <View style={styles.bottomDateWrap}>
             <Text style={styles.bottomDate}>{eventDateText}</Text>
           </View>
@@ -362,6 +362,160 @@ function DetailChromeBar({
     </View>
   );
 }
+
+const BREAKDOWN_UNITS: { unit: FixedDisplayUnit; label: string }[] = [
+  { unit: "years", label: "Years" },
+  { unit: "months", label: "Months" },
+  { unit: "weeks", label: "Weeks" },
+  { unit: "days", label: "Days" },
+  { unit: "hours", label: "Hours" },
+  { unit: "minutes", label: "Minutes" },
+];
+
+type CarouselView = { kind: "compound" } | { kind: "unit"; unit: FixedDisplayUnit; label: string };
+
+function UnitCarousel({
+  moment,
+  now,
+  rows,
+  viewIndex,
+  onIndexChange,
+  sinceUntil,
+}: {
+  moment: Moment;
+  now: Date;
+  rows: { value: string; unit: string }[];
+  viewIndex: number;
+  onIndexChange: (i: number) => void;
+  sinceUntil: string;
+}) {
+  const deltaMs = getMomentDeltaMs(moment, now);
+  const [compoundHeight, setCompoundHeight] = useState<number | null>(null);
+
+  const views: CarouselView[] = [
+    { kind: "compound" },
+    ...BREAKDOWN_UNITS.filter(
+      ({ unit }) => formatDisplayUnit(deltaMs, unit) !== "0",
+    ).map((u) => ({ kind: "unit" as const, ...u })),
+  ];
+
+  const safeIndex = Math.min(viewIndex, views.length - 1);
+  const current = views[safeIndex];
+  const canPrev = safeIndex > 0;
+  const canNext = safeIndex < views.length - 1;
+  const label = current.kind === "compound" ? "Breakdown" : current.label;
+
+  return (
+    <View>
+      <Animated.View
+        key={safeIndex}
+        entering={FadeInDown.duration(260)}
+        style={[
+          ucStyles.content,
+          compoundHeight !== null && { minHeight: compoundHeight },
+          current.kind === "unit" && ucStyles.contentCentered,
+        ]}
+      >
+        {current.kind === "compound" ? (
+          <View
+            style={styles.rowsCol}
+            onLayout={(e) => {
+              const h = e.nativeEvent.layout.height;
+              if (h > 0 && compoundHeight === null) setCompoundHeight(h);
+            }}
+          >
+            {rows.map((r) => (
+              <View key={`${r.value}-${r.unit}`} style={styles.rowStat}>
+                <Text style={styles.rowValue}>{r.value}</Text>
+                <Text style={styles.rowUnit}>{r.unit}</Text>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View style={ucStyles.singleUnit}>
+            <Text
+              style={styles.rowValue}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+            >
+              {formatDisplayUnit(deltaMs, current.unit)}
+            </Text>
+            <Text style={styles.rowUnit}>{current.label}</Text>
+          </View>
+        )}
+      </Animated.View>
+
+      <Text style={styles.sinceUntil}>{sinceUntil}</Text>
+
+      <View style={ucStyles.nav}>
+        <Pressable
+          onPress={() => onIndexChange(safeIndex - 1)}
+          disabled={!canPrev}
+          hitSlop={12}
+          style={[ucStyles.arrow, !canPrev && ucStyles.arrowDisabled]}
+          accessibilityRole="button"
+          accessibilityLabel="Previous format"
+        >
+          <Ionicons name="chevron-back" size={18} color={canPrev ? "#fff" : "rgba(255,255,255,0.25)"} />
+        </Pressable>
+
+        <Text style={ucStyles.navLabel}>{label}</Text>
+
+        <Pressable
+          onPress={() => onIndexChange(safeIndex + 1)}
+          disabled={!canNext}
+          hitSlop={12}
+          style={[ucStyles.arrow, !canNext && ucStyles.arrowDisabled]}
+          accessibilityRole="button"
+          accessibilityLabel="Next format"
+        >
+          <Ionicons name="chevron-forward" size={18} color={canNext ? "#fff" : "rgba(255,255,255,0.25)"} />
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+const ucStyles = StyleSheet.create({
+  content: {
+    justifyContent: "flex-start",
+  },
+  contentCentered: {
+    justifyContent: "center",
+  },
+  singleUnit: {
+    gap: 4,
+  },
+  nav: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.sm,
+    marginTop: space.lg,
+  },
+  arrow: {
+    width: 36,
+    height: 36,
+    borderRadius: radii.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(255,255,255,0.25)",
+    backgroundColor: "rgba(255,255,255,0.1)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  arrowDisabled: {
+    borderColor: "rgba(255,255,255,0.1)",
+    backgroundColor: "rgba(255,255,255,0.04)",
+  },
+  navLabel: {
+    color: "rgba(255,255,255,0.6)",
+    fontSize: typography.caption,
+    fontWeight: "600",
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+    flex: 1,
+    textAlign: "center",
+  },
+});
 
 const styles = StyleSheet.create({
   chromeOverlay: {

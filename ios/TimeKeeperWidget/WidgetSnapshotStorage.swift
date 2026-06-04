@@ -5,6 +5,7 @@ struct WidgetSnapshotPayload: Decodable {
   let momentId: String?
   let title: String
   let primary: String
+  let primaryUnit: String
   let subLabel: String
   let sinceUntil: String
   let backgroundColor: String
@@ -16,6 +17,7 @@ struct WidgetSnapshotPayload: Decodable {
     case snapshot
     case title
     case primary
+    case primaryUnit
     case subLabel
     case sinceUntil
     case backgroundColor
@@ -25,6 +27,7 @@ struct WidgetSnapshotPayload: Decodable {
   private struct NestedSnapshot: Decodable {
     let title: String
     let primary: String
+    let primaryUnit: String
     let subLabel: String
     let sinceUntil: String
     let backgroundColor: String
@@ -39,6 +42,7 @@ struct WidgetSnapshotPayload: Decodable {
     if let nested = try c.decodeIfPresent(NestedSnapshot.self, forKey: .snapshot) {
       title = nested.title
       primary = nested.primary
+      primaryUnit = nested.primaryUnit
       subLabel = nested.subLabel
       sinceUntil = nested.sinceUntil
       backgroundColor = nested.backgroundColor
@@ -46,6 +50,7 @@ struct WidgetSnapshotPayload: Decodable {
     } else {
       title = try c.decode(String.self, forKey: .title)
       primary = try c.decode(String.self, forKey: .primary)
+      primaryUnit = try c.decodeIfPresent(String.self, forKey: .primaryUnit) ?? ""
       subLabel = try c.decode(String.self, forKey: .subLabel)
       sinceUntil = try c.decode(String.self, forKey: .sinceUntil)
       backgroundColor = try c.decode(String.self, forKey: .backgroundColor)
@@ -77,6 +82,7 @@ enum WidgetSnapshotStorage {
       momentId: nil,
       title: "Time Keeper",
       primary: "",
+      primaryUnit: "",
       subLabel: "",
       sinceUntil: "Press and hold, then Edit Widget to choose a moment",
       backgroundColor: "#1C2127",
@@ -91,6 +97,7 @@ extension WidgetSnapshotPayload {
     momentId: String?,
     title: String,
     primary: String,
+    primaryUnit: String,
     subLabel: String,
     sinceUntil: String,
     backgroundColor: String,
@@ -100,6 +107,7 @@ extension WidgetSnapshotPayload {
     self.momentId = momentId
     self.title = title
     self.primary = primary
+    self.primaryUnit = primaryUnit
     self.subLabel = subLabel
     self.sinceUntil = sinceUntil
     self.backgroundColor = backgroundColor

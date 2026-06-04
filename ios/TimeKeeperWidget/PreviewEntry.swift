@@ -6,6 +6,7 @@ struct PreviewEntry: TimelineEntry {
   let momentId: String?
   let title: String
   let primary: String
+  let primaryUnit: String
   let subLabel: String
   let sinceUntil: String
   let backgroundColor: String

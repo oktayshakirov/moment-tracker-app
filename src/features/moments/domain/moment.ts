@@ -48,6 +48,7 @@ export const momentSchema = z.object({
   categoryId: z.string(),
   backgroundType: backgroundTypeSchema,
   backgroundValue: backgroundValueSchema,
+  accentColor: z.string(),
   displayUnit: displayUnitSchema,
   createdAt: z.string(),
   updatedAt: z.string(),

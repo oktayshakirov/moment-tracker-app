@@ -18,6 +18,7 @@ type Row = {
   category_id: string;
   background_type: BackgroundType;
   background_json: string;
+  accent_color: string;
   display_unit: DisplayUnit;
   created_at: string;
   updated_at: string;
@@ -33,6 +34,7 @@ function mapRow(r: Row): Moment {
     categoryId: r.category_id,
     backgroundType: r.background_type,
     backgroundValue: bg,
+    accentColor: r.accent_color,
     displayUnit: r.display_unit,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
@@ -46,6 +48,7 @@ export type MomentInput = {
   categoryId: string;
   backgroundType: BackgroundType;
   backgroundValue: BackgroundValue;
+  accentColor: string;
   displayUnit: DisplayUnit;
 };
 
@@ -84,8 +87,8 @@ export class MomentRepository {
     await this.db.runAsync(
       `INSERT INTO moments (
         id, title, target_iso, mode, category_id, background_type, background_json,
-        display_unit, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        accent_color, display_unit, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         input.title.trim(),
@@ -94,6 +97,7 @@ export class MomentRepository {
         input.categoryId,
         input.backgroundType,
         JSON.stringify(input.backgroundValue),
+        input.accentColor,
         input.displayUnit,
         now,
         now,
@@ -114,13 +118,14 @@ export class MomentRepository {
       categoryId: input.categoryId ?? cur.categoryId,
       backgroundType: input.backgroundType ?? cur.backgroundType,
       backgroundValue: input.backgroundValue ?? cur.backgroundValue,
+      accentColor: input.accentColor ?? cur.accentColor,
       displayUnit: input.displayUnit ?? cur.displayUnit,
     };
     const now = new Date().toISOString();
     await this.db.runAsync(
       `UPDATE moments SET
         title = ?, target_iso = ?, mode = ?, category_id = ?, background_type = ?,
-        background_json = ?, display_unit = ?, updated_at = ?
+        background_json = ?, accent_color = ?, display_unit = ?, updated_at = ?
       WHERE id = ?`,
       [
         next.title.trim(),
@@ -129,6 +134,7 @@ export class MomentRepository {
         next.categoryId,
         next.backgroundType,
         JSON.stringify(next.backgroundValue),
+        next.accentColor,
         next.displayUnit,
         now,
         id,
