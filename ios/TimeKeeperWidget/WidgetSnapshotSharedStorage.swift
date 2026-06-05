@@ -2,8 +2,8 @@ import Foundation
 
 /// Reads/writes widget data in the App Group shared container.
 enum WidgetSnapshotSharedStorage {
-  static let appGroupId = "group.com.shadev.timekeeper"
-  static let widgetKind = "TimeKeeperPreview"
+  static let appGroupId = "group.com.shadev.momentkeeper"
+  static let widgetKind = "MomentKeeperPreview"
   static let catalogFileName = "moments-catalog.json"
   static let snapshotsDirectoryName = "snapshots"
 
