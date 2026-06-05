@@ -17,19 +17,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		13B07F961A680F5B00A75B9A /* TimeKeeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimeKeeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TimeKeeper/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TimeKeeper/Info.plist; sourceTree = "<group>"; };
-		2C2BA6FAFC64D9CFF149CC2B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = TimeKeeper/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* MomentKeeper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MomentKeeper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = MomentKeeper/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MomentKeeper/Info.plist; sourceTree = "<group>"; };
+		2C2BA6FAFC64D9CFF149CC2B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = MomentKeeper/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A6695546EF79A062487F03FA /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-TimeKeeper/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = TimeKeeper/SplashScreen.storyboard; sourceTree = "<group>"; };
+		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = MomentKeeper/SplashScreen.storyboard; sourceTree = "<group>"; };
 		AF99EAB37C8CE3ACE3BC6F45 /* Pods-TimeKeeper.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TimeKeeper.debug.xcconfig"; path = "Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper.debug.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		D2DD1F1FE76C2A0E49F014BC /* Pods-TimeKeeper.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TimeKeeper.release.xcconfig"; path = "Target Support Files/Pods-TimeKeeper/Pods-TimeKeeper.release.xcconfig"; sourceTree = "<group>"; };
 		ED2344CBE0D7007AE01DF55D /* libPods-TimeKeeper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TimeKeeper.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = TimeKeeper/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* TimeKeeper-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "TimeKeeper-Bridging-Header.h"; path = "TimeKeeper/TimeKeeper-Bridging-Header.h"; sourceTree = "<group>"; };
+		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = MomentKeeper/AppDelegate.swift; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* TimeKeeper-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "MomentKeeper-Bridging-Header.h"; path = "MomentKeeper/MomentKeeper-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +44,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* TimeKeeper */ = {
+		13B07FAE1A68108700A75B9A /* MomentKeeper */ = {
 			isa = PBXGroup;
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
@@ -55,7 +55,7 @@
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				2C2BA6FAFC64D9CFF149CC2B /* PrivacyInfo.xcprivacy */,
 			);
-			name = TimeKeeper;
+			name = MomentKeeper;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -67,12 +67,12 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		38ACB0AC1B34D508C3FEE389 /* TimeKeeper */ = {
+		38ACB0AC1B34D508C3FEE389 /* MomentKeeper */ = {
 			isa = PBXGroup;
 			children = (
 				A6695546EF79A062487F03FA /* ExpoModulesProvider.swift */,
 			);
-			name = TimeKeeper;
+			name = MomentKeeper;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -85,7 +85,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* TimeKeeper */,
+				13B07FAE1A68108700A75B9A /* MomentKeeper */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -100,7 +100,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* TimeKeeper.app */,
+				13B07F961A680F5B00A75B9A /* MomentKeeper.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -111,7 +111,7 @@
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
 			);
 			name = Supporting;
-			path = TimeKeeper/Supporting;
+			path = MomentKeeper/Supporting;
 			sourceTree = "<group>";
 		};
 		D3EF00872CFF2AAFE6942864 /* Pods */ = {
@@ -126,7 +126,7 @@
 		DBDCC9B5F2B3CDDD481A6F78 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				38ACB0AC1B34D508C3FEE389 /* TimeKeeper */,
+				38ACB0AC1B34D508C3FEE389 /* MomentKeeper */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
@@ -134,9 +134,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* TimeKeeper */ = {
+		13B07F861A680F5B00A75B9A /* MomentKeeper */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TimeKeeper" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MomentKeeper" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
 				C7EF2966E69CFACDEA6AC2BA /* [Expo] Configure project */,
@@ -151,9 +151,9 @@
 			);
 			dependencies = (
 			);
-			name = TimeKeeper;
+			name = MomentKeeper;
 			productName = TimeKeeper;
-			productReference = 13B07F961A680F5B00A75B9A /* TimeKeeper.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* MomentKeeper.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -169,7 +169,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "TimeKeeper" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "MomentKeeper" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -182,7 +182,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* TimeKeeper */,
+				13B07F861A680F5B00A75B9A /* MomentKeeper */,
 			);
 		};
 /* End PBXProject section */
@@ -304,7 +304,7 @@
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env",
 				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/TimeKeeper/TimeKeeper.entitlements",
+				"$(SRCROOT)/MomentKeeper/MomentKeeper.entitlements",
 				"$(SRCROOT)/Pods/Target Support Files/Pods-TimeKeeper/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
@@ -338,7 +338,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = TimeKeeper/TimeKeeper.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MomentKeeper/MomentKeeper.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2UNNRK9L5Q;
 				ENABLE_BITCODE = NO;
@@ -346,7 +346,7 @@
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = TimeKeeper/Info.plist;
+				INFOPLIST_FILE = MomentKeeper/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -361,7 +361,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.shadev.momentkeeper;
 				PRODUCT_NAME = MomentKeeper;
-				SWIFT_OBJC_BRIDGING_HEADER = "TimeKeeper/TimeKeeper-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "MomentKeeper/MomentKeeper-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -375,10 +375,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = TimeKeeper/TimeKeeper.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MomentKeeper/MomentKeeper.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 2UNNRK9L5Q;
-				INFOPLIST_FILE = TimeKeeper/Info.plist;
+				INFOPLIST_FILE = MomentKeeper/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -393,7 +393,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.shadev.momentkeeper;
 				PRODUCT_NAME = MomentKeeper;
-				SWIFT_OBJC_BRIDGING_HEADER = "TimeKeeper/TimeKeeper-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "MomentKeeper/MomentKeeper-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -521,7 +521,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "TimeKeeper" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MomentKeeper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -530,7 +530,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "TimeKeeper" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "MomentKeeper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
