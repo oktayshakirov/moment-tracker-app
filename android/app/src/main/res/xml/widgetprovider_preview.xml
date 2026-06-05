@@ -14,7 +14,7 @@
     android:initialLayout="@layout/rn_widget"
 
 
-    android:configure="com.shadev.timekeeper.WidgetConfigurationActivity"
+    android:configure="com.shadev.momentkeeper.WidgetConfigurationActivity"
     android:widgetFeatures="reconfigurable|configuration_optional"
 
     android:updatePeriodMillis="0"

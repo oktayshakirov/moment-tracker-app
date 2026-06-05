@@ -1,4 +1,4 @@
-package com.shadev.timekeeper;
+package com.shadev.momentkeeper;
 
 import com.reactnativeandroidwidget.RNWidgetConfigurationActivity;
 

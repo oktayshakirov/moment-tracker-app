@@ -1,4 +1,4 @@
-package com.shadev.timekeeper
+package com.shadev.momentkeeper
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

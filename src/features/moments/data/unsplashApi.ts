@@ -6,7 +6,7 @@
 const API_ROOT = "https://api.unsplash.com";
 
 /** Registered app slug — used in Unsplash referral links (API attribution guideline). */
-export const UNSPLASH_UTM_SOURCE = "time-keeper";
+export const UNSPLASH_UTM_SOURCE = "moment-keeper";
 
 const UNSPLASH_HOME = "https://unsplash.com/";
 

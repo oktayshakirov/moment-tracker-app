@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Time Keeper",
-    "slug": "time-keeper",
-    "scheme": "timekeeper",
+    "name": "Moment Keeper",
+    "slug": "moment-keeper",
+    "scheme": "momentkeeper",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,12 +16,14 @@
     "ios": {
       "supportsTablet": true,
       "entitlements": {
-        "com.apple.security.application-groups": ["group.com.shadev.timekeeper"]
+        "com.apple.security.application-groups": [
+          "group.com.shadev.momentkeeper"
+        ]
       },
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Choose a photo as the background for your moments."
       },
-      "bundleIdentifier": "com.shadev.timekeeper"
+      "bundleIdentifier": "com.shadev.momentkeeper"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,7 +33,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": ["android.permission.RECORD_AUDIO"],
-      "package": "com.shadev.timekeeper"
+      "package": "com.shadev.momentkeeper"
     },
     "web": {
       "favicon": "./assets/icon.png"
@@ -61,7 +63,7 @@
           "widgets": [
             {
               "name": "Preview",
-              "label": "Time Keeper",
+              "label": "Moment Keeper",
               "description": "Choose a moment to show on your home screen",
               "minWidth": "110dp",
               "minHeight": "110dp",

@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.shadev.timekeeper'
+    namespace 'com.shadev.momentkeeper'
     defaultConfig {
-        applicationId 'com.shadev.timekeeper'
+        applicationId 'com.shadev.momentkeeper'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

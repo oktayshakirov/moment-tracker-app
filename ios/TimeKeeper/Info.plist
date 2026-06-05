@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Time Keeper</string>
+    <string>Moment Keeper</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -27,8 +27,8 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>timekeeper</string>
-          <string>com.shadev.timekeeper</string>
+          <string>momentkeeper</string>
+          <string>com.shadev.momentkeeper</string>
         </array>
       </dict>
     </array>

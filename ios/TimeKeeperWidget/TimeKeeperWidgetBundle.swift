@@ -17,7 +17,7 @@ struct PreviewWidget: Widget {
       entry in
       PreviewWidgetView(entry: entry)
     }
-    .configurationDisplayName("Time Keeper")
+    .configurationDisplayName("Moment Keeper")
     .description(
       "Show a moment on your home screen. Long press the widget, then tap Edit Widget to choose which moment to display."
     )

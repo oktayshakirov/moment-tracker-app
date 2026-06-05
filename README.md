@@ -1,14 +1,14 @@
-# ⏱️ Time Keeper
+# ⏱️ Moment Keeper
 
-Time Keeper is a beautiful countdown and elapsed-time tracker built with React Native and Expo. Create personal **moments** for milestones, anniversaries, goals, and memories — then watch time pass with live counters, rich backgrounds, and home screen widgets.
+Moment Keeper is a beautiful countdown and elapsed-time tracker built with React Native and Expo. Create personal **moments** for milestones, anniversaries, goals, and memories — then watch time pass with live counters, rich backgrounds, and home screen widgets.
 
-> Transform your phone into a personal time capsule. Time Keeper combines elegant dark UI with flexible display units, categories, and native widgets so the moments that matter stay visible every day.
+> Transform your phone into a personal time capsule. Moment Keeper combines elegant dark UI with flexible display units, categories, and native widgets so the moments that matter stay visible every day.
 
-Whether you are counting down to a big day, tracking how long something has lasted, or keeping a milestone on your home screen, Time Keeper makes it simple to create, organize, and revisit the dates that define your life.
+Whether you are counting down to a big day, tracking how long something has lasted, or keeping a milestone on your home screen, Moment Keeper makes it simple to create, organize, and revisit the dates that define your life.
 
 ## Demo
 
-![Time Keeper — Countdown & Elapsed Time Tracker](https://oktayshakirov.com/assets/images/projects/coming-soon.jpeg "Time Keeper")
+![Moment Keeper — Countdown & Elapsed Time Tracker](https://oktayshakirov.com/assets/images/projects/coming-soon.jpeg "Moment Keeper")
 
 <p align="center">
   <a href="">
@@ -132,7 +132,7 @@ eas build --platform ios
 # OR build locally (requires macOS and Xcode)
 # Build through Xcode or use:
 cd ios
-xcodebuild -workspace TimeKeeper.xcworkspace -scheme TimeKeeper -configuration Release
+xcodebuild -workspace MomentKeeper.xcworkspace -scheme MomentKeeper -configuration Release
 ```
 
 ## 📲 How to Use
@@ -142,7 +142,7 @@ xcodebuild -workspace TimeKeeper.xcworkspace -scheme TimeKeeper -configuration R
 3. **Customize**: Choose a category, background, and display unit
 4. **Save**: Your moment appears in the list — **Since** if the date is in the past, **Until** if it is in the future
 5. **View details**: Tap a moment for the full-screen view
-6. **Add a widget**: Long-press the home screen, add the Time Keeper widget, and pick a moment to display
+6. **Add a widget**: Long-press the home screen, add the Moment Keeper widget, and pick a moment to display
 
 ## 🧩 Moment basics
 
@@ -193,7 +193,7 @@ src/
 - **Zod** (^4.3.6) — Runtime schema validation
 - **date-fns** (^4.1.0) — Date math and formatting
 - **react-native-android-widget** — Android home screen widgets
-- **WidgetKit** (iOS) — Native widget extension in `ios/TimeKeeperWidget`
+- **WidgetKit** (iOS) — Native widget extension in `ios/MomentKeeperWidget`
 
 ## Troubleshooting
 

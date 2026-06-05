@@ -27,6 +27,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="timekeeper"/>
+        <data android:scheme="momentkeeper"/>
       </intent-filter>
     </activity>
     <activity android:name=".WidgetConfigurationActivity" android:exported="true">
@@ -34,7 +35,7 @@
         <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
       </intent-filter>
     </activity>
-    <receiver android:name=".widget.Preview" android:exported="false" android:label="Time Keeper Preview">
+    <receiver android:name=".widget.Preview" android:exported="false" android:label="Moment Keeper">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
         <action android:name="com.shadev.timekeeper.WIDGET_CLICK"/>
