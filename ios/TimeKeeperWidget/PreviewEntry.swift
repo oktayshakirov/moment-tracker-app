@@ -17,6 +17,6 @@ struct PreviewEntry: TimelineEntry {
     guard configured, let momentId, !momentId.isEmpty else { return nil }
     let encoded =
       momentId.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? momentId
-    return URL(string: "momentkeeper://moment/\(encoded)")
+    return URL(string: "momenttracker://moment/\(encoded)")
   }
 }

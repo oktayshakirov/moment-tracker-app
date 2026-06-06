@@ -27,7 +27,7 @@ export type WidgetPayload = {
 };
 
 export const WIDGET_PLACEHOLDER_SNAPSHOT: WidgetSnapshot = {
-  title: "Moment Keeper",
+  title: "Moment Tracker",
   primary: "",
   primaryUnit: "",
   subLabel: "",

@@ -1,4 +1,4 @@
-package com.shadev.momentkeeper.widget;
+package com.shadev.momenttracker.widget;
 
 import com.reactnativeandroidwidget.RNWidgetProvider;
 

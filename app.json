@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Moment Keeper",
-    "slug": "moment-keeper",
-    "scheme": "momentkeeper",
+    "name": "Moment Tracker",
+    "slug": "moment-tracker",
+    "scheme": "momenttracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,13 +17,13 @@
       "supportsTablet": true,
       "entitlements": {
         "com.apple.security.application-groups": [
-          "group.com.shadev.momentkeeper"
+          "group.com.shadev.momenttracker"
         ]
       },
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Choose a photo as the background for your moments."
       },
-      "bundleIdentifier": "com.shadev.momentkeeper"
+      "bundleIdentifier": "com.shadev.momenttracker"
     },
     "android": {
       "adaptiveIcon": {
@@ -33,7 +33,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": ["android.permission.RECORD_AUDIO"],
-      "package": "com.shadev.momentkeeper"
+      "package": "com.shadev.momenttracker"
     },
     "web": {
       "favicon": "./assets/icon.png"
@@ -63,7 +63,7 @@
           "widgets": [
             {
               "name": "Preview",
-              "label": "Moment Keeper",
+              "label": "Moment Tracker",
               "description": "Choose a moment to show on your home screen",
               "minWidth": "110dp",
               "minHeight": "110dp",

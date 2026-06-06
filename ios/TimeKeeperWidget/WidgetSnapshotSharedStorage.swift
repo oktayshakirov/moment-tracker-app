@@ -2,8 +2,8 @@ import Foundation
 
 /// Reads/writes widget data in the App Group shared container.
 enum WidgetSnapshotSharedStorage {
-  static let appGroupId = "group.com.shadev.momentkeeper"
-  static let widgetKind = "MomentKeeperPreview"
+  static let appGroupId = "group.com.shadev.momenttracker"
+  static let widgetKind = "MomentTrackerPreview"
   static let catalogFileName = "moments-catalog.json"
   static let snapshotsDirectoryName = "snapshots"
 
@@ -71,7 +71,7 @@ enum WidgetSnapshotSharedStorage {
   private static func write(json: String, to url: URL?, label: String) -> Bool {
     guard let url else {
       WidgetLog.info(
-        "[WidgetSnapshot] App group container is nil (\(appGroupId)). Enable App Groups on TimeKeeper and TimeKeeperWidget."
+        "[WidgetSnapshot] App group container is nil (\(appGroupId)). Enable App Groups on MomentTracker and MomentTrackerWidget."
       )
       return false
     }

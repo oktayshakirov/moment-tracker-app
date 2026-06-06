@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { WidgetPayload } from "./widgetSnapshot";
 
-const CATALOG_KEY = "@timekeeper/moments-catalog";
-const snapshotKey = (momentId: string) => `@timekeeper/snapshots/${momentId}`;
+const CATALOG_KEY = "@momenttracker/moments-catalog";
+const snapshotKey = (momentId: string) => `@momenttracker/snapshots/${momentId}`;
 
 export async function saveWidgetCatalog(
   entries: { id: string; title: string; backgroundColor: string }[],

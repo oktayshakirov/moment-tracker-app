@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { WidgetBindingsMap } from "./widgetCatalog";
 
-const BINDINGS_KEY = "@timekeeper/widgetBindings";
+const BINDINGS_KEY = "@momenttracker/widgetBindings";
 
 export async function getWidgetBindings(): Promise<WidgetBindingsMap> {
   const raw = await AsyncStorage.getItem(BINDINGS_KEY);

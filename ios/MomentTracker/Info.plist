@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Moment Keeper</string>
+    <string>Moment Tracker</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -27,8 +27,8 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>momentkeeper</string>
-          <string>com.shadev.momentkeeper</string>
+          <string>momenttracker</string>
+          <string>com.shadev.momenttracker</string>
         </array>
       </dict>
     </array>

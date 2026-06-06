@@ -1,4 +1,4 @@
-package com.shadev.momentkeeper
+package com.shadev.momenttracker
 
 import android.app.Application
 import android.content.res.Configuration

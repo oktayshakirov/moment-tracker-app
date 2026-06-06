@@ -1,4 +1,4 @@
-package com.shadev.momentkeeper
+package com.shadev.momenttracker
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

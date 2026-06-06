@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "MomentKeeper.app"
-               BlueprintName = "TimeKeeper"
-               ReferencedContainer = "container:TimeKeeper.xcodeproj">
+               BuildableName = "MomentTracker.app"
+               BlueprintName = "MomentTracker"
+               ReferencedContainer = "container:MomentTracker.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "TimeKeeperTests.xctest"
-               BlueprintName = "TimeKeeperTests"
-               ReferencedContainer = "container:TimeKeeper.xcodeproj">
+               BuildableName = "MomentTrackerTests.xctest"
+               BlueprintName = "MomentTrackerTests"
+               ReferencedContainer = "container:MomentTracker.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "MomentKeeper.app"
-            BlueprintName = "TimeKeeper"
-            ReferencedContainer = "container:TimeKeeper.xcodeproj">
+            BuildableName = "MomentTracker.app"
+            BlueprintName = "MomentTracker"
+            ReferencedContainer = "container:MomentTracker.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "MomentKeeper.app"
-            BlueprintName = "TimeKeeper"
-            ReferencedContainer = "container:TimeKeeper.xcodeproj">
+            BuildableName = "MomentTracker.app"
+            BlueprintName = "MomentTracker"
+            ReferencedContainer = "container:MomentTracker.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

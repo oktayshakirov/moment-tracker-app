@@ -3,7 +3,7 @@ import SwiftUI
 import WidgetKit
 
 @main
-struct TimeKeeperWidgetBundle: WidgetBundle {
+struct MomentTrackerWidgetBundle: WidgetBundle {
   var body: some Widget {
     PreviewWidget()
   }
@@ -17,7 +17,7 @@ struct PreviewWidget: Widget {
       entry in
       PreviewWidgetView(entry: entry)
     }
-    .configurationDisplayName("Moment Keeper")
+    .configurationDisplayName("Moment Tracker")
     .description(
       "Show a moment on your home screen. Long press the widget, then tap Edit Widget to choose which moment to display."
     )

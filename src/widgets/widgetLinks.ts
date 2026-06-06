@@ -1,5 +1,5 @@
 /** Deep-link scheme — must match `scheme` in app.json. */
-export const WIDGET_SCHEME = "timekeeper";
+export const WIDGET_SCHEME = "momenttracker";
 
 /** Default widget id for Android configure deep links. */
 export const IOS_WIDGET_INSTANCE_ID = 0;
