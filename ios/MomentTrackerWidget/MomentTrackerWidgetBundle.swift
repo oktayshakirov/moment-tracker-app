@@ -1,27 +1,18 @@
-import AppIntents
-import SwiftUI
+//
+//  MomentTrackerWidgetBundle.swift
+//  MomentTrackerWidget
+//
+//  Created by Oktay Shakirov on 07.06.26.
+//
+
 import WidgetKit
+import SwiftUI
 
 @main
 struct MomentTrackerWidgetBundle: WidgetBundle {
-  var body: some Widget {
-    PreviewWidget()
-  }
-}
-
-struct PreviewWidget: Widget {
-  let kind = WidgetSnapshotSharedStorage.widgetKind
-
-  var body: some WidgetConfiguration {
-    AppIntentConfiguration(kind: kind, intent: WidgetMomentConfigurationIntent.self, provider: PreviewProvider()) {
-      entry in
-      PreviewWidgetView(entry: entry)
+    var body: some Widget {
+        MomentTrackerWidget()
+        MomentTrackerWidgetControl()
+        MomentTrackerWidgetLiveActivity()
     }
-    .configurationDisplayName("Moment Tracker")
-    .description(
-      "Show a moment on your home screen. Long press the widget, then tap Edit Widget to choose which moment to display."
-    )
-    .supportedFamilies([.systemSmall])
-    .contentMarginsDisabled()
-  }
 }
