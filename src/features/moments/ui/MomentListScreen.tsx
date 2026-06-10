@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Modal,
   Pressable,
   RefreshControl,
   SectionList,
@@ -28,6 +29,8 @@ type Section = {
   data: Moment[];
 };
 
+type SortOrder = "alpha" | "date-asc" | "date-desc";
+
 export function MomentListScreen({ navigation }: HomeScreenProps) {
   const theme = useAppTheme();
   const insets = useSafeAreaInsets();
@@ -35,6 +38,8 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
   const [sections, setSections] = useState<Section[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState<SortOrder>("alpha");
+  const [showSortModal, setShowSortModal] = useState(false);
   const activeSwipeRef = useRef<InstanceType<typeof Swipeable> | null>(null);
 
   const load = useCallback(async () => {
@@ -76,23 +81,31 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
     setRefreshing(false);
   }, [load]);
 
+  const displaySections = useMemo(() => {
+    const sortFn = (a: Moment, b: Moment): number => {
+      switch (sortOrder) {
+        case "alpha":
+          return a.title.localeCompare(b.title);
+        case "date-asc":
+          return new Date(a.targetDateTime).getTime() - new Date(b.targetDateTime).getTime();
+        case "date-desc":
+          return new Date(b.targetDateTime).getTime() - new Date(a.targetDateTime).getTime();
+      }
+    };
+    return sections.map((s) => ({ ...s, data: [...s.data].sort(sortFn) }));
+  }, [sections, sortOrder]);
+
   const totalMoments = useMemo(
     () => sections.reduce((acc, s) => acc + s.data.length, 0),
     [sections],
-  );
-
-  const chrome = (
-    <HomeListChrome
-      theme={theme}
-      topInset={insets.top}
-      navigation={navigation}
-    />
   );
 
   const header = (
     <HomeListChrome
       theme={theme}
       topInset={insets.top}
+      sortOrder={sortOrder}
+      onOpenSort={() => setShowSortModal(true)}
       navigation={navigation}
     />
   );
@@ -115,7 +128,7 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
       <View style={styles.shell}>
         {header}
         <SectionList
-          sections={sections}
+          sections={displaySections}
           keyExtractor={(item) => item.id}
           contentContainerStyle={[
             styles.listContent,
@@ -187,6 +200,54 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
           }
         />
       </View>
+
+      <Modal visible={showSortModal} animationType="fade" transparent>
+        <Pressable
+          style={[styles.sortBackdrop, { backgroundColor: theme.overlay }]}
+          onPress={() => setShowSortModal(false)}
+        >
+          <Pressable
+            style={[styles.sortSheet, { backgroundColor: theme.bgElevated }]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <Text style={[styles.sortTitle, { color: theme.text }]}>
+              Sorting Options
+            </Text>
+            <Text style={[styles.sortSubtitle, { color: theme.textSecondary }]}>
+              How would you like to sort your moments?
+            </Text>
+            {(
+              [
+                { value: "alpha", label: "Alphabetically" },
+                { value: "date-asc", label: "Date Ascending" },
+                { value: "date-desc", label: "Date Descending" },
+              ] as { value: SortOrder; label: string }[]
+            ).map((opt) => (
+              <Pressable
+                key={opt.value}
+                style={[
+                  styles.sortOption,
+                  { backgroundColor: theme.glassFill, borderColor: theme.glassBorder },
+                  sortOrder === opt.value && { borderColor: theme.accent, backgroundColor: theme.accent + "22" },
+                ]}
+                onPress={() => {
+                  setSortOrder(opt.value);
+                  setShowSortModal(false);
+                }}
+              >
+                <Text
+                  style={[
+                    styles.sortOptionLabel,
+                    { color: sortOrder === opt.value ? theme.accent : theme.text },
+                  ]}
+                >
+                  {opt.label}
+                </Text>
+              </Pressable>
+            ))}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </Screen>
   );
 }
@@ -194,35 +255,54 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
 type HomeListChromeProps = {
   theme: Theme;
   topInset: number;
+  sortOrder: SortOrder;
+  onOpenSort: () => void;
   navigation: HomeScreenProps["navigation"];
 };
 
-function HomeListChrome({ theme, topInset, navigation }: HomeListChromeProps) {
+function HomeListChrome({ theme, topInset, sortOrder, onOpenSort, navigation }: HomeListChromeProps) {
   return (
     <View style={[styles.chromeBar, { paddingTop: topInset + space.xs, backgroundColor: theme.bg }]}>
-        <Text
-          style={[styles.chromeScreenTitle, { color: theme.text }]}
-          numberOfLines={1}
-        >
-          Moments
-        </Text>
-        <Pressable
-          onPress={() => navigation.navigate("MomentForm", {})}
-          hitSlop={8}
-          style={({ pressed }) => [
-            styles.chromePill,
-            styles.chromeIconPill,
-            {
-              backgroundColor: theme.glassFill,
-              borderColor: theme.glassBorder,
-            },
-            pressed && styles.chromePillPressed,
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Add moment"
-        >
-          <Ionicons name="add" size={22} color={theme.accent} />
-        </Pressable>
+      <Text
+        style={[styles.chromeScreenTitle, { color: theme.text }]}
+        numberOfLines={1}
+      >
+        Moments
+      </Text>
+      <Pressable
+        onPress={onOpenSort}
+        hitSlop={8}
+        style={({ pressed }) => [
+          styles.chromePill,
+          styles.chromeIconPill,
+          {
+            backgroundColor: theme.glassFill,
+            borderColor: theme.glassBorder,
+          },
+          pressed && styles.chromePillPressed,
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Sort moments"
+      >
+        <Ionicons name="swap-vertical-outline" size={20} color={theme.textSecondary} />
+      </Pressable>
+      <Pressable
+        onPress={() => navigation.navigate("MomentForm", {})}
+        hitSlop={8}
+        style={({ pressed }) => [
+          styles.chromePill,
+          styles.chromeIconPill,
+          {
+            backgroundColor: theme.glassFill,
+            borderColor: theme.glassBorder,
+          },
+          pressed && styles.chromePillPressed,
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Add moment"
+      >
+        <Ionicons name="add" size={22} color={theme.accent} />
+      </Pressable>
     </View>
   );
 }
@@ -309,5 +389,35 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  sortBackdrop: {
+    flex: 1,
+    justifyContent: "center",
+    padding: space.xl,
+  },
+  sortSheet: {
+    borderRadius: radii.lg,
+    padding: space.xl,
+    gap: space.md,
+  },
+  sortTitle: {
+    fontSize: typography.title,
+    fontWeight: "700",
+    letterSpacing: -0.3,
+  },
+  sortSubtitle: {
+    fontSize: typography.body,
+    lineHeight: 22,
+    marginBottom: space.sm,
+  },
+  sortOption: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: radii.lg,
+    paddingVertical: space.lg,
+    alignItems: "center",
+  },
+  sortOptionLabel: {
+    fontSize: typography.title2,
+    fontWeight: "700",
   },
 });
