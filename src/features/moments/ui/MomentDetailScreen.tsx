@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Linking,
   Pressable,
@@ -48,6 +49,7 @@ export function MomentDetailScreen({
   const [moment, setMoment] = useState<Moment | null>(null);
   const [now, setNow] = useState(() => new Date());
   const [viewIndex, setViewIndex] = useState(0);
+  const [sharing, setSharing] = useState(false);
   const shotRef = useRef<View>(null);
   const momentRef = useRef<Moment | null>(null);
   const nowRef = useRef(now);
@@ -84,6 +86,7 @@ export function MomentDetailScreen({
   const shareImage = useCallback(async () => {
     const m = momentRef.current;
     if (!m) return;
+    setSharing(true);
     const n = nowRef.current;
     const rowLines = formatDurationRows(m, n);
     const su = formatSinceUntilLabel(m, n);
@@ -105,6 +108,7 @@ export function MomentDetailScreen({
     const body = lines.join("\n");
     const fallbackText = `${m.title}\n${body}`;
     if (!shotRef.current) {
+      setSharing(false);
       await Share.share({ message: fallbackText });
       return;
     }
@@ -114,6 +118,7 @@ export function MomentDetailScreen({
         quality: 0.95,
         result: "tmpfile",
       });
+      setSharing(false);
       const available = await Sharing.isAvailableAsync();
       if (available) {
         await Sharing.shareAsync(uri, {
@@ -124,6 +129,7 @@ export function MomentDetailScreen({
         await Share.share({ url: uri });
       }
     } catch {
+      setSharing(false);
       await Share.share({ message: fallbackText });
     }
   }, []);
@@ -240,6 +246,7 @@ export function MomentDetailScreen({
         topInset={insets.top}
         onBack={() => navigation.goBack()}
         showActions
+        sharing={sharing}
         onShare={() => void shareImage()}
         onEdit={() =>
           navigation.navigate("MomentForm", { momentId: moment.id })
@@ -291,6 +298,7 @@ type DetailChromeBarProps = {
   topInset: number;
   onBack: () => void;
   showActions: boolean;
+  sharing?: boolean;
   onShare: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -301,6 +309,7 @@ function DetailChromeBar({
   topInset,
   onBack,
   showActions,
+  sharing = false,
   onShare,
   onEdit,
   onDelete,
@@ -335,12 +344,26 @@ function DetailChromeBar({
 
         {showActions ? (
           <View style={styles.chromeActions}>
-            <IconPill
-              theme={theme}
-              name="share-outline"
-              onPress={onShare}
+            <Pressable
+              onPress={sharing ? undefined : onShare}
+              hitSlop={8}
+              style={[
+                styles.chromePill,
+                styles.chromeIconPill,
+                {
+                  backgroundColor: theme.glassFill,
+                  borderColor: theme.glassBorder,
+                },
+              ]}
+              accessibilityRole="button"
               accessibilityLabel="Share"
-            />
+            >
+              {sharing ? (
+                <ActivityIndicator size="small" color={theme.text} />
+              ) : (
+                <Ionicons name="share-outline" size={22} color={theme.text} />
+              )}
+            </Pressable>
             <IconPill
               theme={theme}
               name="create-outline"

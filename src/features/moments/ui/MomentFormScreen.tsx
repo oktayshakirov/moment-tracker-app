@@ -86,7 +86,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const momentId = route.params?.momentId;
 
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState(() => trimToMinute(new Date()));
+  const [date, setDate] = useState(() => new Date());
   const [categoryId, setCategoryId] = useState<string | null>(null);
   type ImageValue = Extract<BackgroundValue, { kind: "image" }>;
   const [imageValue, setImageValue] = useState<ImageValue | null>(null);
@@ -151,8 +151,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     }
     setSaving(true);
     try {
-      const atMinute = trimToMinute(date);
-      const iso = atMinute.toISOString();
+      const iso = date.toISOString();
       const mode = modeFromTargetDate(atMinute);
       const backgroundValue: BackgroundValue = imageValue ?? { kind: "solid", color: accentColor };
       const backgroundType = imageValue ? "image" : "solid";
