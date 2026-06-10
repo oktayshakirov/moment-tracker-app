@@ -1,10 +1,96 @@
-/**
- * Loads `.env` before Expo merges static config. Ensures `EXPO_PUBLIC_*` vars
- * are available when Metro and native tooling run (including `expo run:android`).
- *
- * Do not put API secrets in `expo.extra` or any field that gets written into
- * native manifests/plists — Unsplash **Secret Key** must never ship in the app.
- */
 require("dotenv").config();
 
-module.exports = require("./app.json");
+module.exports = {
+  expo: {
+    name: "Moment Tracker",
+    slug: "moment-tracker",
+    scheme: "momenttracker",
+    version: "1.0.0",
+    orientation: "portrait",
+    icon: "./assets/icon.png",
+    userInterfaceStyle: "dark",
+    newArchEnabled: true,
+    splash: {
+      image: "./assets/splash-icon.png",
+      resizeMode: "contain",
+      backgroundColor: "#1C2127",
+    },
+    ios: {
+      supportsTablet: true,
+      bundleIdentifier: "com.shadev.momenttracker",
+      entitlements: {
+        "com.apple.security.application-groups": [
+          "group.com.shadev.momenttracker",
+        ],
+      },
+      infoPlist: {
+        NSPhotoLibraryUsageDescription:
+          "Choose a photo as the background for your moments.",
+        GADApplicationIdentifier: "ca-app-pub-5852582960793521~7118166594",
+        NSUserTrackingUsageDescription:
+          "This allows us to show you relevant ads and support Moment Tracker.",
+      },
+    },
+    android: {
+      adaptiveIcon: {
+        foregroundImage: "./assets/splash-icon.png",
+        backgroundColor: "#1C2127",
+      },
+      edgeToEdgeEnabled: true,
+      predictiveBackGestureEnabled: false,
+      permissions: ["android.permission.RECORD_AUDIO"],
+      package: "com.shadev.momenttracker",
+    },
+    web: {
+      favicon: "./assets/icon.png",
+    },
+    plugins: [
+      [
+        "expo-splash-screen",
+        {
+          backgroundColor: "#1C2127",
+          image: "./assets/splash-icon.png",
+          imageWidth: 180,
+          resizeMode: "contain",
+        },
+      ],
+      "expo-sqlite",
+      "@react-native-community/datetimepicker",
+      [
+        "expo-image-picker",
+        {
+          photosPermission:
+            "Allow Moment Tracker to use photos for your moment backgrounds.",
+        },
+      ],
+      "expo-font",
+      [
+        "react-native-android-widget",
+        {
+          widgets: [
+            {
+              name: "Preview",
+              label: "Moment Tracker",
+              description: "Choose a moment to show on your home screen",
+              minWidth: "110dp",
+              minHeight: "110dp",
+              targetCellWidth: 2,
+              targetCellHeight: 2,
+              resizeMode: "none",
+              updatePeriodMillis: 0,
+              widgetFeatures: "reconfigurable|configuration_optional",
+            },
+          ],
+        },
+      ],
+      "expo-tracking-transparency",
+      [
+        "react-native-google-mobile-ads",
+        {
+          androidAppId: "ca-app-pub-5852582960793521~3595564418",
+          iosAppId: "ca-app-pub-5852582960793521~7118166594",
+        },
+      ],
+    ],
+  },
+};
