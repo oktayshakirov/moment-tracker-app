@@ -3,7 +3,6 @@ import {
   Alert,
   Linking,
   Pressable,
-  ScrollView,
   Share,
   StyleSheet,
   Text,
@@ -176,15 +175,14 @@ export function MomentDetailScreen({
       <View ref={shotRef} style={styles.capture} collapsable={false}>
         <MomentBackground moment={moment} />
         <View style={styles.scrim} />
-        <ScrollView
-          contentContainerStyle={[
-            styles.scroll,
-            { paddingTop: chromeBottom + 12 },
-            unsplashAttr && {
-              paddingBottom: insets.bottom + 52,
+        <View
+          style={[
+            styles.content,
+            {
+              paddingTop: chromeBottom + 12,
+              paddingBottom: unsplashAttr ? insets.bottom + 52 : insets.bottom + space.xxl,
             },
           ]}
-          showsVerticalScrollIndicator={false}
         >
           <Animated.View
             entering={FadeInUp.duration(420)}
@@ -205,7 +203,7 @@ export function MomentDetailScreen({
           <View style={styles.bottomDateWrap}>
             <Text style={styles.bottomDate}>{eventDateText}</Text>
           </View>
-        </ScrollView>
+        </View>
         {unsplashAttr ? (
           <View
             style={[
@@ -576,9 +574,9 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.35)",
   },
-  scroll: {
+  content: {
+    flex: 1,
     paddingHorizontal: space.xl,
-    paddingBottom: space.xxl,
   },
   heroBlock: {
     gap: 8,

@@ -24,19 +24,13 @@ import { syncAllWidgets } from "@/widgets/syncWidgets";
 import { SwipeableMomentRow } from "./SwipeableMomentRow";
 
 type Section = {
-  category: Category;
+  category: Category | null;
   data: Moment[];
 };
-
-/** Matches `MomentDetailScreen` chrome row height for scroll padding. */
-function screenChromeBottomInset(topInset: number): number {
-  return topInset + space.xs + 44 + space.sm;
-}
 
 export function MomentListScreen({ navigation }: HomeScreenProps) {
   const theme = useAppTheme();
   const insets = useSafeAreaInsets();
-  const chromeBottom = screenChromeBottomInset(insets.top);
   const { categories, moments } = useRepositories();
   const [sections, setSections] = useState<Section[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -59,6 +53,10 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
         if (data.length > 0) {
           next.push({ category: c, data });
         }
+      }
+      const uncategorized = byCat.get(null) ?? [];
+      if (uncategorized.length > 0) {
+        next.push({ category: null, data: uncategorized });
       }
       setSections(next);
     } finally {
@@ -91,14 +89,22 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
     />
   );
 
+  const header = (
+    <HomeListChrome
+      theme={theme}
+      topInset={insets.top}
+      navigation={navigation}
+    />
+  );
+
   if (initialLoading) {
     return (
       <Screen edges={["left", "right"]}>
         <View style={styles.shell}>
-          <View style={[styles.loading, { paddingTop: chromeBottom + 12 }]}>
+          {header}
+          <View style={styles.loading}>
             <ActivityIndicator size="large" color={theme.accent} />
           </View>
-          {chrome}
         </View>
       </Screen>
     );
@@ -107,12 +113,12 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
   return (
     <Screen edges={["left", "right"]}>
       <View style={styles.shell}>
+        {header}
         <SectionList
           sections={sections}
           keyExtractor={(item) => item.id}
           contentContainerStyle={[
             styles.listContent,
-            { paddingTop: chromeBottom + 12 },
             totalMoments === 0 && styles.emptyGrow,
           ]}
           stickySectionHeadersEnabled={false}
@@ -128,13 +134,17 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
               <View
                 style={[
                   styles.dot,
-                  { backgroundColor: section.category.colorHex },
+                  {
+                    backgroundColor: section.category
+                      ? section.category.colorHex
+                      : theme.textTertiary,
+                  },
                 ]}
               />
               <Text
                 style={[styles.sectionTitle, { color: theme.textSecondary }]}
               >
-                {section.category.title}
+                {section.category ? section.category.title : "General"}
               </Text>
             </View>
           )}
@@ -176,7 +186,6 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
             </View>
           }
         />
-        {chrome}
       </View>
     </Screen>
   );
@@ -190,8 +199,7 @@ type HomeListChromeProps = {
 
 function HomeListChrome({ theme, topInset, navigation }: HomeListChromeProps) {
   return (
-    <View style={styles.chromeOverlay} pointerEvents="box-none">
-      <View style={[styles.chromeBar, { paddingTop: topInset + space.xs }]}>
+    <View style={[styles.chromeBar, { paddingTop: topInset + space.xs, backgroundColor: theme.bg }]}>
         <Text
           style={[styles.chromeScreenTitle, { color: theme.text }]}
           numberOfLines={1}
@@ -215,7 +223,6 @@ function HomeListChrome({ theme, topInset, navigation }: HomeListChromeProps) {
         >
           <Ionicons name="add" size={22} color={theme.accent} />
         </Pressable>
-      </View>
     </View>
   );
 }
@@ -223,11 +230,6 @@ function HomeListChrome({ theme, topInset, navigation }: HomeListChromeProps) {
 const styles = StyleSheet.create({
   shell: {
     flex: 1,
-  },
-  chromeOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "flex-start",
-    zIndex: 20,
   },
   chromeBar: {
     flexDirection: "row",

@@ -1,9 +1,5 @@
 import type * as SQLite from "expo-sqlite";
-import {
-  categorySchema,
-  DEFAULT_CATEGORY_ID,
-  type Category,
-} from "../domain/category";
+import { categorySchema, type Category } from "../domain/category";
 import { createId } from "@/shared/lib/ids";
 
 type Row = {
@@ -69,11 +65,10 @@ export class CategoryRepository {
   }
 
   async delete(id: string): Promise<void> {
-    if (id === DEFAULT_CATEGORY_ID) return;
     await this.db.withTransactionAsync(async () => {
       await this.db.runAsync(
-        "UPDATE moments SET category_id = ? WHERE category_id = ?",
-        [DEFAULT_CATEGORY_ID, id],
+        "UPDATE moments SET category_id = NULL WHERE category_id = ?",
+        [id],
       );
       await this.db.runAsync("DELETE FROM categories WHERE id = ?", [id]);
     });

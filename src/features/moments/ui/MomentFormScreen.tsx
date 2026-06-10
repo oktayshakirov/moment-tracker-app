@@ -27,10 +27,7 @@ import ColorPicker, {
 } from "reanimated-color-picker";
 import type { MomentFormScreenProps } from "@/app/navigation/types";
 import { useRepositories } from "@/app/database/AppDataProvider";
-import {
-  DEFAULT_CATEGORY_ID,
-  type Category,
-} from "@/features/categories/domain/category";
+import type { Category } from "@/features/categories/domain/category";
 import { CategoryEditorModal } from "@/features/categories/ui/CategoryEditorModal";
 import { KeyboardDismissScrollView } from "@/shared/ui/KeyboardDismissScrollView";
 import { Screen } from "@/shared/ui/Screen";
@@ -90,7 +87,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
 
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(() => trimToMinute(new Date()));
-  const [categoryId, setCategoryId] = useState(DEFAULT_CATEGORY_ID);
+  const [categoryId, setCategoryId] = useState<string | null>(null);
   type ImageValue = Extract<BackgroundValue, { kind: "image" }>;
   const [imageValue, setImageValue] = useState<ImageValue | null>(null);
   const [accentColor, setAccentColor] = useState(DEFAULT_SOLID_COLOR);
@@ -119,8 +116,8 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const previewAccent = accentColor;
   const previewAccentSubtle = `${previewAccent}1F`;
 
-  const selectedCategory = catList.find((c) => c.id === categoryId);
-  const selectedCategoryTitle = selectedCategory?.title ?? "Moments";
+  const selectedCategory = catList.find((c) => c.id === categoryId) ?? null;
+  const selectedCategoryTitle = selectedCategory?.title ?? "None";
 
   const loadCategories = useCallback(async () => {
     setCatList(await categories.listAll());
@@ -703,6 +700,40 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                     Add category
                   </Text>
                 </Pressable>
+                {/* None option */}
+                <View
+                  style={[
+                    styles.categoryManageRow,
+                    { borderColor: theme.separator },
+                    categoryId === null && { backgroundColor: previewAccentSubtle },
+                  ]}
+                >
+                  <Pressable
+                    style={styles.categoryManageMain}
+                    onPress={() => {
+                      setCategoryId(null);
+                      setShowCategoryPicker(false);
+                    }}
+                  >
+                    <View
+                      style={[
+                        styles.categoryDotSmall,
+                        { backgroundColor: theme.textTertiary },
+                      ]}
+                    />
+                    <Text
+                      style={[
+                        styles.optionLabel,
+                        { color: theme.textSecondary, flex: 1 },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      None
+                    </Text>
+                  </Pressable>
+                  <View style={styles.categoryIconSpacer} />
+                  <View style={styles.categoryIconSpacer} />
+                </View>
                 {catList.map((c) => {
                   const isSelected = c.id === categoryId;
                   return (
@@ -754,42 +785,38 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                           color={theme.textSecondary}
                         />
                       </Pressable>
-                      {c.id !== DEFAULT_CATEGORY_ID ? (
-                        <Pressable
-                          onPress={() =>
-                            Alert.alert(
-                              "Delete category?",
-                              `Moments in "${c.title}" will move to the default category.`,
-                              [
-                                { text: "Cancel", style: "cancel" },
-                                {
-                                  text: "Delete",
-                                  style: "destructive",
-                                  onPress: () =>
-                                    void (async () => {
-                                      await categories.delete(c.id);
-                                      await loadCategories();
-                                      if (categoryId === c.id) {
-                                        setCategoryId(DEFAULT_CATEGORY_ID);
-                                      }
-                                    })(),
-                                },
-                              ],
-                            )
-                          }
-                          hitSlop={10}
-                          style={styles.categoryIconBtn}
-                          accessibilityLabel={`Delete ${c.title}`}
-                        >
-                          <Ionicons
-                            name="trash-outline"
-                            size={22}
-                            color="#FF3B30"
-                          />
-                        </Pressable>
-                      ) : (
-                        <View style={styles.categoryIconSpacer} />
-                      )}
+                      <Pressable
+                        onPress={() =>
+                          Alert.alert(
+                            "Delete category?",
+                            `Moments in "${c.title}" will become uncategorized.`,
+                            [
+                              { text: "Cancel", style: "cancel" },
+                              {
+                                text: "Delete",
+                                style: "destructive",
+                                onPress: () =>
+                                  void (async () => {
+                                    await categories.delete(c.id);
+                                    await loadCategories();
+                                    if (categoryId === c.id) {
+                                      setCategoryId(null);
+                                    }
+                                  })(),
+                              },
+                            ],
+                          )
+                        }
+                        hitSlop={10}
+                        style={styles.categoryIconBtn}
+                        accessibilityLabel={`Delete ${c.title}`}
+                      >
+                        <Ionicons
+                          name="trash-outline"
+                          size={22}
+                          color="#FF3B30"
+                        />
+                      </Pressable>
                     </View>
                   );
                 })}

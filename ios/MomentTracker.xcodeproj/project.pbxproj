@@ -15,10 +15,10 @@
 		7E961B5B2FD4E2B9003208C3 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E961B5A2FD4E2B8003208C3 /* WidgetKit.framework */; };
 		7E961B5D2FD4E2B9003208C3 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E961B5C2FD4E2B9003208C3 /* SwiftUI.framework */; };
 		7E961B6C2FD4E2BA003208C3 /* MomentTrackerWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7E961B592FD4E2B8003208C3 /* MomentTrackerWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 		AA001111000000000000AAA1 /* WidgetSnapshotBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA001111000000000000AAA2 /* WidgetSnapshotBridge.swift */; };
 		AA001111000000000000AAA3 /* WidgetSnapshotBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = AA001111000000000000AAA4 /* WidgetSnapshotBridge.m */; };
+		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +54,8 @@
 		7E961B5A2FD4E2B8003208C3 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		7E961B5C2FD4E2B9003208C3 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		8D78C8B187000EF8C64149AA /* Pods-MomentTracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MomentTracker.release.xcconfig"; path = "Target Support Files/Pods-MomentTracker/Pods-MomentTracker.release.xcconfig"; sourceTree = "<group>"; };
+		AA001111000000000000AAA2 /* WidgetSnapshotBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotBridge.swift; path = MomentTracker/WidgetSnapshotBridge.swift; sourceTree = "<group>"; };
+		AA001111000000000000AAA4 /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = MomentTracker/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = MomentTracker/SplashScreen.storyboard; sourceTree = "<group>"; };
 		ADF26867CD8B8443460A4CDD /* libPods-MomentTracker.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MomentTracker.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6CED7705AF74C36E9485D71 /* Pods-MomentTracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MomentTracker.debug.xcconfig"; path = "Target Support Files/Pods-MomentTracker/Pods-MomentTracker.debug.xcconfig"; sourceTree = "<group>"; };
@@ -62,12 +64,10 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = MomentTracker/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* MomentTracker-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "MomentTracker-Bridging-Header.h"; path = "MomentTracker/MomentTracker-Bridging-Header.h"; sourceTree = "<group>"; };
-		AA001111000000000000AAA2 /* WidgetSnapshotBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WidgetSnapshotBridge.swift; path = MomentTracker/WidgetSnapshotBridge.swift; sourceTree = "<group>"; };
-		AA001111000000000000AAA4 /* WidgetSnapshotBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WidgetSnapshotBridge.m; path = MomentTracker/WidgetSnapshotBridge.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		7E961B702FD4E2BA003208C3 /* Exceptions for "MomentTrackerWidget" folder in "MomentTrackerWidgetExtension" target */ = {
+		7E961B702FD4E2BA003208C3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -77,18 +77,7 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		7E961B5E2FD4E2B9003208C3 /* MomentTrackerWidget */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				7E961B702FD4E2BA003208C3 /* Exceptions for "MomentTrackerWidget" folder in "MomentTrackerWidgetExtension" target */,
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
-			path = MomentTrackerWidget;
-			sourceTree = "<group>";
-		};
+		7E961B5E2FD4E2B9003208C3 /* MomentTrackerWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (7E961B702FD4E2BA003208C3 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = MomentTrackerWidget; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -334,20 +323,20 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-MomentTracker/Pods-MomentTracker-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/AsyncStorage/AsyncStorage_resources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/React-Core_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage/SDWebImage.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AsyncStorage_resources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-Core_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDWebImage.bundle",
@@ -485,7 +474,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.shadev.momenttracker;
-				PRODUCT_NAME = "MomentTracker";
+				PRODUCT_NAME = MomentTracker;
 				SWIFT_OBJC_BRIDGING_HEADER = "MomentTracker/MomentTracker-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -517,7 +506,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.shadev.momenttracker;
-				PRODUCT_NAME = "MomentTracker";
+				PRODUCT_NAME = MomentTracker;
 				SWIFT_OBJC_BRIDGING_HEADER = "MomentTracker/MomentTracker-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -1,6 +1,6 @@
 import type * as SQLite from "expo-sqlite";
 
-const CURRENT_VERSION = 2;
+const CURRENT_VERSION = 3;
 
 export async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {
   await db.execAsync(`
@@ -59,6 +59,42 @@ export async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {
     `);
     await db.runAsync("INSERT INTO schema_migrations (version) VALUES (?)", [2]);
     v = 2;
+  }
+
+  if (v < 3) {
+    // Recreate moments table with nullable category_id (SQLite can't drop constraints).
+    // Also clean up the old "My Moments" default category and move its moments to NULL.
+    await db.execAsync(`
+      CREATE TABLE moments_v3 (
+        id TEXT PRIMARY KEY NOT NULL,
+        title TEXT NOT NULL,
+        target_iso TEXT NOT NULL,
+        mode TEXT NOT NULL CHECK (mode IN ('since', 'until')),
+        category_id TEXT,
+        background_type TEXT NOT NULL CHECK (background_type IN ('solid', 'gradient', 'image')),
+        background_json TEXT NOT NULL,
+        accent_color TEXT NOT NULL DEFAULT '#2898CB',
+        display_unit TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+      );
+
+      INSERT INTO moments_v3
+        SELECT id, title, target_iso, mode,
+               CASE WHEN category_id = 'cat-default-moments' THEN NULL ELSE category_id END,
+               background_type, background_json, accent_color, display_unit, created_at, updated_at
+        FROM moments;
+
+      DROP TABLE moments;
+      ALTER TABLE moments_v3 RENAME TO moments;
+
+      CREATE INDEX IF NOT EXISTS idx_moments_category ON moments(category_id);
+
+      DELETE FROM categories WHERE id = 'cat-default-moments';
+    `);
+    await db.runAsync("INSERT INTO schema_migrations (version) VALUES (?)", [3]);
+    v = 3;
   }
 
   if (v !== CURRENT_VERSION) {

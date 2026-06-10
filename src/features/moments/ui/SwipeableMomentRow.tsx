@@ -113,7 +113,8 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: "row",
     alignItems: "stretch",
-    marginBottom: 12,
+    marginTop: 2.5,
+    marginBottom: 14.5,
     marginLeft: 8,
   },
   btn: {

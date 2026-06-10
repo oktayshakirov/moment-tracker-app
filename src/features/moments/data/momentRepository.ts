@@ -15,7 +15,7 @@ type Row = {
   title: string;
   target_iso: string;
   mode: MomentMode;
-  category_id: string;
+  category_id: string | null;
   background_type: BackgroundType;
   background_json: string;
   accent_color: string;
@@ -45,7 +45,7 @@ export type MomentInput = {
   title: string;
   targetDateTime: string;
   mode: MomentMode;
-  categoryId: string;
+  categoryId: string | null;
   backgroundType: BackgroundType;
   backgroundValue: BackgroundValue;
   accentColor: string;

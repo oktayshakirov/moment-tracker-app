@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography } from "@/shared/theme/tokens";
 import { PrimaryButton } from "@/shared/ui/PrimaryButton";
@@ -80,37 +81,54 @@ export function CategoryEditorModal({
           onPress={Keyboard.dismiss}
         >
           <Pressable onPress={(e) => e.stopPropagation()}>
-          <Text style={[styles.heading, { color: theme.text }]}>{heading}</Text>
-          <TextInput
-            value={title}
-            onChangeText={setTitle}
-            placeholder="Title"
-            placeholderTextColor={theme.textTertiary}
-            returnKeyType="done"
-            blurOnSubmit
-            onSubmitEditing={Keyboard.dismiss}
-            style={[
-              styles.input,
-              {
-                color: theme.text,
-                borderColor: theme.separator,
-                backgroundColor: theme.bg,
-              },
-            ]}
-          />
-          <Text style={[styles.label, { color: theme.textSecondary }]}>
-            Color
-          </Text>
-          <ColorPicker
-            value={color}
-            style={styles.picker}
-            onChangeJS={(c) => setColor(c.hex)}
-          >
-            <Preview hideInitialColor style={styles.preview} />
-            <Panel1 style={styles.panel} />
-            <HueSlider style={styles.slider} />
-          </ColorPicker>
-          <PrimaryButton label={actionLabel} onPress={submit} />
+            <View style={styles.headingRow}>
+              <Text style={[styles.heading, { color: theme.text }]}>
+                {heading}
+              </Text>
+              <Pressable
+                onPress={onClose}
+                hitSlop={10}
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                style={[styles.closeBtn, { backgroundColor: theme.glassFill, borderColor: theme.glassBorder }]}
+              >
+                <Ionicons name="close" size={18} color={theme.textSecondary} />
+              </Pressable>
+            </View>
+            <TextInput
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Title"
+              placeholderTextColor={theme.textTertiary}
+              returnKeyType="done"
+              blurOnSubmit
+              onSubmitEditing={Keyboard.dismiss}
+              style={[
+                styles.input,
+                {
+                  color: theme.text,
+                  borderColor: theme.separator,
+                  backgroundColor: theme.bg,
+                },
+              ]}
+            />
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Color
+            </Text>
+            <ColorPicker
+              value={color}
+              style={styles.picker}
+              onChangeJS={(c) => setColor(c.hex)}
+            >
+              <Preview hideInitialColor style={styles.preview} />
+              <Panel1 style={styles.panel} />
+              <HueSlider style={styles.slider} />
+            </ColorPicker>
+            <PrimaryButton
+              label={actionLabel}
+              onPress={submit}
+              style={{ marginTop: space.lg }}
+            />
           </Pressable>
         </Pressable>
       </Pressable>
@@ -127,11 +145,25 @@ const styles = StyleSheet.create({
   sheet: {
     borderRadius: radii.lg,
     padding: space.xl,
-    gap: space.md,
+    gap: space.lg,
+  },
+  headingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: space.lg,
   },
   heading: {
     fontSize: typography.title2,
     fontWeight: "700",
+  },
+  closeBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     borderWidth: StyleSheet.hairlineWidth,
@@ -139,6 +171,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.md,
     paddingVertical: 12,
     fontSize: typography.body,
+    marginBottom: space.lg,
   },
   label: {
     fontSize: typography.caption,
@@ -149,6 +182,7 @@ const styles = StyleSheet.create({
   },
   preview: {
     alignSelf: "stretch",
+    marginBottom: space.lg,
   },
   panel: {
     borderRadius: radii.md,
