@@ -30,6 +30,7 @@ type Section = {
 };
 
 type SortOrder = "alpha" | "date-asc" | "date-desc";
+type CategorySortOrder = "date-asc" | "date-desc" | "alpha";
 
 export function MomentListScreen({ navigation }: HomeScreenProps) {
   const theme = useAppTheme();
@@ -39,6 +40,7 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState<SortOrder>("alpha");
+  const [categorySortOrder, setCategorySortOrder] = useState<CategorySortOrder>("date-asc");
   const [showSortModal, setShowSortModal] = useState(false);
   const activeSwipeRef = useRef<InstanceType<typeof Swipeable> | null>(null);
 
@@ -92,11 +94,25 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
           return new Date(b.targetDateTime).getTime() - new Date(a.targetDateTime).getTime();
       }
     };
-    return sections.map((s) => ({ ...s, data: [...s.data].sort(sortFn) }));
-  }, [sections, sortOrder]);
+    const sorted = sections.map((s) => ({ ...s, data: [...s.data].sort(sortFn) }));
+    // Always keep General (null category) last
+    const named = sorted.filter((s) => s.category !== null);
+    const general = sorted.filter((s) => s.category === null);
+    if (categorySortOrder === "alpha") {
+      named.sort((a, b) => a.category!.title.localeCompare(b.category!.title));
+    } else if (categorySortOrder === "date-desc") {
+      named.reverse();
+    }
+    // "date-asc" keeps original insertion order (default from DB)
+    return [...named, ...general];
+  }, [sections, sortOrder, categorySortOrder]);
 
   const totalMoments = useMemo(
     () => sections.reduce((acc, s) => acc + s.data.length, 0),
+    [sections],
+  );
+  const hasCategories = useMemo(
+    () => sections.some((s) => s.category !== null),
     [sections],
   );
 
@@ -210,41 +226,92 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
             style={[styles.sortSheet, { backgroundColor: theme.bgElevated }]}
             onPress={(e) => e.stopPropagation()}
           >
-            <Text style={[styles.sortTitle, { color: theme.text }]}>
-              Sorting Options
-            </Text>
-            <Text style={[styles.sortSubtitle, { color: theme.textSecondary }]}>
-              How would you like to sort your moments?
+            {/* Header */}
+            <View style={styles.sortHeader}>
+              <Text style={[styles.sortTitle, { color: theme.text }]}>
+                Sorting Options
+              </Text>
+              <Pressable
+                onPress={() => setShowSortModal(false)}
+                hitSlop={8}
+                style={[styles.sortCloseBtn, { backgroundColor: theme.glassFill, borderColor: theme.glassBorder }]}
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+              >
+                <Ionicons name="close" size={18} color={theme.textSecondary} />
+              </Pressable>
+            </View>
+
+            {/* Moments section */}
+            <Text style={[styles.sortSectionLabel, { color: theme.textSecondary }]}>
+              MOMENTS
             </Text>
             {(
               [
-                { value: "alpha", label: "Alphabetically" },
-                { value: "date-asc", label: "Date Ascending" },
-                { value: "date-desc", label: "Date Descending" },
-              ] as { value: SortOrder; label: string }[]
-            ).map((opt) => (
-              <Pressable
-                key={opt.value}
-                style={[
-                  styles.sortOption,
-                  { backgroundColor: theme.glassFill, borderColor: theme.glassBorder },
-                  sortOrder === opt.value && { borderColor: theme.accent, backgroundColor: theme.accent + "22" },
-                ]}
-                onPress={() => {
-                  setSortOrder(opt.value);
-                  setShowSortModal(false);
-                }}
-              >
-                <Text
+                { value: "alpha", label: "Alphabetically", icon: "text-outline" },
+                { value: "date-asc", label: "Date Ascending", icon: "arrow-up-outline" },
+                { value: "date-desc", label: "Date Descending", icon: "arrow-down-outline" },
+              ] as { value: SortOrder; label: string; icon: React.ComponentProps<typeof Ionicons>["name"] }[]
+            ).map((opt) => {
+              const active = sortOrder === opt.value;
+              return (
+                <Pressable
+                  key={opt.value}
                   style={[
-                    styles.sortOptionLabel,
-                    { color: sortOrder === opt.value ? theme.accent : theme.text },
+                    styles.sortOption,
+                    { backgroundColor: theme.glassFill, borderColor: theme.glassBorder },
+                    active && { borderColor: theme.accent, backgroundColor: theme.accent + "22" },
                   ]}
+                  onPress={() => setSortOrder(opt.value)}
                 >
-                  {opt.label}
+                  <Ionicons name={opt.icon} size={18} color={active ? theme.accent : theme.textSecondary} />
+                  <Text style={[styles.sortOptionLabel, { color: active ? theme.accent : theme.text }]}>
+                    {opt.label}
+                  </Text>
+                  {active && (
+                    <Ionicons name="checkmark" size={16} color={theme.accent} style={styles.sortCheckmark} />
+                  )}
+                </Pressable>
+              );
+            })}
+
+            {/* Categories section — only when categories exist */}
+            {hasCategories && (
+              <>
+                <View style={[styles.sortDivider, { backgroundColor: theme.glassBorder }]} />
+                <Text style={[styles.sortSectionLabel, { color: theme.textSecondary }]}>
+                  CATEGORIES
                 </Text>
-              </Pressable>
-            ))}
+                {(
+                  [
+                    { value: "date-asc", label: "Date Ascending", icon: "arrow-up-outline" },
+                    { value: "date-desc", label: "Date Descending", icon: "arrow-down-outline" },
+                    { value: "alpha", label: "Alphabetically", icon: "text-outline" },
+                  ] as { value: CategorySortOrder; label: string; icon: React.ComponentProps<typeof Ionicons>["name"] }[]
+                ).map((opt) => {
+                  const active = categorySortOrder === opt.value;
+                  return (
+                    <Pressable
+                      key={opt.value}
+                      style={[
+                        styles.sortOption,
+                        { backgroundColor: theme.glassFill, borderColor: theme.glassBorder },
+                        active && { borderColor: theme.accent, backgroundColor: theme.accent + "22" },
+                      ]}
+                      onPress={() => setCategorySortOrder(opt.value)}
+                    >
+                      <Ionicons name={opt.icon} size={18} color={active ? theme.accent : theme.textSecondary} />
+                      <Text style={[styles.sortOptionLabel, { color: active ? theme.accent : theme.text }]}>
+                        {opt.label}
+                      </Text>
+                      {active && (
+                        <Ionicons name="checkmark" size={16} color={theme.accent} style={styles.sortCheckmark} />
+                      )}
+                    </Pressable>
+                  );
+                })}
+              </>
+            )}
           </Pressable>
         </Pressable>
       </Modal>
@@ -400,24 +467,50 @@ const styles = StyleSheet.create({
     padding: space.xl,
     gap: space.md,
   },
+  sortHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   sortTitle: {
     fontSize: typography.title,
     fontWeight: "700",
     letterSpacing: -0.3,
+    flex: 1,
   },
-  sortSubtitle: {
-    fontSize: typography.body,
-    lineHeight: 22,
-    marginBottom: space.sm,
+  sortCloseBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  sortSectionLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    letterSpacing: 0.8,
+    marginBottom: -space.xs,
+  },
+  sortDivider: {
+    height: StyleSheet.hairlineWidth,
+    marginVertical: space.xs,
   },
   sortOption: {
     borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radii.lg,
-    paddingVertical: space.lg,
+    borderRadius: radii.md,
+    paddingVertical: space.md,
+    paddingHorizontal: space.md,
+    flexDirection: "row",
     alignItems: "center",
+    gap: space.sm,
   },
   sortOptionLabel: {
-    fontSize: typography.title2,
-    fontWeight: "700",
+    fontSize: typography.body,
+    fontWeight: "600",
+    flex: 1,
+  },
+  sortCheckmark: {
+    marginLeft: "auto",
   },
 });
