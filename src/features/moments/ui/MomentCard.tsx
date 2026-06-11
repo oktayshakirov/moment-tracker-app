@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { BlurView } from "expo-blur";
 import Animated, {
   FadeIn,
   useAnimatedStyle,
@@ -63,7 +64,7 @@ export function MomentCard({ moment, onPress }: Props) {
           <View style={styles.clip}>
             <MomentBackground moment={moment} />
             <LinearDarkOverlay />
-            <View style={styles.row}>
+            <ContentGlassPanel>
               <View style={styles.textCol}>
                 <Text
                   style={[styles.title, { color: "#fff" }]}
@@ -89,11 +90,26 @@ export function MomentCard({ moment, onPress }: Props) {
                   <Text style={styles.sinceUntil}>{sinceUntil}</Text>
                 </View>
               </View>
-            </View>
+            </ContentGlassPanel>
           </View>
         </GlassCard>
       </Pressable>
     </Animated.View>
+  );
+}
+
+function ContentGlassPanel({ children }: { children: React.ReactNode }) {
+  if (Platform.OS === "ios") {
+    return (
+      <BlurView intensity={5} tint="dark" style={styles.glassPanel}>
+        <View style={styles.glassPanelInner}>{children}</View>
+      </BlurView>
+    );
+  }
+  return (
+    <View style={[styles.glassPanel, styles.glassPanelAndroid]}>
+      <View style={styles.glassPanelInner}>{children}</View>
+    </View>
   );
 }
 
@@ -127,11 +143,7 @@ function AnimatedCounterText({
 
   return (
     <Animated.Text
-      style={[
-        styles.counter,
-        { color: "#fff" },
-        anim,
-      ]}
+      style={[styles.counter, { color: "#fff" }, anim]}
       numberOfLines={1}
     >
       {value}
@@ -152,9 +164,19 @@ const styles = StyleSheet.create({
     minHeight: 112,
     justifyContent: "flex-end",
   },
-  row: {
-    alignItems: "flex-start",
-    padding: space.lg,
+  glassPanel: {
+    margin: space.md,
+    borderRadius: radii.md,
+    overflow: "hidden",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(255,255,255,0.18)",
+  },
+  glassPanelAndroid: {
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
+  glassPanelInner: {
+    padding: space.md,
+    backgroundColor: "rgba(255,255,255,0.06)",
   },
   textCol: {
     gap: 6,

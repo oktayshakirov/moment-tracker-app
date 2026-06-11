@@ -152,7 +152,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     setSaving(true);
     try {
       const iso = date.toISOString();
-      const mode = modeFromTargetDate(atMinute);
+      const mode = modeFromTargetDate(date);
       const backgroundValue: BackgroundValue = imageValue ?? { kind: "solid", color: accentColor };
       const backgroundType = imageValue ? "image" : "solid";
       if (momentId) {

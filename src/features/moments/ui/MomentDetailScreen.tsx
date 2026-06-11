@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { BlurView } from "expo-blur";
 import { useFocusEffect } from "@react-navigation/native";
 import { captureRef } from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
@@ -95,11 +96,7 @@ export function MomentDetailScreen({
       m.backgroundValue.kind === "image"
         ? m.backgroundValue.unsplashAttribution
         : undefined;
-    const lines = [
-      ...rowLines.map((r) => `${r.value} ${r.unit}`),
-      su,
-      ed,
-    ];
+    const lines = [...rowLines.map((r) => `${r.value} ${r.unit}`), su, ed];
     if (unsplashAttr) {
       lines.push(
         `Photo by ${unsplashAttr.photographerName} on Unsplash — ${withUnsplashReferral(unsplashAttr.photoHtmlUrl)}`,
@@ -186,7 +183,9 @@ export function MomentDetailScreen({
             styles.content,
             {
               paddingTop: chromeBottom + 12,
-              paddingBottom: unsplashAttr ? insets.bottom + 52 : insets.bottom + space.xxl,
+              paddingBottom: unsplashAttr
+                ? insets.bottom + 52
+                : insets.bottom + space.xxl,
             },
           ]}
         >
@@ -194,21 +193,22 @@ export function MomentDetailScreen({
             entering={FadeInUp.duration(420)}
             style={styles.heroBlock}
           >
-            <Text style={styles.title}>{moment.title}</Text>
+            <BlurView intensity={10} tint="dark" style={styles.glassCard}>
+              <View style={styles.glassCardInner}>
+                <Text style={styles.title}>{moment.title}</Text>
+                <Text style={styles.cardDate}>{eventDateText}</Text>
 
-            <UnitCarousel
-              moment={moment}
-              now={now}
-              rows={rows}
-              viewIndex={viewIndex}
-              onIndexChange={setViewIndex}
-              sinceUntil={sinceUntil}
-            />
+                <UnitCarousel
+                  moment={moment}
+                  now={now}
+                  rows={rows}
+                  viewIndex={viewIndex}
+                  onIndexChange={setViewIndex}
+                  sinceUntil={sinceUntil}
+                />
+              </View>
+            </BlurView>
           </Animated.View>
-
-          <View style={styles.bottomDateWrap}>
-            <Text style={styles.bottomDate}>{eventDateText}</Text>
-          </View>
         </View>
         {unsplashAttr ? (
           <View
@@ -393,7 +393,9 @@ const BREAKDOWN_UNITS: { unit: FixedDisplayUnit; label: string }[] = [
   { unit: "minutes", label: "Minutes" },
 ];
 
-type CarouselView = { kind: "compound" } | { kind: "unit"; unit: FixedDisplayUnit; label: string };
+type CarouselView =
+  | { kind: "compound" }
+  | { kind: "unit"; unit: FixedDisplayUnit; label: string };
 
 function UnitCarousel({
   moment,
@@ -477,7 +479,11 @@ function UnitCarousel({
           accessibilityRole="button"
           accessibilityLabel="Previous format"
         >
-          <Ionicons name="chevron-back" size={18} color={canPrev ? "#fff" : "rgba(255,255,255,0.25)"} />
+          <Ionicons
+            name="chevron-back"
+            size={18}
+            color={canPrev ? "#fff" : "rgba(255,255,255,0.25)"}
+          />
         </Pressable>
 
         <Text style={ucStyles.navLabel}>{label}</Text>
@@ -490,7 +496,11 @@ function UnitCarousel({
           accessibilityRole="button"
           accessibilityLabel="Next format"
         >
-          <Ionicons name="chevron-forward" size={18} color={canNext ? "#fff" : "rgba(255,255,255,0.25)"} />
+          <Ionicons
+            name="chevron-forward"
+            size={18}
+            color={canNext ? "#fff" : "rgba(255,255,255,0.25)"}
+          />
         </Pressable>
       </View>
     </View>
@@ -599,18 +609,36 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: space.xl,
+    paddingHorizontal: space.md,
   },
   heroBlock: {
     gap: 8,
-    paddingTop: 16,
+  },
+  glassCard: {
+    borderRadius: radii.xl,
+    overflow: "hidden",
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: "rgba(255,255,255,0.18)",
+  },
+  glassCardInner: {
+    paddingHorizontal: space.xl,
+    paddingTop: space.xl,
+    paddingBottom: space.lg,
+    backgroundColor: "rgba(255,255,255,0.06)",
   },
   title: {
     color: "#fff",
     fontSize: 44,
     fontWeight: "700",
     letterSpacing: -0.8,
-    marginBottom: space.md,
+    marginBottom: space.xs,
+  },
+  cardDate: {
+    color: "rgba(255,255,255,0.55)",
+    fontSize: typography.caption,
+    fontWeight: "500",
+    letterSpacing: 0.1,
+    marginBottom: space.lg,
   },
   rowsCol: {
     gap: 6,
@@ -641,17 +669,6 @@ const styles = StyleSheet.create({
     letterSpacing: -0.1,
     textTransform: "uppercase",
     marginTop: space.md,
-  },
-  bottomDateWrap: {
-    flex: 1,
-    justifyContent: "flex-end",
-    minHeight: 180,
-    paddingBottom: space.xl,
-  },
-  bottomDate: {
-    color: "rgba(255,255,255,0.92)",
-    fontSize: typography.title2,
-    fontWeight: "600",
   },
   unsplashFooter: {
     position: "absolute",
