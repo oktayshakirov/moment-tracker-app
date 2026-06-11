@@ -7,7 +7,7 @@ module.exports = {
     scheme: "momenttracker",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/icon.jpg",
     userInterfaceStyle: "dark",
     newArchEnabled: true,
     splash: {
@@ -42,7 +42,7 @@ module.exports = {
       package: "com.shadev.momenttracker",
     },
     web: {
-      favicon: "./assets/icon.png",
+      favicon: "./assets/icon.jpg",
     },
     extra: {
       revenueCatApiKeyIos:

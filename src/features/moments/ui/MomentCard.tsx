@@ -19,14 +19,18 @@ import {
 import { splitLeadingNumber } from "../domain/splitLeadingNumber";
 import { MomentBackground } from "./MomentBackground";
 
+export type MomentCardVariant = "big" | "small";
+
 type Props = {
   moment: Moment;
   onPress: () => void;
+  variant?: MomentCardVariant;
 };
 
-export function MomentCard({ moment, onPress }: Props) {
+export function MomentCard({ moment, onPress, variant = "big" }: Props) {
   const [now, setNow] = useState(() => new Date());
   const scale = useSharedValue(1);
+  const small = variant === "small";
 
   useEffect(() => {
     const ms = getTickerIntervalMs(moment.displayUnit, moment);
@@ -60,25 +64,25 @@ export function MomentCard({ moment, onPress }: Props) {
         onPress={onPress}
         style={styles.press}
       >
-        <GlassCard style={styles.card}>
-          <View style={styles.clip}>
+        <GlassCard style={small ? styles.cardSmall : styles.card}>
+          <View style={[styles.clip, small && styles.clipSmall]}>
             <MomentBackground moment={moment} />
             <LinearDarkOverlay />
-            <ContentGlassPanel>
+            <ContentGlassPanel small={small}>
               <View style={styles.textCol}>
                 <Text
-                  style={[styles.title, { color: "#fff" }]}
-                  numberOfLines={2}
+                  style={[small ? styles.titleSmall : styles.title, { color: "#fff" }]}
+                  numberOfLines={small ? 1 : 2}
                 >
                   {moment.title}
                 </Text>
-                <View style={styles.durationBlock}>
+                <View style={[styles.durationBlock, small && styles.durationBlockSmall]}>
                   <View style={styles.counterRow}>
-                    <AnimatedCounterText value={mainValue} animate />
+                    <AnimatedCounterText value={mainValue} animate small={small} />
                     {subValue ? (
                       <Text
                         style={[
-                          styles.durationCompound,
+                          small ? styles.durationCompoundSmall : styles.durationCompound,
                           { color: "rgba(255,255,255,0.92)" },
                         ]}
                         numberOfLines={2}
@@ -87,7 +91,7 @@ export function MomentCard({ moment, onPress }: Props) {
                       </Text>
                     ) : null}
                   </View>
-                  <Text style={styles.sinceUntil}>{sinceUntil}</Text>
+                  <Text style={small ? styles.sinceUntilSmall : styles.sinceUntil}>{sinceUntil}</Text>
                 </View>
               </View>
             </ContentGlassPanel>
@@ -98,17 +102,19 @@ export function MomentCard({ moment, onPress }: Props) {
   );
 }
 
-function ContentGlassPanel({ children }: { children: React.ReactNode }) {
+function ContentGlassPanel({ children, small }: { children: React.ReactNode; small?: boolean }) {
+  const panelStyle = [styles.glassPanel, small && styles.glassPanelSmall];
+  const innerStyle = [styles.glassPanelInner, small && styles.glassPanelInnerSmall];
   if (Platform.OS === "ios") {
     return (
-      <BlurView intensity={5} tint="dark" style={styles.glassPanel}>
-        <View style={styles.glassPanelInner}>{children}</View>
+      <BlurView intensity={5} tint="dark" style={panelStyle}>
+        <View style={innerStyle}>{children}</View>
       </BlurView>
     );
   }
   return (
-    <View style={[styles.glassPanel, styles.glassPanelAndroid]}>
-      <View style={styles.glassPanelInner}>{children}</View>
+    <View style={[...panelStyle, styles.glassPanelAndroid]}>
+      <View style={innerStyle}>{children}</View>
     </View>
   );
 }
@@ -124,9 +130,11 @@ function LinearDarkOverlay() {
 function AnimatedCounterText({
   value,
   animate,
+  small,
 }: {
   value: string;
   animate: boolean;
+  small?: boolean;
 }) {
   const pulse = useSharedValue(1);
 
@@ -143,7 +151,7 @@ function AnimatedCounterText({
 
   return (
     <Animated.Text
-      style={[styles.counter, { color: "#fff" }, anim]}
+      style={[small ? styles.counterSmall : styles.counter, { color: "#fff" }, anim]}
       numberOfLines={1}
     >
       {value}
@@ -156,13 +164,19 @@ const styles = StyleSheet.create({
     marginBottom: space.md,
   },
   card: {
-    minHeight: 112,
+    minHeight: 160,
+  },
+  cardSmall: {
+    minHeight: 110,
   },
   clip: {
     borderRadius: radii.lg,
     overflow: "hidden",
-    minHeight: 112,
+    minHeight: 160,
     justifyContent: "flex-end",
+  },
+  clipSmall: {
+    minHeight: 110,
   },
   glassPanel: {
     margin: space.md,
@@ -171,12 +185,18 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: "rgba(255,255,255,0.18)",
   },
+  glassPanelSmall: {
+    margin: space.sm,
+  },
   glassPanelAndroid: {
     backgroundColor: "rgba(0,0,0,0.45)",
   },
   glassPanelInner: {
     padding: space.md,
     backgroundColor: "rgba(255,255,255,0.06)",
+  },
+  glassPanelInnerSmall: {
+    padding: space.sm,
   },
   textCol: {
     gap: 6,
@@ -187,11 +207,19 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: -0.4,
   },
+  titleSmall: {
+    fontSize: typography.body,
+    fontWeight: "700",
+    letterSpacing: -0.3,
+  },
   durationBlock: {
     alignItems: "flex-start",
     gap: 2,
     marginTop: 6,
     width: "100%",
+  },
+  durationBlockSmall: {
+    marginTop: 2,
   },
   sinceUntil: {
     color: "rgba(255,255,255,0.72)",
@@ -200,6 +228,14 @@ const styles = StyleSheet.create({
     letterSpacing: 0.8,
     textTransform: "uppercase",
     marginTop: 4,
+  },
+  sinceUntilSmall: {
+    color: "rgba(255,255,255,0.72)",
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 0.6,
+    textTransform: "uppercase",
+    marginTop: 2,
   },
   counterRow: {
     flexDirection: "row",
@@ -214,10 +250,23 @@ const styles = StyleSheet.create({
     letterSpacing: -1.1,
     lineHeight: 62,
   },
+  counterSmall: {
+    fontSize: 34,
+    fontWeight: "800",
+    fontVariant: ["tabular-nums"],
+    letterSpacing: -0.8,
+    lineHeight: 38,
+  },
   durationCompound: {
     fontSize: typography.title2,
     fontWeight: "600",
     letterSpacing: 0,
     lineHeight: 30,
+  },
+  durationCompoundSmall: {
+    fontSize: typography.caption,
+    fontWeight: "600",
+    letterSpacing: 0,
+    lineHeight: 18,
   },
 });

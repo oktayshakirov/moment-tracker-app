@@ -193,7 +193,7 @@ export function MomentDetailScreen({
             entering={FadeInUp.duration(420)}
             style={styles.heroBlock}
           >
-            <BlurView intensity={10} tint="dark" style={styles.glassCard}>
+            <BlurView intensity={8} tint="dark" style={styles.glassCard}>
               <View style={styles.glassCardInner}>
                 <Text style={styles.title}>{moment.title}</Text>
                 <Text style={styles.cardDate}>{eventDateText}</Text>
@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: "#fff",
-    fontSize: 44,
+    fontSize: 35,
     fontWeight: "700",
     letterSpacing: -0.8,
     marginBottom: space.xs,
@@ -650,21 +650,21 @@ const styles = StyleSheet.create({
   },
   rowValue: {
     color: "#fff",
-    fontSize: 64,
+    fontSize: 51,
     fontWeight: "800",
-    lineHeight: 66,
+    lineHeight: 53,
     letterSpacing: -1.4,
     fontVariant: ["tabular-nums"],
   },
   rowUnit: {
     color: "#fff",
-    fontSize: 44,
+    fontSize: 35,
     fontWeight: "600",
     letterSpacing: -0.6,
   },
   sinceUntil: {
     color: "rgba(255,255,255,0.75)",
-    fontSize: typography.title2,
+    fontSize: 14,
     fontWeight: "700",
     letterSpacing: -0.1,
     textTransform: "uppercase",

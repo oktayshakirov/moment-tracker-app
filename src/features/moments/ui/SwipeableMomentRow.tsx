@@ -11,12 +11,16 @@ import {
   parseMomentDate,
 } from "../domain/momentFormatters";
 import { MomentCard } from "./MomentCard";
+import { MomentListItem } from "./MomentListItem";
+
+type RowVariant = "big" | "small" | "list";
 
 type Props = {
   moment: Moment;
   onPress: () => void;
   onDelete: () => void;
   onResetStart: () => void;
+  variant?: RowVariant;
   /** Tracks which row is open; closing another row when a new one opens. */
   activeSwipeRef: MutableRefObject<SwipeableRow | null>;
 };
@@ -26,6 +30,7 @@ export function SwipeableMomentRow({
   onPress,
   onDelete,
   onResetStart,
+  variant = "big",
   activeSwipeRef,
 }: Props) {
   const ref = useRef<SwipeableRow>(null);
@@ -58,7 +63,7 @@ export function SwipeableMomentRow({
   };
 
   const renderRight = () => (
-    <View style={styles.actions}>
+    <View style={[styles.actions, variant === "list" && styles.actionsList]}>
       {modeFromTargetDate(parseMomentDate(moment)) === "since" && (
         <Pressable
           onPress={confirmReset}
@@ -104,7 +109,11 @@ export function SwipeableMomentRow({
       onSwipeableWillOpen={onSwipeableWillOpen}
       onSwipeableClose={onSwipeableClose}
     >
-      <MomentCard moment={moment} onPress={onPress} />
+      {variant === "list" ? (
+        <MomentListItem moment={moment} onPress={onPress} />
+      ) : (
+        <MomentCard moment={moment} onPress={onPress} variant={variant} />
+      )}
     </Swipeable>
   );
 }
@@ -116,6 +125,10 @@ const styles = StyleSheet.create({
     marginTop: 2.5,
     marginBottom: 14.5,
     marginLeft: 8,
+  },
+  actionsList: {
+    marginTop: 0,
+    marginBottom: 8,
   },
   btn: {
     width: 88,

@@ -23,6 +23,7 @@ import type { Moment } from "../domain/moment";
 import { Swipeable } from "react-native-gesture-handler";
 import { syncAllWidgets } from "@/widgets/syncWidgets";
 import { SwipeableMomentRow } from "./SwipeableMomentRow";
+import { MomentGridItem } from "./MomentGridItem";
 
 type Section = {
   category: Category | null;
@@ -31,6 +32,7 @@ type Section = {
 
 type SortOrder = "alpha" | "date-asc" | "date-desc";
 type CategorySortOrder = "date-asc" | "date-desc" | "alpha";
+type ViewMode = "big" | "small" | "list" | "grid";
 
 export function MomentListScreen({ navigation }: HomeScreenProps) {
   const theme = useAppTheme();
@@ -42,6 +44,8 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
   const [sortOrder, setSortOrder] = useState<SortOrder>("alpha");
   const [categorySortOrder, setCategorySortOrder] = useState<CategorySortOrder>("date-asc");
   const [showSortModal, setShowSortModal] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("big");
+  const [showViewModal, setShowViewModal] = useState(false);
   const activeSwipeRef = useRef<InstanceType<typeof Swipeable> | null>(null);
 
   const load = useCallback(async () => {
@@ -107,6 +111,18 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
     return [...named, ...general];
   }, [sections, sortOrder, categorySortOrder]);
 
+  // Grid view packs each section's moments into rows of two.
+  const renderSections = useMemo(() => {
+    if (viewMode !== "grid") return displaySections;
+    return displaySections.map((s) => {
+      const rows: Moment[][] = [];
+      for (let i = 0; i < s.data.length; i += 2) {
+        rows.push(s.data.slice(i, i + 2));
+      }
+      return { ...s, data: rows as unknown as Moment[] };
+    });
+  }, [displaySections, viewMode]);
+
   const totalMoments = useMemo(
     () => sections.reduce((acc, s) => acc + s.data.length, 0),
     [sections],
@@ -120,8 +136,8 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
     <HomeListChrome
       theme={theme}
       topInset={insets.top}
-      sortOrder={sortOrder}
       onOpenSort={() => setShowSortModal(true)}
+      onOpenView={() => setShowViewModal(true)}
       navigation={navigation}
     />
   );
@@ -144,8 +160,10 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
       <View style={styles.shell}>
         {header}
         <SectionList
-          sections={displaySections}
-          keyExtractor={(item) => item.id}
+          sections={renderSections}
+          keyExtractor={(item) =>
+            Array.isArray(item) ? item.map((m) => m.id).join("-") : item.id
+          }
           contentContainerStyle={[
             styles.listContent,
             totalMoments === 0 && styles.emptyGrow,
@@ -177,28 +195,47 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
               </Text>
             </View>
           )}
-          renderItem={({ item }) => (
-            <SwipeableMomentRow
-              activeSwipeRef={activeSwipeRef}
-              moment={item}
-              onPress={() =>
-                navigation.navigate("MomentDetail", { momentId: item.id })
-              }
-              onDelete={() =>
-                void (async () => {
-                  await moments.delete(item.id);
-                  await syncAllWidgets(moments);
-                  await load();
-                })()
-              }
-              onResetStart={() =>
-                void moments.resetStartTime(item.id).then(async () => {
-                  await syncAllWidgets(moments);
-                  await load();
-                })
-              }
-            />
-          )}
+          renderItem={({ item }) => {
+            if (Array.isArray(item)) {
+              return (
+                <View style={styles.gridRow}>
+                  {item.map((m) => (
+                    <MomentGridItem
+                      key={m.id}
+                      moment={m}
+                      onPress={() =>
+                        navigation.navigate("MomentDetail", { momentId: m.id })
+                      }
+                    />
+                  ))}
+                  {item.length === 1 && <View style={styles.gridSpacer} />}
+                </View>
+              );
+            }
+            return (
+              <SwipeableMomentRow
+                activeSwipeRef={activeSwipeRef}
+                moment={item}
+                variant={viewMode === "grid" ? "big" : viewMode}
+                onPress={() =>
+                  navigation.navigate("MomentDetail", { momentId: item.id })
+                }
+                onDelete={() =>
+                  void (async () => {
+                    await moments.delete(item.id);
+                    await syncAllWidgets(moments);
+                    await load();
+                  })()
+                }
+                onResetStart={() =>
+                  void moments.resetStartTime(item.id).then(async () => {
+                    await syncAllWidgets(moments);
+                    await load();
+                  })
+                }
+              />
+            );
+          }}
           ListEmptyComponent={
             <View style={styles.empty}>
               <Text style={[styles.emptyTitle, { color: theme.text }]}>
@@ -315,6 +352,66 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
           </Pressable>
         </Pressable>
       </Modal>
+
+      <Modal visible={showViewModal} animationType="fade" transparent>
+        <Pressable
+          style={[styles.sortBackdrop, { backgroundColor: theme.overlay }]}
+          onPress={() => setShowViewModal(false)}
+        >
+          <Pressable
+            style={[styles.sortSheet, { backgroundColor: theme.bgElevated }]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.sortHeader}>
+              <Text style={[styles.sortTitle, { color: theme.text }]}>
+                View Options
+              </Text>
+              <Pressable
+                onPress={() => setShowViewModal(false)}
+                hitSlop={8}
+                style={[styles.sortCloseBtn, { backgroundColor: theme.glassFill, borderColor: theme.glassBorder }]}
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+              >
+                <Ionicons name="close" size={18} color={theme.textSecondary} />
+              </Pressable>
+            </View>
+
+            {(
+              [
+                { value: "big", label: "Big Card", icon: "square-outline" },
+                { value: "small", label: "Small Card", icon: "tablet-portrait-outline" },
+                { value: "list", label: "List", icon: "list-outline" },
+                { value: "grid", label: "Grid", icon: "grid-outline" },
+              ] as { value: ViewMode; label: string; icon: React.ComponentProps<typeof Ionicons>["name"] }[]
+            ).map((opt) => {
+              const active = viewMode === opt.value;
+              return (
+                <Pressable
+                  key={opt.value}
+                  style={[
+                    styles.sortOption,
+                    { backgroundColor: theme.glassFill, borderColor: theme.glassBorder },
+                    active && { borderColor: theme.accent, backgroundColor: theme.accent + "22" },
+                  ]}
+                  onPress={() => {
+                    setViewMode(opt.value);
+                    setShowViewModal(false);
+                  }}
+                >
+                  <Ionicons name={opt.icon} size={18} color={active ? theme.accent : theme.textSecondary} />
+                  <Text style={[styles.sortOptionLabel, { color: active ? theme.accent : theme.text }]}>
+                    {opt.label}
+                  </Text>
+                  {active && (
+                    <Ionicons name="checkmark" size={16} color={theme.accent} style={styles.sortCheckmark} />
+                  )}
+                </Pressable>
+              );
+            })}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </Screen>
   );
 }
@@ -322,12 +419,12 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
 type HomeListChromeProps = {
   theme: Theme;
   topInset: number;
-  sortOrder: SortOrder;
   onOpenSort: () => void;
+  onOpenView: () => void;
   navigation: HomeScreenProps["navigation"];
 };
 
-function HomeListChrome({ theme, topInset, sortOrder, onOpenSort, navigation }: HomeListChromeProps) {
+function HomeListChrome({ theme, topInset, onOpenSort, onOpenView, navigation }: HomeListChromeProps) {
   return (
     <View style={[styles.chromeBar, { paddingTop: topInset + space.xs, backgroundColor: theme.bg }]}>
       <Text
@@ -336,6 +433,23 @@ function HomeListChrome({ theme, topInset, sortOrder, onOpenSort, navigation }: 
       >
         Moments
       </Text>
+      <Pressable
+        onPress={onOpenView}
+        hitSlop={8}
+        style={({ pressed }) => [
+          styles.chromePill,
+          styles.chromeIconPill,
+          {
+            backgroundColor: theme.glassFill,
+            borderColor: theme.glassBorder,
+          },
+          pressed && styles.chromePillPressed,
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="View options"
+      >
+        <Ionicons name="grid-outline" size={19} color={theme.textSecondary} />
+      </Pressable>
       <Pressable
         onPress={onOpenSort}
         hitSlop={8}
@@ -413,6 +527,13 @@ const styles = StyleSheet.create({
   emptyGrow: {
     flexGrow: 1,
     justifyContent: "center",
+  },
+  gridRow: {
+    flexDirection: "row",
+    gap: space.md,
+  },
+  gridSpacer: {
+    flex: 1,
   },
   sectionHeader: {
     flexDirection: "row",
