@@ -10,6 +10,7 @@ import { RootNavigator } from "./navigation/RootNavigator";
 import { WidgetConfigureShell } from "@/widgets/WidgetConfigureShell";
 import { useWidgetConfigureLaunch } from "@/widgets/useWidgetConfigureLaunch";
 import { ConsentDialog } from "@/shared/ads/ConsentDialog";
+import { useRevenueCat } from "@/hooks/useRevenueCat";
 
 function AppBody() {
   const configure = useWidgetConfigureLaunch();
@@ -30,6 +31,7 @@ export default function App() {
   const [AdBannerComponent, setAdBannerComponent] =
     useState<React.ComponentType<{ isPro?: boolean }> | null>(null);
   const [consentCompleted, setConsentCompleted] = useState(false);
+  const { isPro } = useRevenueCat();
 
   useEffect(() => {
     if (Constants.appOwnership === "expo") return;
@@ -57,6 +59,7 @@ export default function App() {
             {AdBannerComponent && (
               <AdBannerComponent
                 key={consentCompleted ? "with-consent" : "pending"}
+                isPro={isPro}
               />
             )}
             <ConsentDialog

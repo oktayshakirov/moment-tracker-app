@@ -44,6 +44,12 @@ module.exports = {
     web: {
       favicon: "./assets/icon.png",
     },
+    extra: {
+      revenueCatApiKeyIos:
+        process.env.REVENUECAT_API_KEY_IOS ?? process.env.REVENUECAT_API_KEY,
+      revenueCatApiKeyAndroid:
+        process.env.REVENUECAT_API_KEY_ANDROID ?? process.env.REVENUECAT_API_KEY,
+    },
     plugins: [
       [
         "expo-splash-screen",
