@@ -16,7 +16,14 @@ export type ReminderTrigger =
   | { type: "interval"; seconds: number; repeats: true }
   | { type: "daily"; hour: number; minute: number }
   | { type: "weekly"; weekday: number; hour: number; minute: number }
-  | { type: "monthly"; day: number; hour: number; minute: number };
+  | { type: "monthly"; day: number; hour: number; minute: number }
+  | {
+      type: "yearly";
+      month: number;
+      day: number;
+      hour: number;
+      minute: number;
+    };
 
 function subtractOffset(
   date: Date,
@@ -92,6 +99,14 @@ export function computeReminderTrigger(
       return { type: "weekly", weekday: target.getDay() + 1, hour, minute };
     case "month":
       return { type: "monthly", day: target.getDate(), hour, minute };
+    case "year":
+      return {
+        type: "yearly",
+        month: target.getMonth(),
+        day: target.getDate(),
+        hour,
+        minute,
+      };
   }
 }
 
@@ -125,13 +140,5 @@ export function describeReminder(reminder: Reminder): string {
       reminder.value === 1 ? reminder.unit.replace(/s$/, "") : reminder.unit;
     return `${reminder.value} ${unit} before`;
   }
-  const label =
-    reminder.interval === "hour"
-      ? "hour"
-      : reminder.interval === "day"
-        ? "day"
-        : reminder.interval === "week"
-          ? "week"
-          : "month";
-  return `Every ${label}`;
+  return `Every ${reminder.interval}`;
 }

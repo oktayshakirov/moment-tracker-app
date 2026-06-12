@@ -82,8 +82,15 @@ const REMINDER_OFFSET_UNITS: ReminderOffsetUnit[] = [
   "days",
   "weeks",
   "months",
+  "years",
 ];
-const REMINDER_INTERVALS: ReminderInterval[] = ["hour", "day", "week", "month"];
+const REMINDER_INTERVALS: ReminderInterval[] = [
+  "hour",
+  "day",
+  "week",
+  "month",
+  "year",
+];
 
 type ReminderMode = "off" | "before" | "repeat";
 
@@ -179,7 +186,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     try {
       const iso = date.toISOString();
       const mode = modeFromTargetDate(date);
-      const backgroundValue: BackgroundValue = imageValue ?? { kind: "solid", color: accentColor };
+      const backgroundValue: BackgroundValue = imageValue ?? {
+        kind: "solid",
+        color: accentColor,
+      };
       const backgroundType = imageValue ? "image" : "solid";
       let savedId = momentId;
       if (momentId) {
@@ -266,7 +276,8 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     try {
       const trimmed = query.trim();
       const photos = trimmed
-        ? (await searchPhotos({ accessKey, query: trimmed, perPage: 30 })).results
+        ? (await searchPhotos({ accessKey, query: trimmed, perPage: 30 }))
+            .results
         : await listPopularPhotos({ accessKey, perPage: 30 });
       setOnlineResults(photos);
     } catch (e) {
@@ -327,6 +338,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   }, []);
 
   const reminderMode: ReminderMode = reminder?.kind ?? "off";
+  const isAnniversary = modeFromTargetDate(date) === "since";
 
   const requestReminderPermission = useCallback(async (): Promise<boolean> => {
     if (!notificationsSupported()) {
@@ -357,10 +369,13 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
       if (next === "before") {
         setReminder({ kind: "before", value: 1, unit: "days" });
       } else {
-        setReminder({ kind: "repeat", interval: "day" });
+        setReminder({
+          kind: "repeat",
+          interval: isAnniversary ? "year" : "day",
+        });
       }
     },
-    [requestReminderPermission],
+    [requestReminderPermission, isAnniversary],
   );
 
   const previewMoment: Moment = {
@@ -634,7 +649,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               <Pressable
                 style={[
                   styles.imageActionTile,
-                  { borderColor: theme.separator, backgroundColor: theme.bgElevated },
+                  {
+                    borderColor: theme.separator,
+                    backgroundColor: theme.bgElevated,
+                  },
                 ]}
                 onPress={() => void pickGallery()}
               >
@@ -646,7 +664,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               <Pressable
                 style={[
                   styles.imageActionTile,
-                  { borderColor: theme.separator, backgroundColor: theme.bgElevated },
+                  {
+                    borderColor: theme.separator,
+                    backgroundColor: theme.bgElevated,
+                  },
                 ]}
                 onPress={openOnlineImagePicker}
               >
@@ -690,7 +711,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               <Pressable
                 style={[
                   styles.imageActionTile,
-                  { borderColor: theme.separator, backgroundColor: theme.bgElevated },
+                  {
+                    borderColor: theme.separator,
+                    backgroundColor: theme.bgElevated,
+                  },
                 ]}
                 onPress={pickRandomColor}
               >
@@ -702,11 +726,18 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               <Pressable
                 style={[
                   styles.imageActionTile,
-                  { borderColor: theme.separator, backgroundColor: theme.bgElevated },
+                  {
+                    borderColor: theme.separator,
+                    backgroundColor: theme.bgElevated,
+                  },
                 ]}
                 onPress={() => setShowColorPickerModal(true)}
               >
-                <Ionicons name="color-palette-outline" size={28} color={uiAccent} />
+                <Ionicons
+                  name="color-palette-outline"
+                  size={28}
+                  color={uiAccent}
+                />
                 <Text style={[styles.imageActionTitle, { color: theme.text }]}>
                   Pick color
                 </Text>
@@ -714,10 +745,16 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
             </View>
             <View style={styles.colorPreviewWrap}>
               <View
-                style={[styles.colorPreviewFrame, { borderColor: theme.separator }]}
+                style={[
+                  styles.colorPreviewFrame,
+                  { borderColor: theme.separator },
+                ]}
               >
                 <View
-                  style={[styles.colorPreviewBar, { backgroundColor: accentColor }]}
+                  style={[
+                    styles.colorPreviewBar,
+                    { backgroundColor: accentColor },
+                  ]}
                 />
               </View>
             </View>
@@ -810,7 +847,9 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   style={[
                     styles.categoryManageRow,
                     { borderColor: theme.separator },
-                    categoryId === null && { backgroundColor: previewAccentSubtle },
+                    categoryId === null && {
+                      backgroundColor: previewAccentSubtle,
+                    },
                   ]}
                 >
                   <Pressable
@@ -1115,7 +1154,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                 {(
                   [
                     { value: "off", label: "Off" },
-                    { value: "before", label: "One time before the date" },
+                    { value: "before", label: "One time" },
                     { value: "repeat", label: "Repeating" },
                   ] as { value: ReminderMode; label: string }[]
                 ).map((opt) => {
@@ -1148,9 +1187,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               {/* "Before" detail: amount + unit */}
               {reminder?.kind === "before" && (
                 <View style={styles.reminderDetail}>
-                  <Text
-                    style={[styles.label, { color: theme.textSecondary }]}
-                  >
+                  <Text style={[styles.label, { color: theme.textSecondary }]}>
                     How far before
                   </Text>
                   <View style={styles.reminderStepperRow}>
@@ -1228,9 +1265,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
               {/* "Repeat" detail: interval */}
               {reminder?.kind === "repeat" && (
                 <View style={styles.reminderDetail}>
-                  <Text
-                    style={[styles.label, { color: theme.textSecondary }]}
-                  >
+                  <Text style={[styles.label, { color: theme.textSecondary }]}>
                     Repeat every
                   </Text>
                   <View style={styles.reminderChipRow}>
@@ -1265,6 +1300,31 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   </View>
                 </View>
               )}
+
+              {reminder ? (
+                <View style={styles.reminderDetail}>
+                  <Text style={[styles.label, { color: theme.textSecondary }]}>
+                    Message (optional)
+                  </Text>
+                  <TextInput
+                    value={reminder.message ?? ""}
+                    onChangeText={(text) =>
+                      setReminder((r) => (r ? { ...r, message: text } : r))
+                    }
+                    placeholder={title.trim() || "Moment name"}
+                    placeholderTextColor={theme.textTertiary}
+                    returnKeyType="done"
+                    style={[
+                      styles.input,
+                      {
+                        color: theme.text,
+                        borderColor: theme.separator,
+                        backgroundColor: theme.bg,
+                      },
+                    ]}
+                  />
+                </View>
+              ) : null}
 
               {reminder ? (
                 <View
@@ -1504,59 +1564,61 @@ function FormChromeBar({
         },
       ]}
     >
-        <View style={styles.formChromeRow}>
-          <View style={styles.formChromeSide}>
-            <Pressable
-              onPress={onBack}
-              hitSlop={12}
-              style={({ pressed }) => [
-                styles.formChromeBackBtn,
-                pressed && styles.formChromePillPressed,
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel="Back to Moments"
-            >
-              <Ionicons name="chevron-back" size={22} color={theme.text} />
-              <Text
-                style={[styles.formChromeBackLabel, { color: theme.text }]}
-                numberOfLines={1}
-              >
-                Moments
-              </Text>
-            </Pressable>
-          </View>
-
-          <Text
-            style={[styles.formChromeTitle, { color: theme.text }]}
-            numberOfLines={1}
-            pointerEvents="none"
+      <View style={styles.formChromeRow}>
+        <View style={styles.formChromeSide}>
+          <Pressable
+            onPress={onBack}
+            hitSlop={12}
+            style={({ pressed }) => [
+              styles.formChromeBackBtn,
+              pressed && styles.formChromePillPressed,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Back to Moments"
           >
-            {title}
-          </Text>
-
-          <View style={[styles.formChromeSide, styles.formChromeSideEnd]}>
-            <Pressable
-              onPress={onSave}
-              disabled={saving}
-              hitSlop={8}
-              style={({ pressed }) => [
-                styles.formChromeSaveBtn,
-                pressed && !saving && styles.formChromePillPressed,
-                saving && styles.formChromeSaveBtnDisabled,
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel={saveLabel}
+            <Ionicons name="chevron-back" size={22} color={theme.text} />
+            <Text
+              style={[styles.formChromeBackLabel, { color: theme.text }]}
+              numberOfLines={1}
             >
-              {saving ? (
-                <ActivityIndicator size="small" color={theme.accent} />
-              ) : (
-                <Text style={[styles.formChromeSaveLabel, { color: theme.accent }]}>
-                  {saveLabel}
-                </Text>
-              )}
-            </Pressable>
-          </View>
+              Moments
+            </Text>
+          </Pressable>
         </View>
+
+        <Text
+          style={[styles.formChromeTitle, { color: theme.text }]}
+          numberOfLines={1}
+          pointerEvents="none"
+        >
+          {title}
+        </Text>
+
+        <View style={[styles.formChromeSide, styles.formChromeSideEnd]}>
+          <Pressable
+            onPress={onSave}
+            disabled={saving}
+            hitSlop={8}
+            style={({ pressed }) => [
+              styles.formChromeSaveBtn,
+              pressed && !saving && styles.formChromePillPressed,
+              saving && styles.formChromeSaveBtnDisabled,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={saveLabel}
+          >
+            {saving ? (
+              <ActivityIndicator size="small" color={theme.accent} />
+            ) : (
+              <Text
+                style={[styles.formChromeSaveLabel, { color: theme.accent }]}
+              >
+                {saveLabel}
+              </Text>
+            )}
+          </Pressable>
+        </View>
+      </View>
     </View>
   );
 }

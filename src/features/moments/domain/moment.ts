@@ -50,7 +50,13 @@ export const reminderOffsetUnitSchema = z.enum([
 ]);
 export type ReminderOffsetUnit = z.infer<typeof reminderOffsetUnitSchema>;
 
-export const reminderIntervalSchema = z.enum(['hour', 'day', 'week', 'month']);
+export const reminderIntervalSchema = z.enum([
+  'hour',
+  'day',
+  'week',
+  'month',
+  'year',
+]);
 export type ReminderInterval = z.infer<typeof reminderIntervalSchema>;
 
 export const reminderSchema = z.discriminatedUnion('kind', [
@@ -58,10 +64,12 @@ export const reminderSchema = z.discriminatedUnion('kind', [
     kind: z.literal('before'),
     value: z.number().int().positive(),
     unit: reminderOffsetUnitSchema,
+    message: z.string().optional(),
   }),
   z.object({
     kind: z.literal('repeat'),
     interval: reminderIntervalSchema,
+    message: z.string().optional(),
   }),
 ]);
 export type Reminder = z.infer<typeof reminderSchema>;

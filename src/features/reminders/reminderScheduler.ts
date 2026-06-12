@@ -46,6 +46,14 @@ function toTriggerInput(
         hour: trigger.hour,
         minute: trigger.minute,
       };
+    case "yearly":
+      return {
+        type: T.YEARLY,
+        month: trigger.month,
+        day: trigger.day,
+        hour: trigger.hour,
+        minute: trigger.minute,
+      };
   }
 }
 
@@ -85,10 +93,7 @@ export async function syncMomentReminder(moment: Moment): Promise<void> {
     const id = await Notifications.scheduleNotificationAsync({
       content: {
         title: moment.title,
-        body:
-          moment.reminder.kind === "before"
-            ? "Coming up soon."
-            : "A moment to check in on.",
+        body: moment.reminder.message?.trim() || moment.title,
       },
       trigger: toTriggerInput(Notifications, trigger),
     });
