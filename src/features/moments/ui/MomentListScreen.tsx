@@ -1,4 +1,5 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   ActivityIndicator,
   Modal,
@@ -45,6 +46,7 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
   const [categorySortOrder, setCategorySortOrder] = useState<CategorySortOrder>("date-asc");
   const [showSortModal, setShowSortModal] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("big");
+  const prefsLoaded = useRef(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const activeSwipeRef = useRef<InstanceType<typeof Swipeable> | null>(null);
 
@@ -80,6 +82,30 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
       void load();
     }, [load]),
   );
+
+  useEffect(() => {
+    AsyncStorage.multiGet(["sortOrder", "categorySortOrder", "viewMode"]).then(([[, so], [, cso], [, vm]]) => {
+      if (so) setSortOrder(so as SortOrder);
+      if (cso) setCategorySortOrder(cso as CategorySortOrder);
+      if (vm) setViewMode(vm as ViewMode);
+      prefsLoaded.current = true;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!prefsLoaded.current) return;
+    void AsyncStorage.setItem("sortOrder", sortOrder);
+  }, [sortOrder]);
+
+  useEffect(() => {
+    if (!prefsLoaded.current) return;
+    void AsyncStorage.setItem("categorySortOrder", categorySortOrder);
+  }, [categorySortOrder]);
+
+  useEffect(() => {
+    if (!prefsLoaded.current) return;
+    void AsyncStorage.setItem("viewMode", viewMode);
+  }, [viewMode]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

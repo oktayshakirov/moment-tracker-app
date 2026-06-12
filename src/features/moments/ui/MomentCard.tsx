@@ -71,18 +71,32 @@ export function MomentCard({ moment, onPress, variant = "big" }: Props) {
             <ContentGlassPanel small={small}>
               <View style={styles.textCol}>
                 <Text
-                  style={[small ? styles.titleSmall : styles.title, { color: "#fff" }]}
+                  style={[
+                    small ? styles.titleSmall : styles.title,
+                    { color: "#fff" },
+                  ]}
                   numberOfLines={small ? 1 : 2}
                 >
                   {moment.title}
                 </Text>
-                <View style={[styles.durationBlock, small && styles.durationBlockSmall]}>
+                <View
+                  style={[
+                    styles.durationBlock,
+                    small && styles.durationBlockSmall,
+                  ]}
+                >
                   <View style={styles.counterRow}>
-                    <AnimatedCounterText value={mainValue} animate small={small} />
+                    <AnimatedCounterText
+                      value={mainValue}
+                      animate
+                      small={small}
+                    />
                     {subValue ? (
                       <Text
                         style={[
-                          small ? styles.durationCompoundSmall : styles.durationCompound,
+                          small
+                            ? styles.durationCompoundSmall
+                            : styles.durationCompound,
                           { color: "rgba(255,255,255,0.92)" },
                         ]}
                         numberOfLines={2}
@@ -91,7 +105,11 @@ export function MomentCard({ moment, onPress, variant = "big" }: Props) {
                       </Text>
                     ) : null}
                   </View>
-                  <Text style={small ? styles.sinceUntilSmall : styles.sinceUntil}>{sinceUntil}</Text>
+                  <Text
+                    style={small ? styles.sinceUntilSmall : styles.sinceUntil}
+                  >
+                    {sinceUntil}
+                  </Text>
                 </View>
               </View>
             </ContentGlassPanel>
@@ -102,9 +120,18 @@ export function MomentCard({ moment, onPress, variant = "big" }: Props) {
   );
 }
 
-function ContentGlassPanel({ children, small }: { children: React.ReactNode; small?: boolean }) {
+function ContentGlassPanel({
+  children,
+  small,
+}: {
+  children: React.ReactNode;
+  small?: boolean;
+}) {
   const panelStyle = [styles.glassPanel, small && styles.glassPanelSmall];
-  const innerStyle = [styles.glassPanelInner, small && styles.glassPanelInnerSmall];
+  const innerStyle = [
+    styles.glassPanelInner,
+    small && styles.glassPanelInnerSmall,
+  ];
   if (Platform.OS === "ios") {
     return (
       <BlurView intensity={5} tint="dark" style={panelStyle}>
@@ -151,7 +178,11 @@ function AnimatedCounterText({
 
   return (
     <Animated.Text
-      style={[small ? styles.counterSmall : styles.counter, { color: "#fff" }, anim]}
+      style={[
+        small ? styles.counterSmall : styles.counter,
+        { color: "#fff" },
+        anim,
+      ]}
       numberOfLines={1}
     >
       {value}
@@ -179,7 +210,7 @@ const styles = StyleSheet.create({
     minHeight: 110,
   },
   glassPanel: {
-    margin: space.md,
+    margin: space.sm,
     borderRadius: radii.md,
     overflow: "hidden",
     borderWidth: StyleSheet.hairlineWidth,
