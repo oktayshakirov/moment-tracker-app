@@ -17,6 +17,10 @@ export type WidgetSnapshot = {
   subLabel: string;
   sinceUntil: string;
   backgroundColor: string;
+  /** iOS: filename of the widget image inside the App Group container. */
+  backgroundImageName: string | null;
+  /** Android: absolute file:// URI of the downscaled widget image. */
+  backgroundImageUri: string | null;
   refreshIntervalSeconds: number;
 };
 
@@ -33,6 +37,8 @@ export const WIDGET_PLACEHOLDER_SNAPSHOT: WidgetSnapshot = {
   subLabel: "",
   sinceUntil: WIDGET_PLACEHOLDER_HINT_ANDROID,
   backgroundColor: PLACEHOLDER_BG,
+  backgroundImageName: null,
+  backgroundImageUri: null,
   refreshIntervalSeconds: 3600,
 };
 
@@ -75,16 +81,22 @@ export function buildWidgetSnapshot(
   moment: Moment,
   now: Date = new Date(),
 ): WidgetSnapshot {
-  const isAuto = moment.displayUnit === "auto";
+  // Widgets refresh at most about once a minute, so seconds would always look
+  // stale. Minutes is the smallest unit shown; seconds stay in the app only.
+  const effectiveUnit =
+    moment.displayUnit === "seconds" ? "minutes" : moment.displayUnit;
+  const isAuto = effectiveUnit === "auto";
 
   let primary: string;
   let primaryUnit: string;
   let subLabel: string;
 
   if (isAuto) {
-    const rows = formatDurationRows(moment, now);
+    const rows = formatDurationRows(moment, now).filter(
+      (r) => r.unit !== "Seconds",
+    );
     if (rows.length === 0) {
-      primary = "0";
+      primary = "1";
       primaryUnit = "Minutes";
       subLabel = "";
     } else {
@@ -96,8 +108,10 @@ export function buildWidgetSnapshot(
         .join(", ");
     }
   } else {
-    primary = formatDisplayUnit(getMomentDeltaMs(moment, now), moment.displayUnit);
-    primaryUnit = FIXED_UNIT_LABELS[moment.displayUnit] ?? "";
+    const raw = formatDisplayUnit(getMomentDeltaMs(moment, now), effectiveUnit);
+    // Never show "0 minutes" — round up to a meaningful "1".
+    primary = effectiveUnit === "minutes" && raw === "0" ? "1" : raw;
+    primaryUnit = FIXED_UNIT_LABELS[effectiveUnit] ?? "";
     subLabel = "";
   }
 
@@ -108,6 +122,8 @@ export function buildWidgetSnapshot(
     subLabel,
     sinceUntil: formatSinceUntilLabel(moment, now),
     backgroundColor: moment.accentColor,
+    backgroundImageName: null,
+    backgroundImageUri: null,
     refreshIntervalSeconds: widgetRefreshSeconds(moment, now),
   };
 }

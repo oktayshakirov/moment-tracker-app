@@ -9,6 +9,7 @@ struct WidgetSnapshotPayload: Decodable {
   let subLabel: String
   let sinceUntil: String
   let backgroundColor: String
+  let backgroundImageName: String?
   let refreshIntervalSeconds: Int
 
   private enum CodingKeys: String, CodingKey {
@@ -21,6 +22,7 @@ struct WidgetSnapshotPayload: Decodable {
     case subLabel
     case sinceUntil
     case backgroundColor
+    case backgroundImageName
     case refreshIntervalSeconds
   }
 
@@ -31,6 +33,7 @@ struct WidgetSnapshotPayload: Decodable {
     let subLabel: String
     let sinceUntil: String
     let backgroundColor: String
+    let backgroundImageName: String?
     let refreshIntervalSeconds: Int
   }
 
@@ -46,6 +49,7 @@ struct WidgetSnapshotPayload: Decodable {
       subLabel = nested.subLabel
       sinceUntil = nested.sinceUntil
       backgroundColor = nested.backgroundColor
+      backgroundImageName = nested.backgroundImageName
       refreshIntervalSeconds = nested.refreshIntervalSeconds
     } else {
       title = try c.decode(String.self, forKey: .title)
@@ -54,6 +58,7 @@ struct WidgetSnapshotPayload: Decodable {
       subLabel = try c.decode(String.self, forKey: .subLabel)
       sinceUntil = try c.decode(String.self, forKey: .sinceUntil)
       backgroundColor = try c.decode(String.self, forKey: .backgroundColor)
+      backgroundImageName = try c.decodeIfPresent(String.self, forKey: .backgroundImageName)
       refreshIntervalSeconds = try c.decode(Int.self, forKey: .refreshIntervalSeconds)
     }
   }
@@ -86,6 +91,7 @@ enum WidgetSnapshotStorage {
       subLabel: "",
       sinceUntil: "Press and hold, then Edit Widget to choose a moment",
       backgroundColor: "#1C2127",
+      backgroundImageName: nil,
       refreshIntervalSeconds: 3600
     )
   }
@@ -101,6 +107,7 @@ extension WidgetSnapshotPayload {
     subLabel: String,
     sinceUntil: String,
     backgroundColor: String,
+    backgroundImageName: String?,
     refreshIntervalSeconds: Int
   ) {
     self.configured = configured
@@ -111,6 +118,7 @@ extension WidgetSnapshotPayload {
     self.subLabel = subLabel
     self.sinceUntil = sinceUntil
     self.backgroundColor = backgroundColor
+    self.backgroundImageName = backgroundImageName
     self.refreshIntervalSeconds = refreshIntervalSeconds
   }
 }

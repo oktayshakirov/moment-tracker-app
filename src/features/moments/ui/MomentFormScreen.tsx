@@ -333,8 +333,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     setImageValue(null);
   }, []);
 
+  // A moment background is either an image or a color, never both.
   const pickRandomColor = useCallback(() => {
     setAccentColor(randomSolidHex());
+    setImageValue(null);
   }, []);
 
   const reminderMode: ReminderMode = reminder?.kind ?? "off";
@@ -743,21 +745,23 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                 </Text>
               </Pressable>
             </View>
-            <View style={styles.colorPreviewWrap}>
-              <View
-                style={[
-                  styles.colorPreviewFrame,
-                  { borderColor: theme.separator },
-                ]}
-              >
+            {!imageValue ? (
+              <View style={styles.colorPreviewWrap}>
                 <View
                   style={[
-                    styles.colorPreviewBar,
-                    { backgroundColor: accentColor },
+                    styles.colorPreviewFrame,
+                    { borderColor: theme.separator },
                   ]}
-                />
+                >
+                  <View
+                    style={[
+                      styles.colorPreviewBar,
+                      { backgroundColor: accentColor },
+                    ]}
+                  />
+                </View>
               </View>
-            </View>
+            ) : null}
             <View style={{ height: space.xl }} />
           </KeyboardDismissScrollView>
         </KeyboardAvoidingView>
@@ -1406,6 +1410,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   style={styles.colorPicker}
                   onChangeJS={(c) => {
                     setAccentColor(c.hex);
+                    setImageValue(null);
                   }}
                 >
                   <Preview hideInitialColor style={styles.colorPickerPreview} />

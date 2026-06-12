@@ -10,6 +10,7 @@ struct PreviewEntry: TimelineEntry {
   let subLabel: String
   let sinceUntil: String
   let backgroundColor: String
+  let backgroundImageName: String?
   let refreshIntervalSeconds: Int
 
   /// Only configured widgets open the app (moment detail). Placeholder uses Edit Widget.

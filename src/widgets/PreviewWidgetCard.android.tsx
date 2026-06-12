@@ -1,5 +1,10 @@
 import React from "react";
-import { FlexWidget, TextWidget } from "react-native-android-widget";
+import {
+  FlexWidget,
+  ImageWidget,
+  OverlapWidget,
+  TextWidget,
+} from "react-native-android-widget";
 import type { ColorProp } from "react-native-android-widget";
 import { momentDetailUri } from "./widgetLinks";
 import type { WidgetSnapshot } from "./widgetSnapshot";
@@ -7,6 +12,7 @@ import type { WidgetSnapshot } from "./widgetSnapshot";
 const WHITE: ColorProp = "#FFFFFF";
 const SUB: ColorProp = "#EBEBEB";
 const MUTED: ColorProp = "#BFBFBF";
+const SCRIM: ColorProp = "#00000059"; // ~35% black, matches the in-app card
 
 type Props = {
   snapshot: WidgetSnapshot;
@@ -18,13 +24,13 @@ export function PreviewWidgetCard({
   momentId,
 }: Props): React.JSX.Element {
   const { title, primary, subLabel, sinceUntil, backgroundColor } = snapshot;
+  const imageUri = snapshot.backgroundImageUri;
 
-  return (
+  const content = (
     <FlexWidget
       style={{
         width: "match_parent",
         height: "match_parent",
-        backgroundColor: backgroundColor as ColorProp,
         padding: 14,
         justifyContent: "space-between",
       }}
@@ -75,5 +81,46 @@ export function PreviewWidgetCard({
         />
       </FlexWidget>
     </FlexWidget>
+  );
+
+  // Solid-color background: single flex container.
+  if (!imageUri) {
+    return (
+      <FlexWidget
+        style={{
+          width: "match_parent",
+          height: "match_parent",
+          backgroundColor: backgroundColor as ColorProp,
+        }}
+      >
+        {content}
+      </FlexWidget>
+    );
+  }
+
+  // Image background: photo, dark scrim, then content, stacked.
+  return (
+    <OverlapWidget
+      style={{
+        width: "match_parent",
+        height: "match_parent",
+        overflow: "hidden",
+      }}
+    >
+      <ImageWidget
+        image={imageUri as `data:image${string}`}
+        imageWidth={400}
+        imageHeight={400}
+        style={{ width: "match_parent", height: "match_parent" }}
+      />
+      <FlexWidget
+        style={{
+          width: "match_parent",
+          height: "match_parent",
+          backgroundColor: SCRIM,
+        }}
+      />
+      {content}
+    </OverlapWidget>
   );
 }

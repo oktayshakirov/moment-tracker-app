@@ -6,6 +6,7 @@ enum WidgetSnapshotSharedStorage {
   static let widgetKind = "MomentTrackerPreview"
   static let catalogFileName = "moments-catalog.json"
   static let snapshotsDirectoryName = "snapshots"
+  static let imagesDirectoryName = "widget-images"
 
   static var containerURL: URL? {
     FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupId)
@@ -27,6 +28,20 @@ enum WidgetSnapshotSharedStorage {
   static func snapshotFileURL(momentId: String) -> URL? {
     let safe = momentId.replacingOccurrences(of: "/", with: "_")
     return snapshotsDirectoryURL?.appendingPathComponent("\(safe).json")
+  }
+
+  static var imagesDirectoryURL: URL? {
+    guard let container = containerURL else { return nil }
+    let dir = container.appendingPathComponent(imagesDirectoryName, isDirectory: true)
+    if !FileManager.default.fileExists(atPath: dir.path) {
+      try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+    }
+    return dir
+  }
+
+  static func imageFileURL(name: String) -> URL? {
+    let safe = name.replacingOccurrences(of: "/", with: "_")
+    return imagesDirectoryURL?.appendingPathComponent(safe)
   }
 
   @discardableResult

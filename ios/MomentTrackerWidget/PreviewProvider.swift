@@ -39,6 +39,7 @@ struct PreviewProvider: AppIntentTimelineProvider {
       subLabel: payload.subLabel,
       sinceUntil: payload.sinceUntil,
       backgroundColor: payload.backgroundColor,
+      backgroundImageName: payload.backgroundImageName,
       refreshIntervalSeconds: payload.refreshIntervalSeconds
     )
   }
@@ -54,6 +55,7 @@ struct PreviewProvider: AppIntentTimelineProvider {
       subLabel: payload.subLabel,
       sinceUntil: payload.sinceUntil,
       backgroundColor: payload.backgroundColor,
+      backgroundImageName: payload.backgroundImageName,
       refreshIntervalSeconds: payload.refreshIntervalSeconds
     )
   }

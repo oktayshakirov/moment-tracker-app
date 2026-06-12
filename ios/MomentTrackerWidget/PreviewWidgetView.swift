@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import WidgetKit
 
 struct PreviewWidgetView: View {
@@ -8,9 +9,21 @@ struct PreviewWidgetView: View {
     Color(hex: entry.backgroundColor) ?? Color(red: 28 / 255, green: 33 / 255, blue: 39 / 255)
   }
 
-  /// True when the background is light enough that white text would be unreadable.
+  /// Downscaled background photo from the App Group container, if any.
+  private var backgroundImage: UIImage? {
+    guard
+      let name = entry.backgroundImageName,
+      !name.isEmpty,
+      let url = WidgetSnapshotSharedStorage.imageFileURL(name: name)
+    else {
+      return nil
+    }
+    return UIImage(contentsOfFile: url.path)
+  }
+
+  /// Over a photo, always use white text on a dark scrim.
   private var useDarkText: Bool {
-    Color.isLight(hex: entry.backgroundColor)
+    backgroundImage == nil && Color.isLight(hex: entry.backgroundColor)
   }
 
   private func fg(_ opacity: Double) -> Color {
@@ -30,7 +43,17 @@ struct PreviewWidgetView: View {
       }
     }
     .widgetContainerBackground {
-      accent
+      if let image = backgroundImage {
+        ZStack {
+          Image(uiImage: image)
+            .resizable()
+            .scaledToFill()
+          // Dark scrim so white text stays readable over any photo.
+          Color.black.opacity(0.35)
+        }
+      } else {
+        accent
+      }
     }
   }
 
@@ -44,19 +67,19 @@ struct PreviewWidgetView: View {
       Spacer()
 
       if entry.configured {
-        HStack(alignment: .lastTextBaseline, spacing: 6) {
-          Text(entry.primary)
-            .font(.system(size: 48, weight: .black))
-            .foregroundStyle(fg(1.0))
-            .minimumScaleFactor(0.5)
+        Text(entry.primary)
+          .font(.system(size: 44, weight: .black))
+          .foregroundStyle(fg(1.0))
+          .minimumScaleFactor(0.4)
+          .lineLimit(1)
+        if !entry.primaryUnit.isEmpty {
+          Text(entry.primaryUnit.uppercased())
+            .font(.system(size: 13, weight: .bold))
+            .foregroundStyle(fg(0.85))
+            .tracking(1.0)
             .lineLimit(1)
-          if !entry.primaryUnit.isEmpty {
-            Text(entry.primaryUnit.uppercased())
-              .font(.system(size: 14, weight: .bold))
-              .foregroundStyle(fg(0.85))
-              .tracking(1.2)
-              .lineLimit(1)
-          }
+            .minimumScaleFactor(0.7)
+            .padding(.top, 1)
         }
 
         if !entry.subLabel.isEmpty {

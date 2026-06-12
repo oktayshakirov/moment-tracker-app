@@ -13,6 +13,7 @@ import {
 } from "./widgetSnapshotStore";
 import type { WidgetCatalogEntry } from "./widgetCatalog";
 import { buildMomentPayload, payloadToIosJson } from "./widgetSnapshot";
+import { prepareWidgetImage, removeWidgetImage } from "./widgetImageService";
 /** Rebuild catalog + per-moment snapshot files from the database. */
 export async function syncWidgetCatalog(
   moments: MomentRepository,
@@ -29,6 +30,7 @@ export async function syncWidgetCatalog(
   for (const entry of previousCatalog) {
     if (!activeIds.has(entry.id)) {
       await removeMomentSnapshot(entry.id);
+      await removeWidgetImage(entry.id);
       if (Platform.OS === "ios") {
         removeSnapshotOnIos(entry.id);
       }
@@ -39,6 +41,9 @@ export async function syncWidgetCatalog(
 
   for (const moment of list) {
     const payload = buildMomentPayload(moment);
+    const image = await prepareWidgetImage(moment);
+    payload.snapshot.backgroundImageName = image.backgroundImageName;
+    payload.snapshot.backgroundImageUri = image.backgroundImageUri;
     await saveMomentSnapshot(moment.id, payload);
     if (Platform.OS === "ios") {
       pushSnapshotToIos(moment.id, payloadToIosJson(payload));

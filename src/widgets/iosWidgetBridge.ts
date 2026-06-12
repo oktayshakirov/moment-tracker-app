@@ -4,6 +4,8 @@ type WidgetSnapshotBridgeModule = {
   setSnapshotForMoment: (momentId: string, json: string) => void;
   removeSnapshotForMoment: (momentId: string) => void;
   setCatalogJson: (json: string) => void;
+  setImageForMoment: (momentId: string, sourcePath: string, name: string) => void;
+  removeImageForMoment: (momentId: string) => void;
   reloadTimelines: () => void;
 };
 
@@ -53,6 +55,24 @@ export function pushCatalogToIos(json: string): void {
   const bridge = getBridge();
   if (!bridge) return;
   bridge.setCatalogJson(json);
+}
+
+export function setWidgetImageOnIos(
+  momentId: string,
+  sourcePath: string,
+  name: string,
+): void {
+  if (Platform.OS !== "ios") return;
+  const bridge = getBridge();
+  if (!bridge || typeof bridge.setImageForMoment !== "function") return;
+  bridge.setImageForMoment(momentId, sourcePath, name);
+}
+
+export function removeWidgetImageOnIos(momentId: string): void {
+  if (Platform.OS !== "ios") return;
+  const bridge = getBridge();
+  if (!bridge || typeof bridge.removeImageForMoment !== "function") return;
+  bridge.removeImageForMoment(momentId);
 }
 
 export function reloadIosWidgetTimelines(): void {
