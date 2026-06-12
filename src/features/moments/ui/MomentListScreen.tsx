@@ -23,6 +23,7 @@ import type { Category } from "@/features/categories/domain/category";
 import type { Moment } from "../domain/moment";
 import { Swipeable } from "react-native-gesture-handler";
 import { syncAllWidgets } from "@/widgets/syncWidgets";
+import { cancelMomentReminder } from "@/features/reminders/reminderScheduler";
 import { SwipeableMomentRow } from "./SwipeableMomentRow";
 import { MomentGridItem } from "./MomentGridItem";
 
@@ -248,6 +249,7 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
                 }
                 onDelete={() =>
                   void (async () => {
+                    await cancelMomentReminder(item.id);
                     await moments.delete(item.id);
                     await syncAllWidgets(moments);
                     await load();

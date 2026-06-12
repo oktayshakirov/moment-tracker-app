@@ -134,7 +134,7 @@ function ContentGlassPanel({
   ];
   if (Platform.OS === "ios") {
     return (
-      <BlurView intensity={5} tint="dark" style={panelStyle}>
+      <BlurView intensity={8} tint="dark" style={panelStyle}>
         <View style={innerStyle}>{children}</View>
       </BlurView>
     );
@@ -204,27 +204,24 @@ const styles = StyleSheet.create({
     borderRadius: radii.lg,
     overflow: "hidden",
     minHeight: 160,
-    justifyContent: "flex-end",
   },
   clipSmall: {
     minHeight: 110,
   },
   glassPanel: {
-    margin: space.sm,
-    borderRadius: radii.md,
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: radii.lg,
     overflow: "hidden",
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "rgba(255,255,255,0.18)",
   },
-  glassPanelSmall: {
-    margin: space.sm,
-  },
+  glassPanelSmall: {},
   glassPanelAndroid: {
     backgroundColor: "rgba(0,0,0,0.45)",
   },
   glassPanelInner: {
+    flex: 1,
     padding: space.md,
     backgroundColor: "rgba(255,255,255,0.06)",
+    justifyContent: "flex-end",
   },
   glassPanelInnerSmall: {
     padding: space.sm,

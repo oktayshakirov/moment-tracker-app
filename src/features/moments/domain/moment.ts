@@ -40,6 +40,32 @@ export const backgroundValueSchema = z.discriminatedUnion('kind', [
 
 export type BackgroundValue = z.infer<typeof backgroundValueSchema>;
 
+export const reminderOffsetUnitSchema = z.enum([
+  'minutes',
+  'hours',
+  'days',
+  'weeks',
+  'months',
+  'years',
+]);
+export type ReminderOffsetUnit = z.infer<typeof reminderOffsetUnitSchema>;
+
+export const reminderIntervalSchema = z.enum(['hour', 'day', 'week', 'month']);
+export type ReminderInterval = z.infer<typeof reminderIntervalSchema>;
+
+export const reminderSchema = z.discriminatedUnion('kind', [
+  z.object({
+    kind: z.literal('before'),
+    value: z.number().int().positive(),
+    unit: reminderOffsetUnitSchema,
+  }),
+  z.object({
+    kind: z.literal('repeat'),
+    interval: reminderIntervalSchema,
+  }),
+]);
+export type Reminder = z.infer<typeof reminderSchema>;
+
 export const momentSchema = z.object({
   id: z.string(),
   title: z.string().min(1),
@@ -50,6 +76,7 @@ export const momentSchema = z.object({
   backgroundValue: backgroundValueSchema,
   accentColor: z.string(),
   displayUnit: displayUnitSchema,
+  reminder: reminderSchema.nullable().default(null),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

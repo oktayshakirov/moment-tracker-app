@@ -37,8 +37,20 @@ import type {
   BackgroundValue,
   DisplayUnit,
   Moment,
+  Reminder,
+  ReminderInterval,
+  ReminderOffsetUnit,
 } from "../domain/moment";
 import { modeFromTargetDate } from "../domain/momentFormatters";
+import {
+  describeReminder,
+  describeReminderSchedule,
+} from "@/features/reminders/reminderTrigger";
+import {
+  ensureNotificationPermission,
+  notificationsSupported,
+} from "@/features/reminders/notifications";
+import { syncMomentReminder } from "@/features/reminders/reminderScheduler";
 import { syncAllWidgets } from "@/widgets/syncWidgets";
 import { copyImageToAppStorage } from "../data/imageFileService";
 import {
@@ -63,6 +75,17 @@ const DISPLAY_UNITS: DisplayUnit[] = [
   "years",
 ];
 const DEFAULT_SOLID_COLOR = "#0A84FF";
+
+const REMINDER_OFFSET_UNITS: ReminderOffsetUnit[] = [
+  "minutes",
+  "hours",
+  "days",
+  "weeks",
+  "months",
+];
+const REMINDER_INTERVALS: ReminderInterval[] = ["hour", "day", "week", "month"];
+
+type ReminderMode = "off" | "before" | "repeat";
 
 /** Drop seconds so pickers and labels stay minute-precision only. */
 function trimToMinute(d: Date): Date {
@@ -92,6 +115,8 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const [imageValue, setImageValue] = useState<ImageValue | null>(null);
   const [accentColor, setAccentColor] = useState(DEFAULT_SOLID_COLOR);
   const [displayUnit, setDisplayUnit] = useState<DisplayUnit>("auto");
+  const [reminder, setReminder] = useState<Reminder | null>(null);
+  const [showReminderModal, setShowReminderModal] = useState(false);
 
   const [catList, setCatList] = useState<
     Awaited<ReturnType<typeof categories.listAll>>
@@ -140,6 +165,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
       );
       setAccentColor(m.accentColor);
       setDisplayUnit(m.displayUnit);
+      setReminder(m.reminder);
     })();
   }, [momentId, moments]);
 
@@ -155,6 +181,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
       const mode = modeFromTargetDate(date);
       const backgroundValue: BackgroundValue = imageValue ?? { kind: "solid", color: accentColor };
       const backgroundType = imageValue ? "image" : "solid";
+      let savedId = momentId;
       if (momentId) {
         await moments.update(momentId, {
           title: t,
@@ -165,9 +192,10 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           backgroundValue,
           accentColor,
           displayUnit,
+          reminder,
         });
       } else {
-        await moments.create({
+        const created = await moments.create({
           title: t,
           targetDateTime: iso,
           mode,
@@ -176,8 +204,12 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           backgroundValue,
           accentColor,
           displayUnit,
+          reminder,
         });
+        savedId = created.id;
       }
+      const saved = savedId ? await moments.getById(savedId) : null;
+      if (saved) await syncMomentReminder(saved);
       await syncAllWidgets(moments);
       navigation.goBack();
     } catch (e) {
@@ -195,6 +227,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     imageValue,
     accentColor,
     displayUnit,
+    reminder,
     momentId,
     moments,
     navigation,
@@ -293,6 +326,43 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     setAccentColor(randomSolidHex());
   }, []);
 
+  const reminderMode: ReminderMode = reminder?.kind ?? "off";
+
+  const requestReminderPermission = useCallback(async (): Promise<boolean> => {
+    if (!notificationsSupported()) {
+      Alert.alert(
+        "Not available here",
+        "Reminders need a development or production build — they don't work in Expo Go.",
+      );
+      return false;
+    }
+    const granted = await ensureNotificationPermission();
+    if (!granted) {
+      Alert.alert(
+        "Notifications off",
+        "Enable notifications for Moment Tracker in Settings to use reminders.",
+      );
+    }
+    return granted;
+  }, []);
+
+  const chooseReminderMode = useCallback(
+    async (next: ReminderMode) => {
+      if (next === "off") {
+        setReminder(null);
+        return;
+      }
+      const ok = await requestReminderPermission();
+      if (!ok) return;
+      if (next === "before") {
+        setReminder({ kind: "before", value: 1, unit: "days" });
+      } else {
+        setReminder({ kind: "repeat", interval: "day" });
+      }
+    },
+    [requestReminderPermission],
+  );
+
   const previewMoment: Moment = {
     id: momentId ?? "preview",
     title: title.trim() || "New moment",
@@ -303,6 +373,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
     backgroundValue: imageValue ?? { kind: "solid", color: accentColor },
     accentColor,
     displayUnit,
+    reminder,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -520,6 +591,41 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                 color={theme.textTertiary}
               />
             </Pressable>
+            <Text style={[styles.label, { color: theme.textSecondary }]}>
+              Reminder
+            </Text>
+            <Pressable
+              style={[
+                styles.rowBtn,
+                {
+                  borderColor: theme.separator,
+                  backgroundColor: theme.bgElevated,
+                },
+              ]}
+              onPress={() => setShowReminderModal(true)}
+            >
+              <Ionicons
+                name="notifications-outline"
+                size={20}
+                color={reminder ? uiAccent : theme.textSecondary}
+              />
+              <View style={styles.rowBtnCopy}>
+                <Text style={[styles.rowBtnText, { color: theme.text }]}>
+                  {reminder ? describeReminder(reminder) : "Off"}
+                </Text>
+                <Text
+                  style={[styles.rowBtnHint, { color: theme.textSecondary }]}
+                >
+                  Tap to set a notification
+                </Text>
+              </View>
+              <Ionicons
+                name="chevron-forward"
+                size={18}
+                color={theme.textTertiary}
+              />
+            </Pressable>
+
             {/* ── Image (optional) ── */}
             <Text style={[styles.label, { color: theme.textSecondary }]}>
               Image
@@ -971,6 +1077,226 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   );
                 })}
               </View>
+            </Pressable>
+          </Pressable>
+        </Modal>
+
+        <Modal visible={showReminderModal} animationType="fade" transparent>
+          <Pressable
+            style={[styles.dateBackdrop, { backgroundColor: theme.bg }]}
+            onPress={() => setShowReminderModal(false)}
+          >
+            <Pressable
+              style={[styles.dateSheet, { backgroundColor: theme.bgElevated }]}
+              onPress={(e) => e.stopPropagation()}
+            >
+              <View style={styles.dateSheetHeader}>
+                <Text style={[styles.dateSheetTitle, { color: theme.text }]}>
+                  Reminder
+                </Text>
+                <Pressable
+                  onPress={() => setShowReminderModal(false)}
+                  hitSlop={12}
+                >
+                  <Text
+                    style={{
+                      color: uiAccent,
+                      fontSize: typography.body,
+                      fontWeight: "600",
+                    }}
+                  >
+                    Done
+                  </Text>
+                </Pressable>
+              </View>
+
+              {/* Mode selector */}
+              <View style={styles.optionList}>
+                {(
+                  [
+                    { value: "off", label: "Off" },
+                    { value: "before", label: "One time before the date" },
+                    { value: "repeat", label: "Repeating" },
+                  ] as { value: ReminderMode; label: string }[]
+                ).map((opt) => {
+                  const isSelected = reminderMode === opt.value;
+                  return (
+                    <Pressable
+                      key={opt.value}
+                      onPress={() => void chooseReminderMode(opt.value)}
+                      style={[
+                        styles.optionRow,
+                        { borderColor: theme.separator },
+                        isSelected && { backgroundColor: previewAccentSubtle },
+                      ]}
+                    >
+                      <Text style={[styles.optionLabel, { color: theme.text }]}>
+                        {opt.label}
+                      </Text>
+                      {isSelected && (
+                        <Ionicons
+                          name="checkmark-circle"
+                          size={22}
+                          color={uiAccent}
+                        />
+                      )}
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              {/* "Before" detail: amount + unit */}
+              {reminder?.kind === "before" && (
+                <View style={styles.reminderDetail}>
+                  <Text
+                    style={[styles.label, { color: theme.textSecondary }]}
+                  >
+                    How far before
+                  </Text>
+                  <View style={styles.reminderStepperRow}>
+                    <Pressable
+                      onPress={() =>
+                        setReminder((r) =>
+                          r?.kind === "before"
+                            ? { ...r, value: Math.max(1, r.value - 1) }
+                            : r,
+                        )
+                      }
+                      style={[
+                        styles.reminderStepBtn,
+                        { borderColor: theme.separator },
+                      ]}
+                    >
+                      <Ionicons name="remove" size={22} color={theme.text} />
+                    </Pressable>
+                    <Text
+                      style={[styles.reminderValueText, { color: theme.text }]}
+                    >
+                      {reminder.value}
+                    </Text>
+                    <Pressable
+                      onPress={() =>
+                        setReminder((r) =>
+                          r?.kind === "before"
+                            ? { ...r, value: r.value + 1 }
+                            : r,
+                        )
+                      }
+                      style={[
+                        styles.reminderStepBtn,
+                        { borderColor: theme.separator },
+                      ]}
+                    >
+                      <Ionicons name="add" size={22} color={theme.text} />
+                    </Pressable>
+                  </View>
+                  <View style={styles.reminderChipRow}>
+                    {REMINDER_OFFSET_UNITS.map((unit) => {
+                      const isSelected = reminder.unit === unit;
+                      return (
+                        <Pressable
+                          key={unit}
+                          onPress={() =>
+                            setReminder((r) =>
+                              r?.kind === "before" ? { ...r, unit } : r,
+                            )
+                          }
+                          style={[
+                            styles.reminderChip,
+                            { borderColor: theme.separator },
+                            isSelected && {
+                              backgroundColor: previewAccentSubtle,
+                              borderColor: uiAccent,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.reminderChipText,
+                              { color: isSelected ? uiAccent : theme.text },
+                            ]}
+                          >
+                            {unit}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </View>
+              )}
+
+              {/* "Repeat" detail: interval */}
+              {reminder?.kind === "repeat" && (
+                <View style={styles.reminderDetail}>
+                  <Text
+                    style={[styles.label, { color: theme.textSecondary }]}
+                  >
+                    Repeat every
+                  </Text>
+                  <View style={styles.reminderChipRow}>
+                    {REMINDER_INTERVALS.map((interval) => {
+                      const isSelected = reminder.interval === interval;
+                      return (
+                        <Pressable
+                          key={interval}
+                          onPress={() =>
+                            setReminder({ kind: "repeat", interval })
+                          }
+                          style={[
+                            styles.reminderChip,
+                            { borderColor: theme.separator },
+                            isSelected && {
+                              backgroundColor: previewAccentSubtle,
+                              borderColor: uiAccent,
+                            },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.reminderChipText,
+                              { color: isSelected ? uiAccent : theme.text },
+                            ]}
+                          >
+                            {interval}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </View>
+              )}
+
+              {reminder ? (
+                <View
+                  style={[
+                    styles.reminderHint,
+                    { borderColor: theme.separator },
+                  ]}
+                >
+                  <Ionicons
+                    name={
+                      describeReminderSchedule(previewMoment, reminder)
+                        ? "information-circle-outline"
+                        : "warning-outline"
+                    }
+                    size={18}
+                    color={
+                      describeReminderSchedule(previewMoment, reminder)
+                        ? theme.textSecondary
+                        : "#FF9F0A"
+                    }
+                  />
+                  <Text
+                    style={[
+                      styles.reminderHintText,
+                      { color: theme.textSecondary },
+                    ]}
+                  >
+                    {describeReminderSchedule(previewMoment, reminder) ??
+                      "That time has already passed. Pick a shorter lead time or a later date."}
+                  </Text>
+                </View>
+              ) : null}
             </Pressable>
           </Pressable>
         </Modal>
@@ -1558,6 +1884,60 @@ const styles = StyleSheet.create({
   },
   optionList: {
     gap: space.sm,
+  },
+  reminderDetail: {
+    marginTop: space.xs,
+  },
+  reminderStepperRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: space.lg,
+    marginBottom: space.md,
+  },
+  reminderStepBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: radii.md,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  reminderValueText: {
+    fontSize: 28,
+    fontWeight: "700",
+    minWidth: 48,
+    textAlign: "center",
+    fontVariant: ["tabular-nums"],
+  },
+  reminderChipRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: space.sm,
+  },
+  reminderChip: {
+    paddingHorizontal: space.md,
+    paddingVertical: 10,
+    borderRadius: 999,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  reminderChipText: {
+    fontSize: typography.body,
+    fontWeight: "600",
+    textTransform: "capitalize",
+  },
+  reminderHint: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: space.sm,
+    marginTop: space.lg,
+    paddingTop: space.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  reminderHintText: {
+    flex: 1,
+    fontSize: typography.caption,
+    lineHeight: 18,
   },
   optionRow: {
     minHeight: 52,

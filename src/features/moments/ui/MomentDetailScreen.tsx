@@ -32,6 +32,7 @@ import {
 } from "../domain/momentFormatters";
 import { unsplashHomeUrl, withUnsplashReferral } from "../data/unsplashApi";
 import { syncAllWidgets } from "@/widgets/syncWidgets";
+import { cancelMomentReminder } from "@/features/reminders/reminderScheduler";
 import { MomentBackground } from "./MomentBackground";
 
 function detailChromeBottomInset(topInset: number): number {
@@ -141,6 +142,7 @@ export function MomentDetailScreen({
         style: "destructive",
         onPress: () =>
           void (async () => {
+            await cancelMomentReminder(m.id);
             await moments.delete(m.id);
             await syncAllWidgets(moments);
             navigation.goBack();

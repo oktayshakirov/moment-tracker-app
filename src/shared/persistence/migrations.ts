@@ -1,6 +1,6 @@
 import type * as SQLite from "expo-sqlite";
 
-const CURRENT_VERSION = 3;
+const CURRENT_VERSION = 4;
 
 export async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {
   await db.execAsync(`
@@ -95,6 +95,14 @@ export async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {
     `);
     await db.runAsync("INSERT INTO schema_migrations (version) VALUES (?)", [3]);
     v = 3;
+  }
+
+  if (v < 4) {
+    await db.execAsync(`
+      ALTER TABLE moments ADD COLUMN reminder_json TEXT;
+    `);
+    await db.runAsync("INSERT INTO schema_migrations (version) VALUES (?)", [4]);
+    v = 4;
   }
 
   if (v !== CURRENT_VERSION) {

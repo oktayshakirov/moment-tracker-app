@@ -2,9 +2,11 @@ import type * as SQLite from "expo-sqlite";
 import {
   backgroundValueSchema,
   momentSchema,
+  reminderSchema,
   type BackgroundValue,
   type Moment,
   type MomentMode,
+  type Reminder,
 } from "../domain/moment";
 import type { BackgroundType } from "../domain/moment";
 import type { DisplayUnit } from "../domain/moment";
@@ -20,12 +22,16 @@ type Row = {
   background_json: string;
   accent_color: string;
   display_unit: DisplayUnit;
+  reminder_json: string | null;
   created_at: string;
   updated_at: string;
 };
 
 function mapRow(r: Row): Moment {
   const bg = backgroundValueSchema.parse(JSON.parse(r.background_json));
+  const reminder = r.reminder_json
+    ? reminderSchema.parse(JSON.parse(r.reminder_json))
+    : null;
   return momentSchema.parse({
     id: r.id,
     title: r.title,
@@ -36,6 +42,7 @@ function mapRow(r: Row): Moment {
     backgroundValue: bg,
     accentColor: r.accent_color,
     displayUnit: r.display_unit,
+    reminder,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
   });
@@ -50,6 +57,7 @@ export type MomentInput = {
   backgroundValue: BackgroundValue;
   accentColor: string;
   displayUnit: DisplayUnit;
+  reminder: Reminder | null;
 };
 
 export class MomentRepository {
@@ -87,8 +95,8 @@ export class MomentRepository {
     await this.db.runAsync(
       `INSERT INTO moments (
         id, title, target_iso, mode, category_id, background_type, background_json,
-        accent_color, display_unit, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        accent_color, display_unit, reminder_json, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         input.title.trim(),
@@ -99,6 +107,7 @@ export class MomentRepository {
         JSON.stringify(input.backgroundValue),
         input.accentColor,
         input.displayUnit,
+        input.reminder ? JSON.stringify(input.reminder) : null,
         now,
         now,
       ],
@@ -120,12 +129,13 @@ export class MomentRepository {
       backgroundValue: input.backgroundValue ?? cur.backgroundValue,
       accentColor: input.accentColor ?? cur.accentColor,
       displayUnit: input.displayUnit ?? cur.displayUnit,
+      reminder: input.reminder !== undefined ? input.reminder : cur.reminder,
     };
     const now = new Date().toISOString();
     await this.db.runAsync(
       `UPDATE moments SET
         title = ?, target_iso = ?, mode = ?, category_id = ?, background_type = ?,
-        background_json = ?, accent_color = ?, display_unit = ?, updated_at = ?
+        background_json = ?, accent_color = ?, display_unit = ?, reminder_json = ?, updated_at = ?
       WHERE id = ?`,
       [
         next.title.trim(),
@@ -136,6 +146,7 @@ export class MomentRepository {
         JSON.stringify(next.backgroundValue),
         next.accentColor,
         next.displayUnit,
+        next.reminder ? JSON.stringify(next.reminder) : null,
         now,
         id,
       ],

@@ -4,6 +4,7 @@ import { openAppDatabase } from '@/shared/persistence/db';
 import { CategoryRepository } from '@/features/categories/data/categoryRepository';
 import { MomentRepository } from '@/features/moments/data/momentRepository';
 import { syncAllWidgets } from '@/widgets/syncWidgets';
+import { syncAllReminders } from '@/features/reminders/reminderScheduler';
 
 export type AppRepositories = {
   categories: CategoryRepository;
@@ -26,6 +27,7 @@ export function AppDataProvider({ children }: { children: React.ReactNode }) {
         moments,
       });
       void syncAllWidgets(moments);
+      void syncAllReminders(moments);
     })();
     return () => {
       cancelled = true;
