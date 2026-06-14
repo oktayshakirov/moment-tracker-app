@@ -54,7 +54,7 @@ export function MomentListItem({ moment, onPress }: Props) {
             {sinceUntil}
           </Text>
         </View>
-        <Text style={[styles.counter, { color }]} numberOfLines={1}>
+        <Text style={[styles.counter, { color: theme.accent }]} numberOfLines={1}>
           {counter}
         </Text>
       </Pressable>
