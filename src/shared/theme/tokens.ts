@@ -61,3 +61,26 @@ export const darkTheme = {
 };
 
 export type Theme = typeof darkTheme;
+
+/** A user-selectable accent color (and its darker filled-button variant). */
+export type AccentPreset = {
+  id: string;
+  name: string;
+  accent: string;
+  accentButton: string;
+};
+
+/** Accent palette offered in Settings. `sky` matches the default theme. */
+export const accentPresets: AccentPreset[] = [
+  { id: "sky", name: "Sky", accent: "#60D4FC", accentButton: "#2898CB" },
+  { id: "blue", name: "Blue", accent: "#0A84FF", accentButton: "#0A6CD0" },
+  { id: "indigo", name: "Indigo", accent: "#7D7AFF", accentButton: "#5B57E0" },
+  { id: "purple", name: "Purple", accent: "#BF5AF2", accentButton: "#9938CC" },
+  { id: "pink", name: "Pink", accent: "#FF6482", accentButton: "#D64463" },
+  { id: "red", name: "Red", accent: "#FF453A", accentButton: "#D2352B" },
+  { id: "orange", name: "Orange", accent: "#FF9F0A", accentButton: "#D77F00" },
+  { id: "green", name: "Green", accent: "#30D158", accentButton: "#249C43" },
+  { id: "teal", name: "Teal", accent: "#40C8C0", accentButton: "#2A9C95" },
+];
+
+export const DEFAULT_ACCENT_ID = "sky";

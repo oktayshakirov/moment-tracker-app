@@ -15,7 +15,7 @@ import type { SettingsScreenProps } from "@/app/navigation/types";
 import { Screen } from "@/shared/ui/Screen";
 import { useRepositories } from "@/app/database/AppDataProvider";
 import { usePro } from "@/app/pro/ProContext";
-import { useAppTheme } from "@/shared/theme/ThemeContext";
+import { useAppTheme, useThemeController } from "@/shared/theme/ThemeContext";
 import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
 import { syncAllWidgets } from "@/widgets/syncWidgets";
 import { syncAllReminders } from "@/features/reminders/reminderScheduler";
@@ -27,6 +27,7 @@ import {
 
 export function SettingsScreen({ navigation }: SettingsScreenProps) {
   const theme = useAppTheme();
+  const { accentId, presets, setAccent } = useThemeController();
   const insets = useSafeAreaInsets();
   const { moments, categories } = useRepositories();
   const {
@@ -217,6 +218,49 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               </Text>
             </Pressable>
           )}
+        </View>
+
+        {/* Appearance */}
+        <SectionLabel theme={theme}>APPEARANCE</SectionLabel>
+        <View
+          style={[
+            styles.group,
+            { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder },
+          ]}
+        >
+          <View style={styles.appearanceHeader}>
+            <Text style={[styles.rowLabel, { color: theme.text }]}>
+              Theme color
+            </Text>
+            <Text style={[styles.rowSub, { color: theme.textSecondary }]}>
+              Used for buttons, counters, and accents across the app
+            </Text>
+          </View>
+          <View style={styles.swatchRow}>
+            {presets.map((p) => {
+              const selected = p.id === accentId;
+              return (
+                <Pressable
+                  key={p.id}
+                  onPress={() => setAccent(p.id)}
+                  style={[
+                    styles.swatch,
+                    {
+                      backgroundColor: p.accent,
+                      borderColor: selected ? theme.text : "transparent",
+                    },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${p.name} theme color`}
+                  accessibilityState={{ selected }}
+                >
+                  {selected ? (
+                    <Ionicons name="checkmark" size={18} color="#FFFFFF" />
+                  ) : null}
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         {/* Data */}
@@ -464,6 +508,27 @@ const styles = StyleSheet.create({
     gap: space.md,
     paddingHorizontal: space.lg,
     paddingVertical: space.md,
+  },
+  appearanceHeader: {
+    paddingHorizontal: space.lg,
+    paddingTop: space.md,
+    gap: 2,
+  },
+  swatchRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: space.md,
+    paddingHorizontal: space.lg,
+    paddingTop: space.md,
+    paddingBottom: space.lg,
+  },
+  swatch: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
   },
   rowPressed: {
     opacity: 0.7,

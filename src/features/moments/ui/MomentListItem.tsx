@@ -10,7 +10,6 @@ import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography } from "@/shared/theme/tokens";
 import type { Moment } from "../domain/moment";
 import { useMomentDisplay } from "./useMomentDisplay";
-import { momentColor } from "./momentColor";
 
 type Props = {
   moment: Moment;
@@ -20,7 +19,6 @@ type Props = {
 export function MomentListItem({ moment, onPress }: Props) {
   const theme = useAppTheme();
   const { mainValue, subValue, sinceUntil } = useMomentDisplay(moment);
-  const color = momentColor(moment);
   const scale = useSharedValue(1);
 
   const animStyle = useAnimatedStyle(() => ({
@@ -45,7 +43,7 @@ export function MomentListItem({ moment, onPress }: Props) {
           { backgroundColor: theme.glassFill, borderColor: theme.glassBorder },
         ]}
       >
-        <View style={[styles.bar, { backgroundColor: color }]} />
+        <View style={[styles.bar, { backgroundColor: theme.accent }]} />
         <View style={styles.textCol}>
           <Text style={[styles.title, { color: theme.text }]} numberOfLines={1}>
             {moment.title}
