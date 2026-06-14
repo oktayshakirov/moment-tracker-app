@@ -41,3 +41,9 @@ export async function setWidgetMomentId(
 export async function clearWidgetBinding(widgetId: number): Promise<void> {
   await setWidgetMomentId(widgetId, null);
 }
+
+/** Number of widgets currently bound to a moment. */
+export async function countWidgetBindings(): Promise<number> {
+  const bindings = await getWidgetBindings();
+  return Object.keys(bindings).length;
+}

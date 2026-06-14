@@ -12,6 +12,8 @@ struct PreviewEntry: TimelineEntry {
   let backgroundColor: String
   let backgroundImageName: String?
   let refreshIntervalSeconds: Int
+  /// When true the free-tier widget limit is exceeded; show an upgrade notice.
+  var locked: Bool = false
 
   /// Only configured widgets open the app (moment detail). Placeholder uses Edit Widget.
   var widgetURL: URL? {

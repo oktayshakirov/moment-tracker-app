@@ -34,7 +34,9 @@ struct PreviewWidgetView: View {
 
   var body: some View {
     Group {
-      if entry.configured, let url = entry.widgetURL {
+      if entry.locked {
+        lockedContent
+      } else if entry.configured, let url = entry.widgetURL {
         Link(destination: url) {
           widgetContent
         }
@@ -43,7 +45,9 @@ struct PreviewWidgetView: View {
       }
     }
     .widgetContainerBackground {
-      if let image = backgroundImage {
+      if entry.locked {
+        accent
+      } else if let image = backgroundImage {
         ZStack {
           Image(uiImage: image)
             .resizable()
@@ -55,6 +59,27 @@ struct PreviewWidgetView: View {
         accent
       }
     }
+  }
+
+  /// Shown when a free user exceeds the one-widget limit.
+  private var lockedContent: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Image(systemName: "lock.fill")
+        .font(.system(size: 20, weight: .bold))
+        .foregroundStyle(fg(0.9))
+      Spacer()
+      Text("Pro feature")
+        .font(.system(size: 17, weight: .black))
+        .foregroundStyle(fg(1.0))
+        .lineLimit(1)
+        .minimumScaleFactor(0.6)
+      Text("Upgrade in the app to use more than one widget.")
+        .font(.system(size: 11, weight: .medium))
+        .foregroundStyle(fg(0.7))
+        .lineLimit(3)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .padding(14)
   }
 
   private var widgetContent: some View {

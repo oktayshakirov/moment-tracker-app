@@ -49,6 +49,30 @@ class WidgetSnapshotBridge: NSObject {
     WidgetCenter.shared.reloadTimelines(ofKind: Self.widgetKind)
   }
 
+  /// Records the Pro entitlement and recomputes whether the free user's widgets
+  /// should be locked (more than one placed while not Pro). Pro users are never
+  /// locked.
+  @objc func setProState(_ isPro: Bool) {
+    let defaults = UserDefaults(suiteName: Self.appGroupId)
+    defaults?.set(isPro, forKey: "isPro")
+
+    if isPro {
+      defaults?.set(false, forKey: "widgetsLocked")
+      WidgetCenter.shared.reloadTimelines(ofKind: Self.widgetKind)
+      return
+    }
+
+    WidgetCenter.shared.getCurrentConfigurations { result in
+      var count = 0
+      if case let .success(infos) = result {
+        count = infos.count
+      }
+      // Free plan allows a single widget; anything beyond that is locked.
+      defaults?.set(count > 1, forKey: "widgetsLocked")
+      WidgetCenter.shared.reloadTimelines(ofKind: Self.widgetKind)
+    }
+  }
+
   @objc static func requiresMainQueueSetup() -> Bool { false }
 
   // MARK: - Helpers

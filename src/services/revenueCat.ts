@@ -53,6 +53,21 @@ export function hasProEntitlement(customerInfo: CustomerInfo | null): boolean {
   return Boolean(customerInfo.entitlements.active[ENTITLEMENT_PRO]);
 }
 
+/**
+ * True only when RevenueCat is configured AND a current offering exists, so it
+ * is safe to present the paywall. Presenting without a configured offering can
+ * crash the native paywall UI, so callers must gate on this.
+ */
+export async function hasAvailablePaywall(): Promise<boolean> {
+  if (!isConfigured) return false;
+  try {
+    const offerings = await Purchases.getOfferings();
+    return Boolean(offerings.current?.availablePackages?.length);
+  } catch {
+    return false;
+  }
+}
+
 export async function getCustomerInfo(): Promise<{
   customerInfo: CustomerInfo | null;
   error?: RevenueCatError;

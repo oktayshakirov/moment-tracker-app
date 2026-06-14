@@ -7,6 +7,7 @@ type WidgetSnapshotBridgeModule = {
   setImageForMoment: (momentId: string, sourcePath: string, name: string) => void;
   removeImageForMoment: (momentId: string) => void;
   reloadTimelines: () => void;
+  setProState: (isPro: boolean) => void;
 };
 
 function getBridge(): WidgetSnapshotBridgeModule | null {
@@ -80,4 +81,15 @@ export function reloadIosWidgetTimelines(): void {
   const bridge = getBridge();
   if (!bridge) return;
   bridge.reloadTimelines();
+}
+
+/**
+ * Push the Pro entitlement to the widget extension so it can lock extra widgets
+ * for free users. No-op off iOS or when the native module isn't present.
+ */
+export function setWidgetProStateOnIos(isPro: boolean): void {
+  if (Platform.OS !== "ios") return;
+  const bridge = getBridge();
+  if (!bridge || typeof bridge.setProState !== "function") return;
+  bridge.setProState(isPro);
 }

@@ -7,6 +7,7 @@ import { openAppDatabase } from "@/shared/persistence/db";
 import { ThemeProvider } from "@/shared/theme/ThemeContext";
 import { bindWidgetToMoment } from "./syncWidgets";
 import { WidgetMomentPickerContent } from "./WidgetMomentPickerContent";
+import { WidgetSlotGate } from "./WidgetSlotGate";
 
 /** Android long-press “Configure” entry — same picker as tapping an unconfigured widget. */
 export function WidgetConfigurationEntry({
@@ -43,13 +44,18 @@ export function WidgetConfigurationEntry({
   return (
     <SafeAreaProvider>
       <ThemeProvider>
-        <WidgetMomentPickerContent
-          moments={moments}
-          onSelect={onSelect}
+        <WidgetSlotGate
+          widgetId={widgetInfo.widgetId}
           onCancel={() => setResult("cancel")}
-          title="Add to widget"
-          subtitle="Choose which moment this widget should show."
-        />
+        >
+          <WidgetMomentPickerContent
+            moments={moments}
+            onSelect={onSelect}
+            onCancel={() => setResult("cancel")}
+            title="Add to widget"
+            subtitle="Choose which moment this widget should show."
+          />
+        </WidgetSlotGate>
       </ThemeProvider>
     </SafeAreaProvider>
   );

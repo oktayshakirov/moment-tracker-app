@@ -12,6 +12,17 @@ enum WidgetSnapshotSharedStorage {
     FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupId)
   }
 
+  /// Shared key/value store for Pro entitlement + widget gating flags.
+  static var sharedDefaults: UserDefaults? {
+    UserDefaults(suiteName: appGroupId)
+  }
+
+  /// True when a free user has more widgets than the free plan allows; the
+  /// widget then renders an upgrade notice instead of moment data.
+  static func widgetsLocked() -> Bool {
+    sharedDefaults?.bool(forKey: "widgetsLocked") ?? false
+  }
+
   static var catalogFileURL: URL? {
     containerURL?.appendingPathComponent(catalogFileName)
   }

@@ -52,7 +52,11 @@ import {
 } from "@/features/reminders/notifications";
 import { syncMomentReminder } from "@/features/reminders/reminderScheduler";
 import { syncAllWidgets } from "@/widgets/syncWidgets";
-import { copyImageToAppStorage } from "../data/imageFileService";
+import { usePro } from "@/app/pro/ProContext";
+import {
+  copyImageToAppStorage,
+  resolveMomentImageUri,
+} from "../data/imageFileService";
 import {
   getUnsplashAccessKey,
   listPopularPhotos,
@@ -113,6 +117,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
   const { moments, categories } = useRepositories();
+  const { isPro, showPaywall } = usePro();
   const momentId = route.params?.momentId;
 
   const [title, setTitle] = useState("");
@@ -366,6 +371,11 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
         setReminder(null);
         return;
       }
+      // Repeating reminders are a Pro feature; free users only get one-time.
+      if (next === "repeat" && !isPro) {
+        void showPaywall();
+        return;
+      }
       const ok = await requestReminderPermission();
       if (!ok) return;
       if (next === "before") {
@@ -377,7 +387,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
         });
       }
     },
-    [requestReminderPermission, isAnniversary],
+    [requestReminderPermission, isAnniversary, isPro, showPaywall],
   );
 
   const previewMoment: Moment = {
@@ -688,7 +698,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   ]}
                 >
                   <Image
-                    source={{ uri: imageValue.uri }}
+                    source={{ uri: resolveMomentImageUri(imageValue.uri) }}
                     style={styles.attachedImage}
                     contentFit="cover"
                     transition={160}
@@ -1176,6 +1186,14 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                       <Text style={[styles.optionLabel, { color: theme.text }]}>
                         {opt.label}
                       </Text>
+                      {opt.value === "repeat" && !isPro && (
+                        <Ionicons
+                          name="lock-closed"
+                          size={16}
+                          color={theme.textSecondary}
+                          style={{ marginLeft: "auto", marginRight: isSelected ? 8 : 0 }}
+                        />
+                      )}
                       {isSelected && (
                         <Ionicons
                           name="checkmark-circle"

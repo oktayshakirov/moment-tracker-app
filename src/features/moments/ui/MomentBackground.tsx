@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import type { Moment } from '../domain/moment';
+import { resolveMomentImageUri } from '../data/imageFileService';
 
 type Props = {
   moment: Moment;
@@ -15,7 +16,7 @@ export function MomentBackground({ moment, style }: Props) {
   if (v.kind === 'image') {
     return (
       <Image
-        source={{ uri: v.uri }}
+        source={{ uri: resolveMomentImageUri(v.uri) }}
         style={[StyleSheet.absoluteFill, style]}
         contentFit="cover"
         transition={200}

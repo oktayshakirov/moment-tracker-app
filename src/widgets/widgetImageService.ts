@@ -1,6 +1,7 @@
 import { Platform } from "react-native";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import type { Moment } from "@/features/moments/domain/moment";
+import { resolveMomentImageUri } from "@/features/moments/data/imageFileService";
 import { setWidgetImageOnIos, removeWidgetImageOnIos } from "./iosWidgetBridge";
 
 /**
@@ -42,7 +43,7 @@ export async function prepareWidgetImage(
 
   try {
     const result = await manipulateAsync(
-      bg.uri,
+      resolveMomentImageUri(bg.uri),
       [{ resize: { width: TARGET_WIDTH } }],
       {
         compress: 0.8,

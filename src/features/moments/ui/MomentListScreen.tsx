@@ -24,6 +24,8 @@ import type { Moment } from "../domain/moment";
 import { Swipeable } from "react-native-gesture-handler";
 import { syncAllWidgets } from "@/widgets/syncWidgets";
 import { cancelMomentReminder } from "@/features/reminders/reminderScheduler";
+import { usePro } from "@/app/pro/ProContext";
+import { FREE_MOMENT_LIMIT } from "@/constants/limits";
 import { SwipeableMomentRow } from "./SwipeableMomentRow";
 import { MomentGridItem } from "./MomentGridItem";
 
@@ -40,6 +42,7 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
   const theme = useAppTheme();
   const insets = useSafeAreaInsets();
   const { categories, moments } = useRepositories();
+  const { isPro, showPaywall } = usePro();
   const [sections, setSections] = useState<Section[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -159,13 +162,24 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
     [sections],
   );
 
+  // Free users are capped at FREE_MOMENT_LIMIT moments; beyond that the add
+  // action opens the paywall instead of the form.
+  const handleAddMoment = useCallback(() => {
+    if (!isPro && totalMoments >= FREE_MOMENT_LIMIT) {
+      void showPaywall();
+      return;
+    }
+    navigation.navigate("MomentForm", {});
+  }, [isPro, totalMoments, showPaywall, navigation]);
+
   const header = (
     <HomeListChrome
       theme={theme}
       topInset={insets.top}
       onOpenSort={() => setShowSortModal(true)}
       onOpenView={() => setShowViewModal(true)}
-      navigation={navigation}
+      onAddMoment={handleAddMoment}
+      onOpenSettings={() => navigation.navigate("Settings")}
     />
   );
 
@@ -274,7 +288,7 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
               </Text>
               <PrimaryButton
                 label="Create a moment"
-                onPress={() => navigation.navigate("MomentForm", {})}
+                onPress={handleAddMoment}
                 style={styles.emptyCta}
               />
             </View>
@@ -449,10 +463,11 @@ type HomeListChromeProps = {
   topInset: number;
   onOpenSort: () => void;
   onOpenView: () => void;
-  navigation: HomeScreenProps["navigation"];
+  onAddMoment: () => void;
+  onOpenSettings: () => void;
 };
 
-function HomeListChrome({ theme, topInset, onOpenSort, onOpenView, navigation }: HomeListChromeProps) {
+function HomeListChrome({ theme, topInset, onOpenSort, onOpenView, onAddMoment, onOpenSettings }: HomeListChromeProps) {
   return (
     <View style={[styles.chromeBar, { paddingTop: topInset + space.xs, backgroundColor: theme.bg }]}>
       <Text
@@ -496,7 +511,24 @@ function HomeListChrome({ theme, topInset, onOpenSort, onOpenView, navigation }:
         <Ionicons name="swap-vertical-outline" size={20} color={theme.textSecondary} />
       </Pressable>
       <Pressable
-        onPress={() => navigation.navigate("MomentForm", {})}
+        onPress={onOpenSettings}
+        hitSlop={8}
+        style={({ pressed }) => [
+          styles.chromePill,
+          styles.chromeIconPill,
+          {
+            backgroundColor: theme.glassFill,
+            borderColor: theme.glassBorder,
+          },
+          pressed && styles.chromePillPressed,
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Settings"
+      >
+        <Ionicons name="settings-outline" size={19} color={theme.textSecondary} />
+      </Pressable>
+      <Pressable
+        onPress={onAddMoment}
         hitSlop={8}
         style={({ pressed }) => [
           styles.chromePill,

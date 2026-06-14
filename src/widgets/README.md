@@ -24,7 +24,7 @@ The main app calls `syncAllWidgets()` after load and when moments change. That r
 
 ## Native bridge (iOS)
 
-`WidgetSnapshotBridge`: `setSnapshotForMoment`, `removeSnapshotForMoment`, `setCatalogJson`, `setImageForMoment`, `removeImageForMoment`, `reloadTimelines`.
+`WidgetSnapshotBridge`: `setSnapshotForMoment`, `removeSnapshotForMoment`, `setCatalogJson`, `setImageForMoment`, `removeImageForMoment`, `reloadTimelines`, `setProState`.
 
 Background images: the picked photo is downscaled (`widgetImageService`) and, on
 iOS, copied into the App Group `widget-images/` dir (the widget can't read the
@@ -32,6 +32,21 @@ app's private storage); on Android it's embedded as a base64 `data:` URI in the
 snapshot. The widget draws it with a dark scrim so white text stays readable.
 
 Rebuild native code after bridge changes: `yarn ios`.
+
+## Pro gating (multiple widgets)
+
+Free users get one widget (`FREE_WIDGET_LIMIT`); more is a Pro feature.
+
+- **Android:** `WidgetSlotGate` wraps the config picker. Re-configuring an
+  already-bound widget is allowed; binding a *new* widget beyond the limit shows
+  an upgrade notice instead of the picker. Pro state is read from the cached
+  entitlement (`isProCached`).
+- **iOS:** the widget extension can't run the picker, so gating is flag-based.
+  `setProState(isPro)` stores the entitlement in the App Group and, for non-Pro
+  users, counts placed widgets via `WidgetCenter.getCurrentConfigurations`; if
+  more than one exists it sets `widgetsLocked`. The widget reads that flag and
+  renders an upgrade notice. Recomputed on launch / entitlement change
+  (`ProProvider` → `setWidgetProStateOnIos`).
 
 ## Refresh cadence
 

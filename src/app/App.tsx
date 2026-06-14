@@ -10,7 +10,7 @@ import { RootNavigator } from "./navigation/RootNavigator";
 import { WidgetConfigureShell } from "@/widgets/WidgetConfigureShell";
 import { useWidgetConfigureLaunch } from "@/widgets/useWidgetConfigureLaunch";
 import { ConsentDialog } from "@/shared/ads/ConsentDialog";
-import { useRevenueCat } from "@/hooks/useRevenueCat";
+import { ProProvider, usePro } from "./pro/ProContext";
 
 function AppBody() {
   const configure = useWidgetConfigureLaunch();
@@ -27,11 +27,11 @@ function AppBody() {
   return <RootNavigator />;
 }
 
-export default function App() {
+function AppContent() {
   const [AdBannerComponent, setAdBannerComponent] =
     useState<React.ComponentType<{ isPro?: boolean }> | null>(null);
   const [consentCompleted, setConsentCompleted] = useState(false);
-  const { isPro } = useRevenueCat();
+  const { isPro } = usePro();
 
   useEffect(() => {
     if (Constants.appOwnership === "expo") return;
@@ -50,22 +50,28 @@ export default function App() {
   }, []);
 
   return (
+    <AppDataProvider>
+      <StatusBar style="light" />
+      <AppBody />
+      {AdBannerComponent && (
+        <AdBannerComponent
+          key={consentCompleted ? "with-consent" : "pending"}
+          isPro={isPro}
+        />
+      )}
+      <ConsentDialog onConsentCompleted={() => setConsentCompleted(true)} />
+    </AppDataProvider>
+  );
+}
+
+export default function App() {
+  return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <AppDataProvider>
-            <StatusBar style="light" />
-            <AppBody />
-            {AdBannerComponent && (
-              <AdBannerComponent
-                key={consentCompleted ? "with-consent" : "pending"}
-                isPro={isPro}
-              />
-            )}
-            <ConsentDialog
-              onConsentCompleted={() => setConsentCompleted(true)}
-            />
-          </AppDataProvider>
+          <ProProvider>
+            <AppContent />
+          </ProProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

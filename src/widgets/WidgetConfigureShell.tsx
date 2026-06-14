@@ -3,6 +3,7 @@ import { BackHandler, Platform } from "react-native";
 import { useRepositories } from "@/app/database/AppDataProvider";
 import { bindWidgetToMoment } from "./syncWidgets";
 import { WidgetMomentPickerContent } from "./WidgetMomentPickerContent";
+import { WidgetSlotGate } from "./WidgetSlotGate";
 
 type Props = {
   widgetId: number;
@@ -31,12 +32,14 @@ export function WidgetConfigureShell({ widgetId, onDismiss }: Props) {
   );
 
   return (
-    <WidgetMomentPickerContent
-      moments={moments}
-      onSelect={onSelect}
-      onCancel={finish}
-      title="Add to widget"
-      subtitle="Choose which moment this widget should show."
-    />
+    <WidgetSlotGate widgetId={widgetId} onCancel={finish}>
+      <WidgetMomentPickerContent
+        moments={moments}
+        onSelect={onSelect}
+        onCancel={finish}
+        title="Add to widget"
+        subtitle="Choose which moment this widget should show."
+      />
+    </WidgetSlotGate>
   );
 }

@@ -40,7 +40,8 @@ struct PreviewProvider: AppIntentTimelineProvider {
       sinceUntil: payload.sinceUntil,
       backgroundColor: payload.backgroundColor,
       backgroundImageName: payload.backgroundImageName,
-      refreshIntervalSeconds: payload.refreshIntervalSeconds
+      refreshIntervalSeconds: payload.refreshIntervalSeconds,
+      locked: WidgetSnapshotSharedStorage.widgetsLocked()
     )
   }
 

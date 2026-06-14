@@ -4,8 +4,10 @@ export type RootStackParamList = {
   Home: undefined;
   MomentForm: { momentId?: string };
   MomentDetail: { momentId: string };
+  Settings: undefined;
 };
 
 export type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 export type MomentFormScreenProps = NativeStackScreenProps<RootStackParamList, 'MomentForm'>;
 export type MomentDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'MomentDetail'>;
+export type SettingsScreenProps = NativeStackScreenProps<RootStackParamList, 'Settings'>;
