@@ -20,11 +20,14 @@ export type WidgetImageRefs = {
   backgroundImageName: string | null;
   /** Android: a `data:image/jpeg;base64,…` URI for ImageWidget. */
   backgroundImageUri: string | null;
+  /** Android: width/height of the image, so it can be cover-cropped to the widget. */
+  backgroundImageAspect: number | null;
 };
 
 const NO_IMAGE: WidgetImageRefs = {
   backgroundImageName: null,
   backgroundImageUri: null,
+  backgroundImageAspect: null,
 };
 
 function safeName(momentId: string): string {
@@ -55,13 +58,19 @@ export async function prepareWidgetImage(
     if (Platform.OS === "ios") {
       const name = safeName(moment.id);
       setWidgetImageOnIos(moment.id, result.uri.replace(/^file:\/\//, ""), name);
-      return { backgroundImageName: name, backgroundImageUri: null };
+      return {
+        backgroundImageName: name,
+        backgroundImageUri: null,
+        backgroundImageAspect: null,
+      };
     }
 
     if (Platform.OS === "android" && result.base64) {
       return {
         backgroundImageName: null,
         backgroundImageUri: `data:image/jpeg;base64,${result.base64}`,
+        backgroundImageAspect:
+          result.height > 0 ? result.width / result.height : null,
       };
     }
   } catch {

@@ -21,6 +21,8 @@ export type WidgetSnapshot = {
   backgroundImageName: string | null;
   /** Android: absolute file:// URI of the downscaled widget image. */
   backgroundImageUri: string | null;
+  /** Android: width/height of the widget image, for aspect-correct cover cropping. */
+  backgroundImageAspect: number | null;
   refreshIntervalSeconds: number;
 };
 
@@ -39,6 +41,7 @@ export const WIDGET_PLACEHOLDER_SNAPSHOT: WidgetSnapshot = {
   backgroundColor: PLACEHOLDER_BG,
   backgroundImageName: null,
   backgroundImageUri: null,
+  backgroundImageAspect: null,
   refreshIntervalSeconds: 3600,
 };
 
@@ -124,6 +127,7 @@ export function buildWidgetSnapshot(
     backgroundColor: moment.accentColor,
     backgroundImageName: null,
     backgroundImageUri: null,
+    backgroundImageAspect: null,
     refreshIntervalSeconds: widgetRefreshSeconds(moment, now),
   };
 }

@@ -44,6 +44,7 @@ export async function syncWidgetCatalog(
     const image = await prepareWidgetImage(moment);
     payload.snapshot.backgroundImageName = image.backgroundImageName;
     payload.snapshot.backgroundImageUri = image.backgroundImageUri;
+    payload.snapshot.backgroundImageAspect = image.backgroundImageAspect;
     await saveMomentSnapshot(moment.id, payload);
     if (Platform.OS === "ios") {
       pushSnapshotToIos(moment.id, payloadToIosJson(payload));

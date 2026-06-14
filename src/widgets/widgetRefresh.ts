@@ -19,7 +19,11 @@ export async function refreshAndroidWidget(
   await requestWidgetUpdateById({
     widgetName: ANDROID_WIDGET_NAME,
     widgetId,
-    renderWidget: async () => renderWidgetTree(payload, widgetId),
+    renderWidget: (info) =>
+      renderWidgetTree(payload, widgetId, {
+        width: info.width,
+        height: info.height,
+      }),
   });
 }
 

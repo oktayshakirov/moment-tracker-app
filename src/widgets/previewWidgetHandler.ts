@@ -10,7 +10,8 @@ export async function previewWidgetHandler({
   widgetAction,
   renderWidget,
 }: WidgetTaskHandlerProps): Promise<void> {
-  const { widgetId } = widgetInfo;
+  const { widgetId, width, height } = widgetInfo;
+  const size = { width, height };
 
   if (widgetAction === "WIDGET_DELETED") {
     await clearWidgetBinding(widgetId);
@@ -19,10 +20,10 @@ export async function previewWidgetHandler({
 
   if (widgetAction === "WIDGET_ADDED") {
     const placeholder = buildPlaceholderPayload();
-    renderWidget(renderWidgetTree(placeholder, widgetId));
+    renderWidget(renderWidgetTree(placeholder, widgetId, size));
     return;
   }
 
   const payload = await loadPayloadForWidgetTask(widgetId);
-  renderWidget(renderWidgetTree(payload, widgetId));
+  renderWidget(renderWidgetTree(payload, widgetId, size));
 }
