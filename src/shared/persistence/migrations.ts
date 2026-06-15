@@ -1,6 +1,7 @@
 import type * as SQLite from "expo-sqlite";
+import { DEFAULT_CATEGORIES } from "@/features/categories/domain/defaults";
 
-const CURRENT_VERSION = 4;
+const CURRENT_VERSION = 5;
 
 export async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {
   await db.execAsync(`
@@ -103,6 +104,20 @@ export async function runMigrations(db: SQLite.SQLiteDatabase): Promise<void> {
     `);
     await db.runAsync("INSERT INTO schema_migrations (version) VALUES (?)", [4]);
     v = 4;
+  }
+
+  if (v < 5) {
+    // Seed built-in categories. INSERT OR IGNORE keeps it safe if a category
+    // with the same stable id already exists.
+    for (const c of DEFAULT_CATEGORIES) {
+      await db.runAsync(
+        `INSERT OR IGNORE INTO categories (id, title, color_hex, sort_order, is_default)
+         VALUES (?, ?, ?, ?, 1)`,
+        [c.id, c.title, c.colorHex, c.sortOrder],
+      );
+    }
+    await db.runAsync("INSERT INTO schema_migrations (version) VALUES (?)", [5]);
+    v = 5;
   }
 
   if (v !== CURRENT_VERSION) {

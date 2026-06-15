@@ -28,6 +28,7 @@ import ColorPicker, {
 import type { MomentFormScreenProps } from "@/app/navigation/types";
 import { useRepositories } from "@/app/database/AppDataProvider";
 import type { Category } from "@/features/categories/domain/category";
+import { defaultDisplayUnitForCategory } from "@/features/categories/domain/defaults";
 import { CategoryEditorModal } from "@/features/categories/ui/CategoryEditorModal";
 import { KeyboardDismissScrollView } from "@/shared/ui/KeyboardDismissScrollView";
 import { Screen } from "@/shared/ui/Screen";
@@ -159,6 +160,14 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const loadCategories = useCallback(async () => {
     setCatList(await categories.listAll());
   }, [categories]);
+
+  // Picking a category applies its default "Show as" unit (Habits → Days as a
+  // streak counter, everything else → Automatic). The user can still override
+  // the unit per moment afterwards.
+  const chooseCategory = useCallback((id: string | null) => {
+    setCategoryId(id);
+    setDisplayUnit(defaultDisplayUnitForCategory(id));
+  }, []);
 
   useEffect(() => {
     void loadCategories();
@@ -869,7 +878,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                   <Pressable
                     style={styles.categoryManageMain}
                     onPress={() => {
-                      setCategoryId(null);
+                      chooseCategory(null);
                       setShowCategoryPicker(false);
                     }}
                   >
@@ -906,7 +915,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                       <Pressable
                         style={styles.categoryManageMain}
                         onPress={() => {
-                          setCategoryId(c.id);
+                          chooseCategory(c.id);
                           setShowCategoryPicker(false);
                         }}
                       >
