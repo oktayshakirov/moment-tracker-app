@@ -11,6 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography } from "@/shared/theme/tokens";
+import { SHEET_MAX_WIDTH } from "@/shared/ui/tablet";
 import { PrimaryButton } from "@/shared/ui/PrimaryButton";
 import ColorPicker, {
   HueSlider,
@@ -146,6 +147,9 @@ const styles = StyleSheet.create({
     borderRadius: radii.lg,
     padding: space.xl,
     gap: space.lg,
+    width: "100%",
+    maxWidth: SHEET_MAX_WIDTH,
+    alignSelf: "center",
   },
   headingRow: {
     flexDirection: "row",

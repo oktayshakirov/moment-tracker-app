@@ -21,6 +21,7 @@ import type { MomentDetailScreenProps } from "@/app/navigation/types";
 import { useRepositories } from "@/app/database/AppDataProvider";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
+import { useContentPadding, useIsTablet } from "@/shared/ui/tablet";
 import type { Moment } from "../domain/moment";
 import {
   formatDisplayUnit,
@@ -46,6 +47,9 @@ export function MomentDetailScreen({
   const { momentId } = route.params;
   const theme = useAppTheme();
   const insets = useSafeAreaInsets();
+  const isTablet = useIsTablet();
+  const hPad = useContentPadding(space.md);
+  const chromeHPad = useContentPadding(space.lg);
   const chromeBottom = detailChromeBottomInset(insets.top);
   const { moments } = useRepositories();
   const [moment, setMoment] = useState<Moment | null>(null);
@@ -160,6 +164,8 @@ export function MomentDetailScreen({
         <DetailChromeBar
           theme={theme}
           topInset={insets.top}
+          hPad={chromeHPad}
+          isTablet={isTablet}
           onBack={() => navigation.goBack()}
           showActions={false}
           onShare={() => {}}
@@ -184,6 +190,7 @@ export function MomentDetailScreen({
           style={[
             styles.content,
             {
+              paddingHorizontal: hPad,
               paddingTop: chromeBottom + 12,
               paddingBottom: unsplashAttr
                 ? insets.bottom + 52
@@ -196,9 +203,20 @@ export function MomentDetailScreen({
             style={styles.heroBlock}
           >
             <BlurView intensity={8} tint="dark" style={styles.glassCard}>
-              <View style={styles.glassCardInner}>
-                <Text style={styles.title}>{moment.title}</Text>
-                <Text style={styles.cardDate}>{eventDateText}</Text>
+              <View
+                style={[
+                  styles.glassCardInner,
+                  isTablet && styles.glassCardInnerTablet,
+                ]}
+              >
+                <Text style={[styles.title, isTablet && styles.titleTablet]}>
+                  {moment.title}
+                </Text>
+                <Text
+                  style={[styles.cardDate, isTablet && styles.cardDateTablet]}
+                >
+                  {eventDateText}
+                </Text>
 
                 <UnitCarousel
                   moment={moment}
@@ -207,6 +225,7 @@ export function MomentDetailScreen({
                   viewIndex={viewIndex}
                   onIndexChange={setViewIndex}
                   sinceUntil={sinceUntil}
+                  isTablet={isTablet}
                 />
               </View>
             </BlurView>
@@ -246,6 +265,8 @@ export function MomentDetailScreen({
       <DetailChromeBar
         theme={theme}
         topInset={insets.top}
+        hPad={chromeHPad}
+        isTablet={isTablet}
         onBack={() => navigation.goBack()}
         showActions
         sharing={sharing}
@@ -265,6 +286,7 @@ type IconPillProps = {
   onPress: () => void;
   accessibilityLabel: string;
   color?: string;
+  isTablet?: boolean;
 };
 
 function IconPill({
@@ -273,6 +295,7 @@ function IconPill({
   onPress,
   accessibilityLabel,
   color,
+  isTablet,
 }: IconPillProps) {
   return (
     <Pressable
@@ -281,6 +304,7 @@ function IconPill({
       style={({ pressed }) => [
         styles.chromePill,
         styles.chromeIconPill,
+        isTablet && styles.chromeIconPillTablet,
         {
           backgroundColor: theme.glassFill,
           borderColor: theme.glassBorder,
@@ -290,7 +314,7 @@ function IconPill({
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
     >
-      <Ionicons name={name} size={22} color={color ?? theme.text} />
+      <Ionicons name={name} size={isTablet ? 26 : 22} color={color ?? theme.text} />
     </Pressable>
   );
 }
@@ -298,6 +322,8 @@ function IconPill({
 type DetailChromeBarProps = {
   theme: Theme;
   topInset: number;
+  hPad: number;
+  isTablet: boolean;
   onBack: () => void;
   showActions: boolean;
   sharing?: boolean;
@@ -309,6 +335,8 @@ type DetailChromeBarProps = {
 function DetailChromeBar({
   theme,
   topInset,
+  hPad,
+  isTablet,
   onBack,
   showActions,
   sharing = false,
@@ -323,23 +351,35 @@ function DetailChromeBar({
       borderColor: theme.glassBorder,
     },
   ];
+  const iconPillStyle = [
+    styles.chromeIconPill,
+    isTablet && styles.chromeIconPillTablet,
+  ];
+  const iconSize = isTablet ? 26 : 22;
 
   return (
     <View style={styles.chromeOverlay} pointerEvents="box-none">
-      <View style={[styles.chromeBar, { paddingTop: topInset + space.xs }]}>
+      <View style={[styles.chromeBar, { paddingTop: topInset + space.xs, paddingHorizontal: hPad }]}>
         <Pressable
           onPress={onBack}
           hitSlop={12}
           style={({ pressed }) => [
             ...pill,
             styles.chromeBackPill,
+            isTablet && styles.chromeBackPillTablet,
             pressed && styles.chromePillPressed,
           ]}
           accessibilityRole="button"
           accessibilityLabel="Back to Moments"
         >
-          <Ionicons name="chevron-back" size={22} color={theme.text} />
-          <Text style={[styles.chromeBackLabel, { color: theme.text }]}>
+          <Ionicons name="chevron-back" size={iconSize} color={theme.text} />
+          <Text
+            style={[
+              styles.chromeBackLabel,
+              isTablet && styles.chromeBackLabelTablet,
+              { color: theme.text },
+            ]}
+          >
             Moments
           </Text>
         </Pressable>
@@ -351,7 +391,7 @@ function DetailChromeBar({
               hitSlop={8}
               style={[
                 styles.chromePill,
-                styles.chromeIconPill,
+                ...iconPillStyle,
                 {
                   backgroundColor: theme.glassFill,
                   borderColor: theme.glassBorder,
@@ -363,7 +403,7 @@ function DetailChromeBar({
               {sharing ? (
                 <ActivityIndicator size="small" color={theme.text} />
               ) : (
-                <Ionicons name="share-outline" size={22} color={theme.text} />
+                <Ionicons name="share-outline" size={iconSize} color={theme.text} />
               )}
             </Pressable>
             <IconPill
@@ -371,6 +411,7 @@ function DetailChromeBar({
               name="create-outline"
               onPress={onEdit}
               accessibilityLabel="Edit moment"
+              isTablet={isTablet}
             />
             <IconPill
               theme={theme}
@@ -378,6 +419,7 @@ function DetailChromeBar({
               onPress={onDelete}
               accessibilityLabel="Delete moment"
               color={theme.danger}
+              isTablet={isTablet}
             />
           </View>
         ) : null}
@@ -406,6 +448,7 @@ function UnitCarousel({
   viewIndex,
   onIndexChange,
   sinceUntil,
+  isTablet,
 }: {
   moment: Moment;
   now: Date;
@@ -413,7 +456,10 @@ function UnitCarousel({
   viewIndex: number;
   onIndexChange: (i: number) => void;
   sinceUntil: string;
+  isTablet: boolean;
 }) {
+  const valueStyle = [styles.rowValue, isTablet && styles.rowValueTablet];
+  const unitStyle = [styles.rowUnit, isTablet && styles.rowUnitTablet];
   const deltaMs = getMomentDeltaMs(moment, now);
   const [compoundHeight, setCompoundHeight] = useState<number | null>(null);
 
@@ -451,26 +497,24 @@ function UnitCarousel({
           >
             {rows.map((r) => (
               <View key={`${r.value}-${r.unit}`} style={styles.rowStat}>
-                <Text style={styles.rowValue}>{r.value}</Text>
-                <Text style={styles.rowUnit}>{r.unit}</Text>
+                <Text style={valueStyle}>{r.value}</Text>
+                <Text style={unitStyle}>{r.unit}</Text>
               </View>
             ))}
           </View>
         ) : (
           <View style={ucStyles.singleUnit}>
-            <Text
-              style={styles.rowValue}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-            >
+            <Text style={valueStyle} numberOfLines={1} adjustsFontSizeToFit>
               {formatDisplayUnit(deltaMs, current.unit)}
             </Text>
-            <Text style={styles.rowUnit}>{current.label}</Text>
+            <Text style={unitStyle}>{current.label}</Text>
           </View>
         )}
       </Animated.View>
 
-      <Text style={styles.sinceUntil}>{sinceUntil}</Text>
+      <Text style={[styles.sinceUntil, isTablet && styles.sinceUntilTablet]}>
+        {sinceUntil}
+      </Text>
 
       <View style={ucStyles.nav}>
         <Pressable
@@ -696,5 +740,41 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  // ── Tablet scaling (phones keep the base sizes above) ──
+  chromeIconPillTablet: {
+    width: 52,
+    height: 52,
+    borderRadius: radii.lg,
+  },
+  chromeBackPillTablet: {
+    paddingVertical: space.md,
+    paddingRight: space.lg,
+    maxWidth: "60%",
+  },
+  chromeBackLabelTablet: {
+    fontSize: 20,
+  },
+  glassCardInnerTablet: {
+    paddingHorizontal: space.xxl,
+    paddingTop: space.xxl,
+    paddingBottom: space.xl,
+  },
+  titleTablet: {
+    fontSize: 46,
+    letterSpacing: -1,
+  },
+  cardDateTablet: {
+    fontSize: 17,
+  },
+  rowValueTablet: {
+    fontSize: 70,
+    lineHeight: 74,
+  },
+  rowUnitTablet: {
+    fontSize: 46,
+  },
+  sinceUntilTablet: {
+    fontSize: 18,
   },
 });

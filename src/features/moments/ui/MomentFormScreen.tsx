@@ -34,6 +34,7 @@ import { KeyboardDismissScrollView } from "@/shared/ui/KeyboardDismissScrollView
 import { Screen } from "@/shared/ui/Screen";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
+import { SHEET_MAX_WIDTH, useContentPadding } from "@/shared/ui/tablet";
 import type {
   BackgroundValue,
   DisplayUnit,
@@ -117,6 +118,8 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
   const theme = useAppTheme();
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
+  const hPad = useContentPadding();
+  const chromeHPad = useContentPadding(space.md);
   const { moments, categories } = useRepositories();
   const { isPro, showPaywall } = usePro();
   const momentId = route.params?.momentId;
@@ -432,6 +435,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
         <FormChromeBar
           theme={theme}
           topInset={insets.top}
+          hPad={chromeHPad}
           title={momentId ? "Edit moment" : "New moment"}
           saveLabel="Save"
           saving={saving}
@@ -443,7 +447,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
           style={{ flex: 1 }}
         >
           <KeyboardDismissScrollView
-            contentContainerStyle={styles.scroll}
+            contentContainerStyle={[styles.scroll, { paddingHorizontal: hPad }]}
             showsVerticalScrollIndicator={false}
           >
             <MomentCard moment={previewMoment} onPress={() => {}} />
@@ -1569,6 +1573,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
 type FormChromeBarProps = {
   theme: Theme;
   topInset: number;
+  hPad: number;
   title: string;
   saveLabel: string;
   saving: boolean;
@@ -1579,6 +1584,7 @@ type FormChromeBarProps = {
 function FormChromeBar({
   theme,
   topInset,
+  hPad,
   title,
   saveLabel,
   saving,
@@ -1591,6 +1597,7 @@ function FormChromeBar({
         styles.formChromeBar,
         {
           paddingTop: topInset,
+          paddingHorizontal: hPad,
           backgroundColor: theme.bg,
           borderBottomColor: theme.separator,
         },
@@ -1918,6 +1925,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: space.lg,
     paddingTop: space.lg,
     paddingBottom: space.xl,
+    width: "100%",
+    maxWidth: SHEET_MAX_WIDTH,
+    alignSelf: "center",
   },
   dateSheetHeader: {
     flexDirection: "row",

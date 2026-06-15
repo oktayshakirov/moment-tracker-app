@@ -17,6 +17,7 @@ import { useRepositories } from "@/app/database/AppDataProvider";
 import { usePro } from "@/app/pro/ProContext";
 import { useAppTheme, useThemeController } from "@/shared/theme/ThemeContext";
 import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
+import { useContentPadding } from "@/shared/ui/tablet";
 import { syncAllWidgets } from "@/widgets/syncWidgets";
 import { syncAllReminders } from "@/features/reminders/reminderScheduler";
 import {
@@ -29,6 +30,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
   const theme = useAppTheme();
   const { accentId, presets, setAccent } = useThemeController();
   const insets = useSafeAreaInsets();
+  const hPad = useContentPadding();
   const { moments, categories } = useRepositories();
   const {
     isPro,
@@ -146,7 +148,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
 
   return (
     <Screen edges={["left", "right"]}>
-      <View style={[styles.header, { paddingTop: insets.top + space.xs }]}>
+      <View style={[styles.header, { paddingTop: insets.top + space.xs, paddingHorizontal: hPad }]}>
         <Pressable
           onPress={() => navigation.goBack()}
           hitSlop={8}
@@ -164,7 +166,7 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
       </View>
 
       <ScrollView
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, { paddingHorizontal: hPad }]}
         showsVerticalScrollIndicator={false}
       >
         {/* Pro status */}

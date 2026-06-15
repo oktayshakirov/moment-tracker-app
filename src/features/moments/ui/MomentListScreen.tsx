@@ -19,6 +19,7 @@ import { PrimaryButton } from "@/shared/ui/PrimaryButton";
 import { useRepositories } from "@/app/database/AppDataProvider";
 import { useAppTheme } from "@/shared/theme/ThemeContext";
 import { radii, space, typography, type Theme } from "@/shared/theme/tokens";
+import { SHEET_MAX_WIDTH, useContentPadding, useIsTablet } from "@/shared/ui/tablet";
 import type { Category } from "@/features/categories/domain/category";
 import type { Moment } from "../domain/moment";
 import { Swipeable } from "react-native-gesture-handler";
@@ -41,6 +42,8 @@ type ViewMode = "big" | "small" | "list" | "grid";
 export function MomentListScreen({ navigation }: HomeScreenProps) {
   const theme = useAppTheme();
   const insets = useSafeAreaInsets();
+  const hPad = useContentPadding();
+  const isTablet = useIsTablet();
   const { categories, moments } = useRepositories();
   const { isPro, showPaywall } = usePro();
   const [sections, setSections] = useState<Section[]>([]);
@@ -176,6 +179,8 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
     <HomeListChrome
       theme={theme}
       topInset={insets.top}
+      hPad={hPad}
+      isTablet={isTablet}
       onOpenSort={() => setShowSortModal(true)}
       onOpenView={() => setShowViewModal(true)}
       onAddMoment={handleAddMoment}
@@ -207,6 +212,7 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
           }
           contentContainerStyle={[
             styles.listContent,
+            { paddingHorizontal: hPad },
             totalMoments === 0 && styles.emptyGrow,
           ]}
           stickySectionHeadersEnabled={false}
@@ -461,17 +467,35 @@ export function MomentListScreen({ navigation }: HomeScreenProps) {
 type HomeListChromeProps = {
   theme: Theme;
   topInset: number;
+  hPad: number;
+  isTablet: boolean;
   onOpenSort: () => void;
   onOpenView: () => void;
   onAddMoment: () => void;
   onOpenSettings: () => void;
 };
 
-function HomeListChrome({ theme, topInset, onOpenSort, onOpenView, onAddMoment, onOpenSettings }: HomeListChromeProps) {
+function HomeListChrome({ theme, topInset, hPad, isTablet, onOpenSort, onOpenView, onAddMoment, onOpenSettings }: HomeListChromeProps) {
+  const pillBase = ({ pressed }: { pressed: boolean }) => [
+    styles.chromePill,
+    styles.chromeIconPill,
+    isTablet && styles.chromeIconPillTablet,
+    {
+      backgroundColor: theme.glassFill,
+      borderColor: theme.glassBorder,
+    },
+    pressed && styles.chromePillPressed,
+  ];
+  const s = (base: number) => (isTablet ? base + 4 : base);
+
   return (
-    <View style={[styles.chromeBar, { paddingTop: topInset + space.xs, backgroundColor: theme.bg }]}>
+    <View style={[styles.chromeBar, { paddingTop: topInset + space.xs, paddingHorizontal: hPad, backgroundColor: theme.bg }]}>
       <Text
-        style={[styles.chromeScreenTitle, { color: theme.text }]}
+        style={[
+          styles.chromeScreenTitle,
+          isTablet && styles.chromeScreenTitleTablet,
+          { color: theme.text },
+        ]}
         numberOfLines={1}
       >
         Moments
@@ -479,70 +503,38 @@ function HomeListChrome({ theme, topInset, onOpenSort, onOpenView, onAddMoment, 
       <Pressable
         onPress={onOpenView}
         hitSlop={8}
-        style={({ pressed }) => [
-          styles.chromePill,
-          styles.chromeIconPill,
-          {
-            backgroundColor: theme.glassFill,
-            borderColor: theme.glassBorder,
-          },
-          pressed && styles.chromePillPressed,
-        ]}
+        style={pillBase}
         accessibilityRole="button"
         accessibilityLabel="View options"
       >
-        <Ionicons name="grid-outline" size={19} color={theme.textSecondary} />
+        <Ionicons name="grid-outline" size={s(19)} color={theme.textSecondary} />
       </Pressable>
       <Pressable
         onPress={onOpenSort}
         hitSlop={8}
-        style={({ pressed }) => [
-          styles.chromePill,
-          styles.chromeIconPill,
-          {
-            backgroundColor: theme.glassFill,
-            borderColor: theme.glassBorder,
-          },
-          pressed && styles.chromePillPressed,
-        ]}
+        style={pillBase}
         accessibilityRole="button"
         accessibilityLabel="Sort moments"
       >
-        <Ionicons name="swap-vertical-outline" size={20} color={theme.textSecondary} />
+        <Ionicons name="swap-vertical-outline" size={s(20)} color={theme.textSecondary} />
       </Pressable>
       <Pressable
         onPress={onOpenSettings}
         hitSlop={8}
-        style={({ pressed }) => [
-          styles.chromePill,
-          styles.chromeIconPill,
-          {
-            backgroundColor: theme.glassFill,
-            borderColor: theme.glassBorder,
-          },
-          pressed && styles.chromePillPressed,
-        ]}
+        style={pillBase}
         accessibilityRole="button"
         accessibilityLabel="Settings"
       >
-        <Ionicons name="settings-outline" size={19} color={theme.textSecondary} />
+        <Ionicons name="settings-outline" size={s(19)} color={theme.textSecondary} />
       </Pressable>
       <Pressable
         onPress={onAddMoment}
         hitSlop={8}
-        style={({ pressed }) => [
-          styles.chromePill,
-          styles.chromeIconPill,
-          {
-            backgroundColor: theme.glassFill,
-            borderColor: theme.glassBorder,
-          },
-          pressed && styles.chromePillPressed,
-        ]}
+        style={pillBase}
         accessibilityRole="button"
         accessibilityLabel="Add moment"
       >
-        <Ionicons name="add" size={22} color={theme.accent} />
+        <Ionicons name="add" size={s(22)} color={theme.accent} />
       </Pressable>
     </View>
   );
@@ -566,6 +558,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: -0.5,
   },
+  chromeScreenTitleTablet: {
+    fontSize: 34,
+  },
   chromePill: {
     borderWidth: StyleSheet.hairlineWidth,
     overflow: "hidden",
@@ -579,6 +574,10 @@ const styles = StyleSheet.create({
     borderRadius: radii.lg,
     alignItems: "center",
     justifyContent: "center",
+  },
+  chromeIconPillTablet: {
+    width: 52,
+    height: 52,
   },
   listContent: {
     paddingHorizontal: space.lg,
@@ -647,6 +646,9 @@ const styles = StyleSheet.create({
     borderRadius: radii.lg,
     padding: space.xl,
     gap: space.md,
+    width: "100%",
+    maxWidth: SHEET_MAX_WIDTH,
+    alignSelf: "center",
   },
   sortHeader: {
     flexDirection: "row",

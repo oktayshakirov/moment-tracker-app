@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { useIsTablet } from "@/shared/ui/tablet";
 import { BlurView } from "expo-blur";
 import Animated, {
   FadeIn,
@@ -31,6 +32,9 @@ export function MomentCard({ moment, onPress, variant = "big" }: Props) {
   const [now, setNow] = useState(() => new Date());
   const scale = useSharedValue(1);
   const small = variant === "small";
+  // Give the big card extra height on tablets only; phones stay as-is.
+  const isTablet = useIsTablet();
+  const bigTablet = !small && isTablet;
 
   useEffect(() => {
     const ms = getTickerIntervalMs(moment.displayUnit, moment);
@@ -64,8 +68,18 @@ export function MomentCard({ moment, onPress, variant = "big" }: Props) {
         onPress={onPress}
         style={styles.press}
       >
-        <GlassCard style={small ? styles.cardSmall : styles.card}>
-          <View style={[styles.clip, small && styles.clipSmall]}>
+        <GlassCard
+          style={
+            small ? styles.cardSmall : bigTablet ? styles.cardTablet : styles.card
+          }
+        >
+          <View
+            style={[
+              styles.clip,
+              small && styles.clipSmall,
+              bigTablet && styles.clipTablet,
+            ]}
+          >
             <MomentBackground moment={moment} />
             <LinearDarkOverlay />
             <ContentGlassPanel small={small}>
@@ -134,7 +148,7 @@ function ContentGlassPanel({
   ];
   if (Platform.OS === "ios") {
     return (
-      <BlurView intensity={8} tint="dark" style={panelStyle}>
+      <BlurView intensity={5} tint="dark" style={panelStyle}>
         <View style={innerStyle}>{children}</View>
       </BlurView>
     );
@@ -197,6 +211,9 @@ const styles = StyleSheet.create({
   card: {
     minHeight: 160,
   },
+  cardTablet: {
+    minHeight: 210,
+  },
   cardSmall: {
     minHeight: 110,
   },
@@ -204,6 +221,9 @@ const styles = StyleSheet.create({
     borderRadius: radii.lg,
     overflow: "hidden",
     minHeight: 160,
+  },
+  clipTablet: {
+    minHeight: 210,
   },
   clipSmall: {
     minHeight: 110,
