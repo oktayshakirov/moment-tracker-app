@@ -3,7 +3,7 @@ import Purchases, {
   PURCHASES_ERROR_CODE,
   type CustomerInfo,
 } from "react-native-purchases";
-import { ENTITLEMENT_PRO } from "../constants/revenueCat";
+import { ENTITLEMENT_PRO, PRODUCT_ID_UNLOCK } from "../constants/revenueCat";
 import { getRevenueCatApiKey } from "../utils/revenueCatEnv";
 
 let isConfigured = false;
@@ -49,8 +49,17 @@ export function isRevenueCatConfigured(): boolean {
 }
 
 export function hasProEntitlement(customerInfo: CustomerInfo | null): boolean {
-  if (!customerInfo?.entitlements?.active) return false;
-  return Boolean(customerInfo.entitlements.active[ENTITLEMENT_PRO]);
+  if (!customerInfo) return false;
+  // Primary check: the entitlement granted via the RevenueCat dashboard mapping.
+  if (customerInfo.entitlements?.active?.[ENTITLEMENT_PRO]) return true;
+  // Fallback for the lifetime unlock: treat ownership of the one-time product as
+  // Pro even if the dashboard product→entitlement mapping is missing. Safe because
+  // this product is a non-consumable that never expires.
+  return Boolean(
+    customerInfo.nonSubscriptionTransactions?.some(
+      (tx) => tx.productIdentifier === PRODUCT_ID_UNLOCK,
+    ),
+  );
 }
 
 /**

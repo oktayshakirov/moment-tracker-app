@@ -37,8 +37,6 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
     isTester,
     showPaywall,
     restore,
-    showCustomerCenter,
-    isAvailable,
     redeemTesterCode,
     clearTesterCode,
   } = usePro();
@@ -207,17 +205,6 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
               accessibilityRole="button"
             >
               <Text style={styles.ctaText}>Upgrade to Pro</Text>
-            </Pressable>
-          )}
-          {isPro && !isTester && isAvailable && (
-            <Pressable
-              onPress={() => void showCustomerCenter()}
-              style={[styles.ctaGhost, { borderColor: theme.glassBorder }]}
-              accessibilityRole="button"
-            >
-              <Text style={[styles.ctaGhostText, { color: theme.text }]}>
-                Manage subscription
-              </Text>
             </Pressable>
           )}
         </View>
@@ -480,16 +467,6 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: typography.body,
     fontWeight: "700",
-  },
-  ctaGhost: {
-    borderRadius: radii.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    paddingVertical: space.md,
-    alignItems: "center",
-  },
-  ctaGhostText: {
-    fontSize: typography.body,
-    fontWeight: "600",
   },
   sectionLabel: {
     fontSize: 11,
