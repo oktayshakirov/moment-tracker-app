@@ -5,7 +5,7 @@ module.exports = {
     name: "Moment Tracker",
     slug: "moment-tracker",
     scheme: "momenttracker",
-    version: "1.0.0",
+    version: "1.4.0",
     orientation: "portrait",
     icon: "./assets/icon.jpg",
     userInterfaceStyle: "dark",
@@ -48,7 +48,8 @@ module.exports = {
       revenueCatApiKeyIos:
         process.env.REVENUECAT_API_KEY_IOS ?? process.env.REVENUECAT_API_KEY,
       revenueCatApiKeyAndroid:
-        process.env.REVENUECAT_API_KEY_ANDROID ?? process.env.REVENUECAT_API_KEY,
+        process.env.REVENUECAT_API_KEY_ANDROID ??
+        process.env.REVENUECAT_API_KEY,
     },
     plugins: [
       [
