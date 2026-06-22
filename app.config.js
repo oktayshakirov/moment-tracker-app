@@ -38,7 +38,10 @@ module.exports = {
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
-      permissions: ["android.permission.RECORD_AUDIO"],
+      permissions: [
+        "android.permission.RECORD_AUDIO",
+        "com.google.android.gms.permission.AD_ID",
+      ],
       package: "com.shadev.momenttracker",
     },
     web: {
