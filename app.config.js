@@ -5,7 +5,7 @@ module.exports = {
     name: "Moment Tracker",
     slug: "moment-tracker",
     scheme: "momenttracker",
-    version: "1.4.0",
+    version: "1.5.0",
     orientation: "portrait",
     icon: "./assets/icon.jpg",
     userInterfaceStyle: "dark",
@@ -29,6 +29,7 @@ module.exports = {
         GADApplicationIdentifier: "ca-app-pub-5852582960793521~7118166594",
         NSUserTrackingUsageDescription:
           "This allows us to show you relevant ads and support Moment Tracker.",
+        LSApplicationQueriesSchemes: ["googlegmail", "ms-outlook"],
       },
     },
     android: {
@@ -65,6 +66,7 @@ module.exports = {
         },
       ],
       "expo-sqlite",
+      "expo-mail-composer",
       "@react-native-community/datetimepicker",
       [
         "expo-image-picker",

@@ -2,11 +2,12 @@ import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -25,6 +26,16 @@ import {
   importMoments,
   type TransferFormat,
 } from "@/features/moments/data/momentTransfer";
+import {
+  APP_NAME,
+  getPlanLabel,
+  handleBugReport,
+  handleFeatureRequest,
+  handlePartnership,
+  handleRateApp,
+} from "./connectActions";
+
+type Tab = "settings" | "connect" | "plan";
 
 export function SettingsScreen({ navigation }: SettingsScreenProps) {
   const theme = useAppTheme();
@@ -34,16 +45,27 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
   const { moments, categories } = useRepositories();
   const {
     isPro,
-    isTester,
+    isDevPro,
+    isAvailable: revenueCatAvailable,
+    customerInfo,
     showPaywall,
+    openStoreSubscriptions,
     restore,
-    redeemTesterCode,
-    clearTesterCode,
+    setDevPro,
   } = usePro();
   const [busy, setBusy] = useState<null | "export-json" | "export-csv" | "import" | "restore">(
     null,
   );
-  const [code, setCode] = useState("");
+  const [activeTab, setActiveTab] = useState<Tab>("settings");
+
+  // The Plan tab only exists when in-app purchases are available; keep a valid
+  // tab selected if it disappears.
+  // The dev override lives on the Plan tab, so keep that tab reachable in dev
+  // builds even when in-app purchases aren't available (e.g. the simulator).
+  const showPlanTab = revenueCatAvailable || __DEV__;
+  const effectiveTab: Tab =
+    activeTab === "plan" && !showPlanTab ? "settings" : activeTab;
+  const planLabel = getPlanLabel(customerInfo, isDevPro);
 
   const requirePro = useCallback((): boolean => {
     if (isPro) return true;
@@ -108,27 +130,6 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
     }
   }, [requirePro, moments, categories]);
 
-  const handleRedeem = useCallback(async () => {
-    const ok = await redeemTesterCode(code);
-    if (ok) {
-      setCode("");
-      Alert.alert("Pro unlocked", "Tester access is now active.");
-    } else {
-      Alert.alert("Invalid code", "That code didn't work.");
-    }
-  }, [redeemTesterCode, code]);
-
-  const handleClearTester = useCallback(() => {
-    Alert.alert("Remove tester access", "Turn off the local Pro unlock?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Remove",
-        style: "destructive",
-        onPress: () => void clearTesterCode(),
-      },
-    ]);
-  }, [clearTesterCode]);
-
   const handleRestore = useCallback(async () => {
     setBusy("restore");
     try {
@@ -143,6 +144,13 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
       setBusy(null);
     }
   }, [restore]);
+
+  const title =
+    effectiveTab === "settings"
+      ? "Settings"
+      : effectiveTab === "connect"
+        ? "Connect"
+        : "Plan";
 
   return (
     <Screen edges={["left", "right"]}>
@@ -159,196 +167,313 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
         >
           <Ionicons name="chevron-back" size={22} color={theme.text} />
         </Pressable>
-        <Text style={[styles.title, { color: theme.text }]}>Settings</Text>
-        <View style={styles.iconPill} />
+        <Text style={[styles.title, { color: theme.text }]}>{title}</Text>
+        <View style={styles.headerSpacer} />
+      </View>
+
+      {/* Tab bar */}
+      <View style={[styles.tabBarWrap, { paddingHorizontal: hPad }]}>
+        <View style={[styles.tabBar, { backgroundColor: theme.glassFill }]}>
+          <TabButton
+            theme={theme}
+            icon="settings-outline"
+            label="Settings"
+            active={effectiveTab === "settings"}
+            onPress={() => setActiveTab("settings")}
+          />
+          <TabButton
+            theme={theme}
+            icon="chatbubble-ellipses-outline"
+            label="Connect"
+            active={effectiveTab === "connect"}
+            onPress={() => setActiveTab("connect")}
+          />
+          {showPlanTab && (
+            <TabButton
+              theme={theme}
+              icon="card-outline"
+              label="Plan"
+              active={effectiveTab === "plan"}
+              onPress={() => setActiveTab("plan")}
+            />
+          )}
+        </View>
       </View>
 
       <ScrollView
         contentContainerStyle={[styles.content, { paddingHorizontal: hPad }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Pro status */}
-        <View
-          style={[
-            styles.proCard,
-            {
-              backgroundColor: isPro ? theme.accent + "1A" : theme.bgElevated,
-              borderColor: isPro ? theme.accent : theme.glassBorder,
-            },
-          ]}
-        >
-          <View style={styles.proRow}>
-            <Ionicons
-              name={isPro ? "star" : "star-outline"}
-              size={24}
-              color={isPro ? theme.accent : theme.textSecondary}
-            />
-            <View style={styles.proText}>
-              <Text style={[styles.proTitle, { color: theme.text }]}>
-                {isPro
-                  ? isTester
-                    ? "Pro unlocked (tester)"
-                    : "Pro unlocked"
-                  : "Moment Tracker Pro"}
-              </Text>
+        {effectiveTab === "settings" && (
+          <>
+            {/* Appearance */}
+            <SectionLabel theme={theme}>APPEARANCE</SectionLabel>
+            <View
+              style={[
+                styles.group,
+                { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder },
+              ]}
+            >
+              <View style={styles.appearanceHeader}>
+                <Text style={[styles.rowLabel, { color: theme.text }]}>
+                  Theme color
+                </Text>
+                <Text style={[styles.rowSub, { color: theme.textSecondary }]}>
+                  Used for buttons, counters, and accents across the app
+                </Text>
+              </View>
+              <View style={styles.swatchRow}>
+                {presets.map((p) => {
+                  const selected = p.id === accentId;
+                  return (
+                    <Pressable
+                      key={p.id}
+                      onPress={() => setAccent(p.id)}
+                      style={[
+                        styles.swatch,
+                        {
+                          backgroundColor: p.accent,
+                          borderColor: selected ? theme.text : "transparent",
+                        },
+                      ]}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${p.name} theme color`}
+                      accessibilityState={{ selected }}
+                    >
+                      {selected ? (
+                        <Ionicons name="checkmark" size={18} color="#FFFFFF" />
+                      ) : null}
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+
+            {/* Data */}
+            <SectionLabel theme={theme}>DATA</SectionLabel>
+            <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
+              <SettingRow
+                theme={theme}
+                icon="download-outline"
+                label="Import moments"
+                sublabel="Restore from a .json or .csv file"
+                locked={!isPro}
+                loading={busy === "import"}
+                onPress={() => void handleImport()}
+              />
+              <Divider theme={theme} />
+              <SettingRow
+                theme={theme}
+                icon="document-text-outline"
+                label="Export as JSON"
+                sublabel="Full backup, re-importable"
+                locked={!isPro}
+                loading={busy === "export-json"}
+                onPress={() => void handleExport("json")}
+              />
+              <Divider theme={theme} />
+              <SettingRow
+                theme={theme}
+                icon="grid-outline"
+                label="Export as CSV"
+                sublabel="Spreadsheet-friendly"
+                locked={!isPro}
+                loading={busy === "export-csv"}
+                onPress={() => void handleExport("csv")}
+              />
+            </View>
+
+          </>
+        )}
+
+        {effectiveTab === "connect" && (
+          <>
+            <SectionLabel theme={theme}>FEEDBACK</SectionLabel>
+            <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
+              <SettingRow
+                theme={theme}
+                icon="bug-outline"
+                iconColor={theme.danger}
+                label="Report a Bug"
+                onPress={handleBugReport}
+              />
+              <Divider theme={theme} />
+              <SettingRow
+                theme={theme}
+                icon="bulb-outline"
+                label="Suggest a Feature"
+                onPress={handleFeatureRequest}
+              />
+            </View>
+
+            <SectionLabel theme={theme}>COMMUNITY</SectionLabel>
+            <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
+              <SettingRow
+                theme={theme}
+                icon="star-outline"
+                label={`Rate ${APP_NAME}`}
+                onPress={() => void handleRateApp()}
+              />
+            </View>
+
+            <SectionLabel theme={theme}>BUSINESS</SectionLabel>
+            <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
+              <SettingRow
+                theme={theme}
+                icon="rocket-outline"
+                label="Work with Us"
+                onPress={handlePartnership}
+              />
+            </View>
+          </>
+        )}
+
+        {effectiveTab === "plan" && (
+          <>
+            {/* Current plan */}
+            <View
+              style={[
+                styles.proCard,
+                {
+                  backgroundColor: isPro ? theme.accent + "1A" : theme.bgElevated,
+                  borderColor: isPro ? theme.accent : theme.glassBorder,
+                },
+              ]}
+            >
+              <View style={styles.proRow}>
+                <Ionicons
+                  name={isPro ? "star" : "star-outline"}
+                  size={24}
+                  color={isPro ? theme.accent : theme.textSecondary}
+                />
+                <View style={styles.proText}>
+                  <Text style={[styles.proSub, { color: theme.textSecondary }]}>
+                    Current plan
+                  </Text>
+                  <Text style={[styles.proTitle, { color: theme.text }]}>
+                    {isPro ? planLabel : "Free"}
+                  </Text>
+                </View>
+              </View>
               <Text style={[styles.proSub, { color: theme.textSecondary }]}>
                 {isPro
                   ? "Thanks for your support!"
                   : "Unlimited moments, repeating reminders, multiple widgets, import/export, and no ads."}
               </Text>
-            </View>
-          </View>
-          {!isPro && (
-            <Pressable
-              onPress={() => void showPaywall()}
-              style={[styles.cta, { backgroundColor: theme.accent }]}
-              accessibilityRole="button"
-            >
-              <Text style={styles.ctaText}>Upgrade to Pro</Text>
-            </Pressable>
-          )}
-        </View>
-
-        {/* Appearance */}
-        <SectionLabel theme={theme}>APPEARANCE</SectionLabel>
-        <View
-          style={[
-            styles.group,
-            { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder },
-          ]}
-        >
-          <View style={styles.appearanceHeader}>
-            <Text style={[styles.rowLabel, { color: theme.text }]}>
-              Theme color
-            </Text>
-            <Text style={[styles.rowSub, { color: theme.textSecondary }]}>
-              Used for buttons, counters, and accents across the app
-            </Text>
-          </View>
-          <View style={styles.swatchRow}>
-            {presets.map((p) => {
-              const selected = p.id === accentId;
-              return (
+              {!isPro && (
                 <Pressable
-                  key={p.id}
-                  onPress={() => setAccent(p.id)}
-                  style={[
-                    styles.swatch,
-                    {
-                      backgroundColor: p.accent,
-                      borderColor: selected ? theme.text : "transparent",
-                    },
-                  ]}
+                  onPress={() => void showPaywall()}
+                  style={[styles.cta, { backgroundColor: theme.accent }]}
                   accessibilityRole="button"
-                  accessibilityLabel={`${p.name} theme color`}
-                  accessibilityState={{ selected }}
                 >
-                  {selected ? (
-                    <Ionicons name="checkmark" size={18} color="#FFFFFF" />
-                  ) : null}
+                  <Text style={styles.ctaText}>Upgrade to Pro</Text>
                 </Pressable>
-              );
-            })}
-          </View>
-        </View>
+              )}
+            </View>
 
-        {/* Data */}
-        <SectionLabel theme={theme}>DATA</SectionLabel>
-        <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
-          <SettingRow
-            theme={theme}
-            icon="download-outline"
-            label="Import moments"
-            sublabel="Restore from a .json or .csv file"
-            locked={!isPro}
-            loading={busy === "import"}
-            onPress={() => void handleImport()}
-          />
-          <Divider theme={theme} />
-          <SettingRow
-            theme={theme}
-            icon="document-text-outline"
-            label="Export as JSON"
-            sublabel="Full backup, re-importable"
-            locked={!isPro}
-            loading={busy === "export-json"}
-            onPress={() => void handleExport("json")}
-          />
-          <Divider theme={theme} />
-          <SettingRow
-            theme={theme}
-            icon="grid-outline"
-            label="Export as CSV"
-            sublabel="Spreadsheet-friendly"
-            locked={!isPro}
-            loading={busy === "export-csv"}
-            onPress={() => void handleExport("csv")}
-          />
-        </View>
+            {isPro && (
+              <>
+                <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
+                  <SettingRow
+                    theme={theme}
+                    icon="card-outline"
+                    label={`Manage in ${Platform.OS === "ios" ? "App Store" : "Play Store"}`}
+                    sublabel="Cancel, update payment, or change plan"
+                    onPress={() => void openStoreSubscriptions()}
+                  />
+                </View>
+                <View
+                  style={[
+                    styles.tipCard,
+                    { backgroundColor: theme.accent + "1A", borderColor: theme.accent + "55" },
+                  ]}
+                >
+                  <Text style={[styles.tipTitle, { color: theme.accent }]}>
+                    Thank you for supporting {APP_NAME}
+                  </Text>
+                  <Text style={[styles.tipBody, { color: theme.textSecondary }]}>
+                    Your purchase unlocks Pro benefits forever. You'll also
+                    receive any future features and improvements we add to the
+                    app at no extra cost.
+                  </Text>
+                </View>
+              </>
+            )}
 
-        {/* Purchases */}
-        <SectionLabel theme={theme}>PURCHASES</SectionLabel>
-        <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
-          <SettingRow
-            theme={theme}
-            icon="refresh-outline"
-            label="Restore purchases"
-            loading={busy === "restore"}
-            onPress={() => void handleRestore()}
-          />
-        </View>
+            {/* Restore purchases */}
+            <SectionLabel theme={theme}>PURCHASES</SectionLabel>
+            <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
+              <SettingRow
+                theme={theme}
+                icon="refresh-outline"
+                label="Restore purchases"
+                loading={busy === "restore"}
+                onPress={() => void handleRestore()}
+              />
+            </View>
 
-        {/* Tester access */}
-        <SectionLabel theme={theme}>TESTER ACCESS</SectionLabel>
-        {isTester ? (
-          <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
-            <SettingRow
-              theme={theme}
-              icon="flask-outline"
-              label="Tester access active"
-              sublabel="Pro features unlocked locally"
-              onPress={handleClearTester}
-            />
-          </View>
-        ) : (
-          <View style={[styles.codeRow, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
-            <TextInput
-              value={code}
-              onChangeText={setCode}
-              placeholder="Enter tester code"
-              placeholderTextColor={theme.textTertiary}
-              style={[styles.codeInput, { color: theme.text }]}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType="number-pad"
-              returnKeyType="done"
-              onSubmitEditing={() => void handleRedeem()}
-            />
-            <Pressable
-              onPress={() => void handleRedeem()}
-              disabled={code.trim().length === 0}
-              style={[
-                styles.codeBtn,
-                {
-                  backgroundColor:
-                    code.trim().length === 0 ? theme.glassFill : theme.accent,
-                },
-              ]}
-              accessibilityRole="button"
-            >
-              <Text
-                style={[
-                  styles.codeBtnText,
-                  { color: code.trim().length === 0 ? theme.textTertiary : "#FFFFFF" },
-                ]}
-              >
-                Redeem
-              </Text>
-            </Pressable>
-          </View>
+            {/* Developer-only Pro override */}
+            {__DEV__ && (
+              <>
+                <SectionLabel theme={theme}>DEVELOPER</SectionLabel>
+                <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
+                  <View style={styles.row}>
+                    <Ionicons name="flask-outline" size={20} color={theme.textSecondary} />
+                    <View style={styles.rowText}>
+                      <Text style={[styles.rowLabel, { color: theme.text }]}>
+                        Pro plan (dev)
+                      </Text>
+                      <Text style={[styles.rowSub, { color: theme.textSecondary }]}>
+                        Unlock Pro locally for testing
+                      </Text>
+                    </View>
+                    <Switch
+                      value={isDevPro}
+                      onValueChange={(v) => void setDevPro(v)}
+                      trackColor={{ true: theme.accent }}
+                    />
+                  </View>
+                </View>
+              </>
+            )}
+          </>
         )}
       </ScrollView>
     </Screen>
+  );
+}
+
+function TabButton({
+  theme,
+  icon,
+  label,
+  active,
+  onPress,
+}: {
+  theme: Theme;
+  icon: React.ComponentProps<typeof Ionicons>["name"];
+  label: string;
+  active: boolean;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={[styles.tab, active && { backgroundColor: theme.bgElevated }]}
+      accessibilityRole="button"
+      accessibilityState={{ selected: active }}
+    >
+      <Ionicons
+        name={icon}
+        size={15}
+        color={active ? theme.text : theme.textTertiary}
+      />
+      <Text
+        style={[styles.tabLabel, { color: active ? theme.text : theme.textTertiary }]}
+      >
+        {label}
+      </Text>
+    </Pressable>
   );
 }
 
@@ -367,6 +492,7 @@ function Divider({ theme }: { theme: Theme }) {
 function SettingRow({
   theme,
   icon,
+  iconColor,
   label,
   sublabel,
   locked,
@@ -375,6 +501,7 @@ function SettingRow({
 }: {
   theme: Theme;
   icon: React.ComponentProps<typeof Ionicons>["name"];
+  iconColor?: string;
   label: string;
   sublabel?: string;
   locked?: boolean;
@@ -388,7 +515,7 @@ function SettingRow({
       style={({ pressed }) => [styles.row, pressed && styles.rowPressed]}
       accessibilityRole="button"
     >
-      <Ionicons name={icon} size={20} color={theme.textSecondary} />
+      <Ionicons name={icon} size={20} color={iconColor ?? theme.textSecondary} />
       <View style={styles.rowText}>
         <Text style={[styles.rowLabel, { color: theme.text }]}>{label}</Text>
         {sublabel ? (
@@ -429,6 +556,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  headerSpacer: {
+    width: 44,
+    height: 44,
+  },
+  tabBarWrap: {
+    paddingHorizontal: space.lg,
+    paddingBottom: space.md,
+  },
+  tabBar: {
+    flexDirection: "row",
+    borderRadius: radii.md,
+    padding: 4,
+    gap: 4,
+  },
+  tab: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: space.sm,
+    borderRadius: radii.sm,
+  },
+  tabLabel: {
+    fontSize: typography.caption,
+    fontWeight: "600",
+  },
   content: {
     paddingHorizontal: space.lg,
     paddingBottom: space.xxl,
@@ -448,10 +602,10 @@ const styles = StyleSheet.create({
   },
   proText: {
     flex: 1,
-    gap: 4,
+    gap: 2,
   },
   proTitle: {
-    fontSize: typography.body,
+    fontSize: typography.title2,
     fontWeight: "700",
   },
   proSub: {
@@ -467,6 +621,21 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: typography.body,
     fontWeight: "700",
+  },
+  tipCard: {
+    borderRadius: radii.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+    padding: space.lg,
+    marginTop: space.sm,
+    gap: 4,
+  },
+  tipTitle: {
+    fontSize: typography.body,
+    fontWeight: "700",
+  },
+  tipBody: {
+    fontSize: typography.caption,
+    lineHeight: 18,
   },
   sectionLabel: {
     fontSize: 11,
@@ -526,28 +695,5 @@ const styles = StyleSheet.create({
   divider: {
     height: StyleSheet.hairlineWidth,
     marginLeft: space.lg + 20 + space.md,
-  },
-  codeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: space.sm,
-    borderRadius: radii.lg,
-    borderWidth: StyleSheet.hairlineWidth,
-    padding: space.sm,
-  },
-  codeInput: {
-    flex: 1,
-    fontSize: typography.body,
-    paddingHorizontal: space.md,
-    paddingVertical: space.sm,
-  },
-  codeBtn: {
-    borderRadius: radii.md,
-    paddingVertical: space.sm,
-    paddingHorizontal: space.lg,
-  },
-  codeBtnText: {
-    fontSize: typography.body,
-    fontWeight: "700",
   },
 });

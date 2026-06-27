@@ -3,7 +3,7 @@
     "name": "Moment Tracker",
     "slug": "moment-tracker",
     "scheme": "momenttracker",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "orientation": "portrait",
     "icon": "./assets/icon.jpg",
     "userInterfaceStyle": "dark",
@@ -21,7 +21,8 @@
         ]
       },
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "Choose a photo as the background for your moments."
+        "NSPhotoLibraryUsageDescription": "Choose a photo as the background for your moments.",
+        "LSApplicationQueriesSchemes": ["googlegmail", "ms-outlook"]
       },
       "bundleIdentifier": "com.shadev.momenttracker"
     },
@@ -32,7 +33,10 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "permissions": ["android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "com.google.android.gms.permission.AD_ID"
+      ],
       "package": "com.shadev.momenttracker"
     },
     "web": {
@@ -49,6 +53,7 @@
         }
       ],
       "expo-sqlite",
+      "expo-mail-composer",
       "expo-notifications",
       "@react-native-community/datetimepicker",
       [

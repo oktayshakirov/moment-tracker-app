@@ -7,11 +7,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
  */
 export const RC_PRO_CACHE_KEY = "@momenttracker/revenuecat_pro_cache_v1";
 
-/** Local tester override — unlocks Pro without a real purchase. */
+/** Local dev override — unlocks Pro without a real purchase. */
 export const TESTER_PRO_KEY = "@momenttracker/tester_pro_override";
-
-/** Code testers enter in Settings to unlock Pro features locally. */
-export const TESTER_CODE = "12345";
 
 export async function isProCached(): Promise<boolean> {
   try {

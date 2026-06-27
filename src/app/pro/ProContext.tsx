@@ -9,19 +9,13 @@ import { Alert } from "react-native";
 import { useRevenueCat, type UseRevenueCatResult } from "@/hooks/useRevenueCat";
 import { hasAvailablePaywall } from "@/services/revenueCat";
 import { setWidgetProStateOnIos } from "@/widgets/iosWidgetBridge";
-import {
-  getTesterOverride,
-  setTesterOverride,
-  TESTER_CODE,
-} from "./proCache";
+import { getTesterOverride, setTesterOverride } from "./proCache";
 
 export type ProContextValue = UseRevenueCatResult & {
-  /** True when Pro is unlocked via the local tester code (not a real purchase). */
-  isTester: boolean;
-  /** Returns true if the code was valid and Pro was unlocked. */
-  redeemTesterCode: (code: string) => Promise<boolean>;
-  /** Remove the local tester unlock. */
-  clearTesterCode: () => Promise<void>;
+  /** True when Pro is unlocked via the local dev override (not a real purchase). */
+  isDevPro: boolean;
+  /** Toggle the local dev Pro override (dev builds only). */
+  setDevPro: (enabled: boolean) => Promise<void>;
 };
 
 /**
@@ -33,26 +27,26 @@ const ProContext = createContext<ProContextValue | null>(null);
 
 export function ProProvider({ children }: { children: React.ReactNode }) {
   const rc = useRevenueCat();
-  const [isTester, setIsTester] = useState(false);
+  const [isDevPro, setIsDevPro] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     void getTesterOverride().then((on) => {
-      if (!cancelled) setIsTester(on);
+      if (!cancelled) setIsDevPro(on);
     });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const isPro = rc.isPro || isTester;
+  const isPro = rc.isPro || isDevPro;
 
   // Keep the iOS widget extension's lock flag in sync with the effective
-  // entitlement (real purchase or tester override).
+  // entitlement (real purchase or local dev override).
   useEffect(() => {
-    if (!rc.entitlementResolved && !isTester) return;
+    if (!rc.entitlementResolved && !isDevPro) return;
     setWidgetProStateOnIos(isPro);
-  }, [isPro, rc.entitlementResolved, isTester]);
+  }, [isPro, rc.entitlementResolved, isDevPro]);
 
   /** Present the paywall, but never crash when it isn't configured yet. */
   const showPaywall = useCallback(async () => {
@@ -83,16 +77,9 @@ export function ProProvider({ children }: { children: React.ReactNode }) {
     return rc.showPaywallIfNeeded();
   }, [isPro, rc]);
 
-  const redeemTesterCode = useCallback(async (code: string): Promise<boolean> => {
-    if (code.trim() !== TESTER_CODE) return false;
-    await setTesterOverride(true);
-    setIsTester(true);
-    return true;
-  }, []);
-
-  const clearTesterCode = useCallback(async (): Promise<void> => {
-    await setTesterOverride(false);
-    setIsTester(false);
+  const setDevPro = useCallback(async (enabled: boolean): Promise<void> => {
+    await setTesterOverride(enabled);
+    setIsDevPro(enabled);
   }, []);
 
   const value: ProContextValue = {
@@ -100,9 +87,8 @@ export function ProProvider({ children }: { children: React.ReactNode }) {
     isPro,
     showPaywall,
     showPaywallIfNeeded,
-    isTester,
-    redeemTesterCode,
-    clearTesterCode,
+    isDevPro,
+    setDevPro,
   };
 
   return <ProContext.Provider value={value}>{children}</ProContext.Provider>;
