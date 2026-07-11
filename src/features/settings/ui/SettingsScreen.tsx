@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -49,7 +48,6 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
     isAvailable: revenueCatAvailable,
     customerInfo,
     showPaywall,
-    openStoreSubscriptions,
     restore,
     setDevPro,
   } = usePro();
@@ -372,32 +370,21 @@ export function SettingsScreen({ navigation }: SettingsScreenProps) {
             </View>
 
             {isPro && (
-              <>
-                <View style={[styles.group, { backgroundColor: theme.bgElevated, borderColor: theme.glassBorder }]}>
-                  <SettingRow
-                    theme={theme}
-                    icon="card-outline"
-                    label={`Manage in ${Platform.OS === "ios" ? "App Store" : "Play Store"}`}
-                    sublabel="Cancel, update payment, or change plan"
-                    onPress={() => void openStoreSubscriptions()}
-                  />
-                </View>
-                <View
-                  style={[
-                    styles.tipCard,
-                    { backgroundColor: theme.accent + "1A", borderColor: theme.accent + "55" },
-                  ]}
-                >
-                  <Text style={[styles.tipTitle, { color: theme.accent }]}>
-                    Thank you for supporting {APP_NAME}
-                  </Text>
-                  <Text style={[styles.tipBody, { color: theme.textSecondary }]}>
-                    Your purchase unlocks Pro benefits forever. You'll also
-                    receive any future features and improvements we add to the
-                    app at no extra cost.
-                  </Text>
-                </View>
-              </>
+              <View
+                style={[
+                  styles.tipCard,
+                  { backgroundColor: theme.accent + "1A", borderColor: theme.accent + "55" },
+                ]}
+              >
+                <Text style={[styles.tipTitle, { color: theme.accent }]}>
+                  Thank you for supporting {APP_NAME}
+                </Text>
+                <Text style={[styles.tipBody, { color: theme.textSecondary }]}>
+                  Your purchase unlocks Pro benefits forever. You'll also
+                  receive any future features and improvements we add to the
+                  app at no extra cost.
+                </Text>
+              </View>
             )}
 
             {/* Restore purchases */}

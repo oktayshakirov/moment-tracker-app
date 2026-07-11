@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Linking, Platform } from "react-native";
+import { Platform } from "react-native";
 import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { CustomerInfo } from "react-native-purchases";
@@ -25,7 +25,6 @@ export interface UseRevenueCatResult {
   showPaywallIfNeeded: () => Promise<boolean>;
   restore: () => Promise<{ success: boolean; error?: RevenueCatError }>;
   showCustomerCenter: () => Promise<void>;
-  openStoreSubscriptions: () => Promise<void>;
   isAvailable: boolean;
   entitlementResolved: boolean;
 }
@@ -166,32 +165,6 @@ export function useRevenueCat(): UseRevenueCatResult {
     }
   }, [isAvailable, fetchCustomerInfo]);
 
-  const openStoreSubscriptions = useCallback(async () => {
-    if (Platform.OS === "ios") {
-      await Linking.openURL("https://apps.apple.com/account/subscriptions");
-      return;
-    }
-    if (Platform.OS === "android") {
-      const pkg =
-        (Constants.expoConfig as { android?: { package?: string } })?.android?.package ??
-        "com.shadev.momenttracker";
-      const candidates = [
-        `https://play.google.com/store/account/subscriptions?package=${pkg}`,
-        "https://play.google.com/store/account/subscriptions",
-      ];
-      for (const url of candidates) {
-        try {
-          const canOpen = await Linking.canOpenURL(url);
-          if (!canOpen) continue;
-          await Linking.openURL(url);
-          return;
-        } catch {
-          // Try next candidate.
-        }
-      }
-    }
-  }, []);
-
   const isPro = hasProEntitlement(customerInfo) || cachedIsPro;
 
   return {
@@ -204,7 +177,6 @@ export function useRevenueCat(): UseRevenueCatResult {
     showPaywallIfNeeded,
     restore,
     showCustomerCenter,
-    openStoreSubscriptions,
     isAvailable,
     entitlementResolved,
   };
