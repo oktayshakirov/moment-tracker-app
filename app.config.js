@@ -94,17 +94,16 @@ module.exports = {
               widgetFeatures: "reconfigurable|configuration_optional",
             },
             {
-              // Medium (4x2) — mirrors the iOS systemMedium family.
+              // Medium (4x2) — mirrors the iOS systemMedium family. Fixed size,
+              // non-resizable, so it always lands as a full 4-wide card like iOS.
               name: "PreviewMedium",
               label: "Moment Tracker (Wide)",
               description: "Choose a moment to show on your home screen",
-              minWidth: "250dp",
+              minWidth: "276dp",
               minHeight: "110dp",
               targetCellWidth: 4,
               targetCellHeight: 2,
-              minResizeWidth: "180dp",
-              maxResizeWidth: "500dp",
-              resizeMode: "horizontal",
+              resizeMode: "none",
               updatePeriodMillis: 0,
               widgetFeatures: "reconfigurable|configuration_optional",
             },
