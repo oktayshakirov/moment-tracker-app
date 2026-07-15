@@ -56,9 +56,13 @@ export function PreviewWidgetCard({
 
   // Home-screen grid cells aren't square, so to match the iOS widget we draw a
   // centered square (side = the smaller dimension) and leave the rest transparent.
+  // When the user stretches the widget wide, fill the whole cell instead — the
+  // Android counterpart of the iOS medium family.
   const wd = size?.width && size.width > 0 ? size.width : 160;
   const hd = size?.height && size.height > 0 ? size.height : 160;
-  const side = Math.min(wd, hd);
+  const isWide = wd >= hd * 1.4;
+  const cardW = isWide ? wd : Math.min(wd, hd);
+  const cardH = isWide ? hd : Math.min(wd, hd);
 
   // Over a photo always use white text on the dark scrim; on a solid color pick
   // black or white for contrast — same rule as the iOS widget.
@@ -73,6 +77,9 @@ export function PreviewWidgetCard({
         width: "match_parent",
         height: "match_parent",
         padding: 14,
+        // The wide layout has room to spare; nudge the content off the edge
+        // like the iOS medium widget.
+        paddingLeft: isWide ? 20 : 14,
         flexDirection: "column",
         justifyContent: "space-between",
       }}
@@ -142,12 +149,12 @@ export function PreviewWidgetCard({
 
   let card: React.JSX.Element;
   if (!imageUri) {
-    // Solid-color square card.
+    // Solid-color card.
     card = (
       <FlexWidget
         style={{
-          width: side,
-          height: side,
+          width: cardW,
+          height: cardH,
           borderRadius: CARD_RADIUS,
           backgroundColor: (backgroundColor || PLACEHOLDER_BG) as ColorProp,
         }}
@@ -156,22 +163,22 @@ export function PreviewWidgetCard({
       </FlexWidget>
     );
   } else {
-    // Image square card: cover-crop the photo at its true aspect ratio (size it
-    // to cover the square and shift with negative margins; the FrameLayout clips
+    // Image card: cover-crop the photo at its true aspect ratio (size it to
+    // cover the card and shift with negative margins; the FrameLayout clips
     // the overflow → centered crop, no distortion), then scrim + content.
     const aspect =
       snapshot.backgroundImageAspect && snapshot.backgroundImageAspect > 0
         ? snapshot.backgroundImageAspect
         : 1;
-    const coverW = Math.round(Math.max(side, side * aspect));
-    const coverH = Math.round(Math.max(side, side / aspect));
-    const offsetX = Math.round((coverW - side) / 2);
-    const offsetY = Math.round((coverH - side) / 2);
+    const coverH = Math.round(Math.max(cardH, cardW / aspect));
+    const coverW = Math.round(coverH * aspect);
+    const offsetX = Math.round((coverW - cardW) / 2);
+    const offsetY = Math.round((coverH - cardH) / 2);
     card = (
       <OverlapWidget
         style={{
-          width: side,
-          height: side,
+          width: cardW,
+          height: cardH,
           borderRadius: CARD_RADIUS,
           overflow: "hidden",
         }}
@@ -188,14 +195,14 @@ export function PreviewWidgetCard({
           }}
         />
         <FlexWidget
-          style={{ width: side, height: side, backgroundColor: SCRIM }}
+          style={{ width: cardW, height: cardH, backgroundColor: SCRIM }}
         />
         {content}
       </OverlapWidget>
     );
   }
 
-  // Center the square card within the (possibly non-square) widget cell.
+  // Center the card within the (possibly non-square) widget cell.
   return (
     <FlexWidget
       style={{

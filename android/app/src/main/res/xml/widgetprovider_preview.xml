@@ -5,9 +5,9 @@
     android:targetCellWidth="2"
     android:targetCellHeight="2"
 
+    android:maxResizeWidth="500dp"
 
-
-    android:resizeMode="none"
+    android:resizeMode="horizontal"
 
     android:description="@string/widget_preview_description"
 

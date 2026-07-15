@@ -88,7 +88,9 @@ module.exports = {
               minHeight: "110dp",
               targetCellWidth: 2,
               targetCellHeight: 2,
-              resizeMode: "none",
+              // Stretchable to a wide (e.g. 4x2) layout, like the iOS medium widget.
+              resizeMode: "horizontal",
+              maxResizeWidth: "500dp",
               updatePeriodMillis: 0,
               widgetFeatures: "reconfigurable|configuration_optional",
             },
