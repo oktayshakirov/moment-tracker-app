@@ -19,7 +19,7 @@ struct PreviewWidget: Widget {
     }
     .configurationDisplayName("Moment Tracker")
     .description(
-      "Show a moment on your home screen — the medium size adds your next moments alongside it. Long press the widget, then tap Edit Widget to choose which moment to display."
+      "Show a moment on your home screen. Long press the widget, then tap Edit Widget to choose which moment to display."
     )
     .supportedFamilies([.systemSmall, .systemMedium])
     .contentMarginsDisabled()

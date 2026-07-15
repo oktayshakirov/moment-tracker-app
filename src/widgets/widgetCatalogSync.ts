@@ -23,8 +23,6 @@ export async function syncWidgetCatalog(
     id: m.id,
     title: m.title,
     backgroundColor: m.accentColor,
-    targetDateTime: m.targetDateTime,
-    mode: m.mode,
   }));
 
   const activeIds = new Set(list.map((m) => m.id));
