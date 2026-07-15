@@ -98,7 +98,7 @@ const REMINDER_INTERVALS: ReminderInterval[] = [
   "year",
 ];
 
-type ReminderMode = "off" | "before" | "repeat";
+type ReminderMode = "off" | "before" | "repeat" | "milestones";
 
 /** Drop seconds so pickers and labels stay minute-precision only. */
 function trimToMinute(d: Date): Date {
@@ -383,8 +383,8 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
         setReminder(null);
         return;
       }
-      // Repeating reminders are a Pro feature; free users only get one-time.
-      if (next === "repeat" && !isPro) {
+      // Repeating and milestone reminders are Pro; free users only get one-time.
+      if ((next === "repeat" || next === "milestones") && !isPro) {
         void showPaywall();
         return;
       }
@@ -392,6 +392,8 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
       if (!ok) return;
       if (next === "before") {
         setReminder({ kind: "before", value: 1, unit: "days" });
+      } else if (next === "milestones") {
+        setReminder({ kind: "milestones" });
       } else {
         setReminder({
           kind: "repeat",
@@ -1183,6 +1185,7 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                     { value: "off", label: "Off" },
                     { value: "before", label: "One time" },
                     { value: "repeat", label: "Repeating" },
+                    { value: "milestones", label: "Milestones" },
                   ] as { value: ReminderMode; label: string }[]
                 ).map((opt) => {
                   const isSelected = reminderMode === opt.value;
@@ -1199,7 +1202,8 @@ export function MomentFormScreen({ navigation, route }: MomentFormScreenProps) {
                       <Text style={[styles.optionLabel, { color: theme.text }]}>
                         {opt.label}
                       </Text>
-                      {opt.value === "repeat" && !isPro && (
+                      {(opt.value === "repeat" || opt.value === "milestones") &&
+                        !isPro && (
                         <Ionicons
                           name="lock-closed"
                           size={16}

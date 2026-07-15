@@ -6,11 +6,18 @@ import {
   getNotificationsModule,
 } from "./notifications";
 import { computeReminderTrigger, type ReminderTrigger } from "./reminderTrigger";
+import { milestoneNotificationBody, upcomingMilestones } from "./milestones";
 import {
-  clearScheduledId,
-  getScheduledId,
-  setScheduledId,
+  clearScheduledIds,
+  getScheduledIds,
+  setScheduledIds,
 } from "./reminderStore";
+
+/**
+ * How many future milestone notifications to keep scheduled per moment.
+ * `syncAllReminders` rolls the window forward on every app boot.
+ */
+const MILESTONE_SCHEDULE_COUNT = 4;
 
 type NotificationsModule = NonNullable<
   Awaited<ReturnType<typeof getNotificationsModule>>
@@ -57,18 +64,20 @@ function toTriggerInput(
   }
 }
 
-/** Cancel whatever notification is currently scheduled for a moment. */
+/** Cancel whatever notifications are currently scheduled for a moment. */
 export async function cancelMomentReminder(momentId: string): Promise<void> {
   const Notifications = await getNotificationsModule();
   if (!Notifications) return;
-  const existing = await getScheduledId(momentId);
-  if (existing) {
+  const existing = await getScheduledIds(momentId);
+  for (const id of existing) {
     try {
-      await Notifications.cancelScheduledNotificationAsync(existing);
+      await Notifications.cancelScheduledNotificationAsync(id);
     } catch {
       // Already gone — ignore.
     }
-    await clearScheduledId(momentId);
+  }
+  if (existing.length > 0) {
+    await clearScheduledIds(momentId);
   }
 }
 
@@ -86,6 +95,11 @@ export async function syncMomentReminder(moment: Moment): Promise<void> {
 
   if (!moment.reminder) return;
 
+  if (moment.reminder.kind === "milestones") {
+    await scheduleMilestones(Notifications, moment, moment.reminder.message);
+    return;
+  }
+
   const trigger = computeReminderTrigger(moment, moment.reminder);
   if (!trigger) return;
 
@@ -97,9 +111,47 @@ export async function syncMomentReminder(moment: Moment): Promise<void> {
       },
       trigger: toTriggerInput(Notifications, trigger),
     });
-    await setScheduledId(moment.id, id);
+    await setScheduledIds(moment.id, [id]);
   } catch {
     // Scheduling failed (permission revoked, etc.) — leave unscheduled.
+  }
+}
+
+/**
+ * Schedule the next few milestone dates as one-time notifications. iOS caps
+ * pending notifications at 64 per app, so keep the per-moment window small.
+ */
+async function scheduleMilestones(
+  Notifications: NotificationsModule,
+  moment: Moment,
+  message: string | undefined,
+): Promise<void> {
+  const milestones = upcomingMilestones(
+    moment,
+    new Date(),
+    MILESTONE_SCHEDULE_COUNT,
+  );
+  const ids: string[] = [];
+  for (const milestone of milestones) {
+    try {
+      const id = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: moment.title,
+          body: milestoneNotificationBody(milestone, message),
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DATE,
+          date: milestone.date,
+        },
+      });
+      ids.push(id);
+    } catch {
+      // Scheduling failed (permission revoked, etc.) — keep what we have.
+      break;
+    }
+  }
+  if (ids.length > 0) {
+    await setScheduledIds(moment.id, ids);
   }
 }
 

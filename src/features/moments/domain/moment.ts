@@ -71,6 +71,10 @@ export const reminderSchema = z.discriminatedUnion('kind', [
     interval: reminderIntervalSchema,
     message: z.string().optional(),
   }),
+  z.object({
+    kind: z.literal('milestones'),
+    message: z.string().optional(),
+  }),
 ]);
 export type Reminder = z.infer<typeof reminderSchema>;
 

@@ -5,6 +5,8 @@ import WidgetKit
 struct PreviewWidgetView: View {
   let entry: PreviewEntry
 
+  @Environment(\.widgetFamily) private var family
+
   private var accent: Color {
     Color(hex: entry.backgroundColor) ?? Color(red: 28 / 255, green: 33 / 255, blue: 39 / 255)
   }
@@ -36,6 +38,8 @@ struct PreviewWidgetView: View {
     Group {
       if entry.locked {
         lockedContent
+      } else if family == .systemMedium && entry.configured && !entry.others.isEmpty {
+        mediumContent
       } else if entry.configured, let url = entry.widgetURL {
         Link(destination: url) {
           widgetContent
@@ -80,6 +84,70 @@ struct PreviewWidgetView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .padding(14)
+  }
+
+  /// Medium family: configured moment on the left, "up next" rail on the right.
+  private var mediumContent: some View {
+    HStack(spacing: 0) {
+      Group {
+        if let url = entry.widgetURL {
+          Link(destination: url) { widgetContent }
+        } else {
+          widgetContent
+        }
+      }
+      .frame(maxWidth: .infinity)
+
+      Rectangle()
+        .fill(fg(0.15))
+        .frame(width: 1)
+        .padding(.vertical, 14)
+
+      VStack(alignment: .leading, spacing: 6) {
+        ForEach(entry.others, id: \.momentId) { other in
+          secondaryRow(other)
+            .frame(maxHeight: .infinity, alignment: .leading)
+        }
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+      .padding(14)
+    }
+  }
+
+  private func secondaryRow(_ moment: SecondaryMomentEntry) -> some View {
+    let content = VStack(alignment: .leading, spacing: 2) {
+      Text(moment.title)
+        .font(.system(size: 12, weight: .semibold))
+        .foregroundStyle(fg(0.75))
+        .lineLimit(1)
+      HStack(alignment: .firstTextBaseline, spacing: 4) {
+        Text(moment.primary)
+          .font(.system(size: 20, weight: .black))
+          .foregroundStyle(fg(1.0))
+          .lineLimit(1)
+          .minimumScaleFactor(0.6)
+        if !moment.primaryUnit.isEmpty {
+          Text(moment.primaryUnit.uppercased())
+            .font(.system(size: 10, weight: .bold))
+            .foregroundStyle(fg(0.85))
+            .tracking(0.8)
+            .lineLimit(1)
+        }
+      }
+      Text(moment.sinceUntil)
+        .font(.system(size: 9, weight: .bold))
+        .foregroundStyle(fg(0.5))
+        .textCase(.uppercase)
+        .tracking(1.0)
+        .lineLimit(1)
+    }
+    return Group {
+      if let url = moment.widgetURL {
+        Link(destination: url) { content }
+      } else {
+        content
+      }
+    }
   }
 
   private var widgetContent: some View {

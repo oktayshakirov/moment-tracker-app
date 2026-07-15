@@ -1,22 +1,21 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { WidgetPayload } from "./widgetSnapshot";
+import type { WidgetCatalogEntry } from "./widgetCatalog";
 
 const CATALOG_KEY = "@momenttracker/moments-catalog";
 const snapshotKey = (momentId: string) => `@momenttracker/snapshots/${momentId}`;
 
 export async function saveWidgetCatalog(
-  entries: { id: string; title: string; backgroundColor: string }[],
+  entries: WidgetCatalogEntry[],
 ): Promise<void> {
   await AsyncStorage.setItem(CATALOG_KEY, JSON.stringify(entries));
 }
 
-export async function loadWidgetCatalog(): Promise<
-  { id: string; title: string; backgroundColor: string }[]
-> {
+export async function loadWidgetCatalog(): Promise<WidgetCatalogEntry[]> {
   const raw = await AsyncStorage.getItem(CATALOG_KEY);
   if (!raw) return [];
   try {
-    return JSON.parse(raw) as { id: string; title: string; backgroundColor: string }[];
+    return JSON.parse(raw) as WidgetCatalogEntry[];
   } catch {
     return [];
   }

@@ -9,6 +9,7 @@ import {
   subYears,
 } from "date-fns";
 import type { Moment, Reminder, ReminderOffsetUnit } from "../moments/domain/moment";
+import { upcomingMilestones } from "./milestones";
 
 /** Platform-agnostic description of when a reminder should fire. */
 export type ReminderTrigger =
@@ -86,6 +87,12 @@ export function computeReminderTrigger(
     return null;
   }
 
+  if (reminder.kind === "milestones") {
+    // Only the next occurrence; the scheduler batches several ahead itself.
+    const [next] = upcomingMilestones(moment, now, 1);
+    return next ? { type: "date", date: next.date } : null;
+  }
+
   // Repeating, anchored to the moment's time-of-day.
   const hour = target.getHours();
   const minute = target.getMinutes();
@@ -123,6 +130,12 @@ export function describeReminderSchedule(
   if (!trigger) return null;
   const stamp = (d: Date) => format(d, "PPPp");
 
+  if (reminder.kind === "milestones") {
+    const [next] = upcomingMilestones(moment, now, 1);
+    if (!next) return null;
+    return `Next up: ${next.label} on ${stamp(next.date)}. Later milestones (100 days, anniversaries, …) are scheduled automatically.`;
+  }
+
   if (trigger.type === "date") {
     return `You'll get a notification on ${stamp(trigger.date)}.`;
   }
@@ -139,6 +152,9 @@ export function describeReminder(reminder: Reminder): string {
     const unit =
       reminder.value === 1 ? reminder.unit.replace(/s$/, "") : reminder.unit;
     return `${reminder.value} ${unit} before`;
+  }
+  if (reminder.kind === "milestones") {
+    return "At milestones";
   }
   return `Every ${reminder.interval}`;
 }
