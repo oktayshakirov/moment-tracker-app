@@ -43,5 +43,12 @@
       </intent-filter>
       <meta-data android:name="android.appwidget.provider" android:resource="@xml/widgetprovider_preview"/>
     </receiver>
+    <receiver android:name=".widget.PreviewMedium" android:exported="false" android:label="Moment Tracker (Wide)">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+        <action android:name="com.shadev.momenttracker.WIDGET_CLICK"/>
+      </intent-filter>
+      <meta-data android:name="android.appwidget.provider" android:resource="@xml/widgetprovider_previewmedium"/>
+    </receiver>
   </application>
 </manifest>

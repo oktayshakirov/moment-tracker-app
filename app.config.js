@@ -81,6 +81,7 @@ module.exports = {
         {
           widgets: [
             {
+              // Small (2x2) — mirrors the iOS systemSmall family.
               name: "Preview",
               label: "Moment Tracker",
               description: "Choose a moment to show on your home screen",
@@ -88,9 +89,22 @@ module.exports = {
               minHeight: "110dp",
               targetCellWidth: 2,
               targetCellHeight: 2,
-              // Stretchable to a wide (e.g. 4x2) layout, like the iOS medium widget.
-              resizeMode: "horizontal",
+              resizeMode: "none",
+              updatePeriodMillis: 0,
+              widgetFeatures: "reconfigurable|configuration_optional",
+            },
+            {
+              // Medium (4x2) — mirrors the iOS systemMedium family.
+              name: "PreviewMedium",
+              label: "Moment Tracker (Wide)",
+              description: "Choose a moment to show on your home screen",
+              minWidth: "250dp",
+              minHeight: "110dp",
+              targetCellWidth: 4,
+              targetCellHeight: 2,
+              minResizeWidth: "180dp",
               maxResizeWidth: "500dp",
+              resizeMode: "horizontal",
               updatePeriodMillis: 0,
               widgetFeatures: "reconfigurable|configuration_optional",
             },

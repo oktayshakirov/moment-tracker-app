@@ -8,7 +8,11 @@ import {
 } from "./widgetSnapshot";
 import { loadMomentSnapshot } from "./widgetSnapshotStore";
 
-const ANDROID_WIDGET_NAME = "Preview";
+// The two registered home-screen widgets (small + wide). A given widgetId
+// belongs to exactly one of them, but the binding store doesn't record which,
+// so refresh tries both names — requestWidgetUpdateById is a no-op for the name
+// that doesn't own the id.
+const ANDROID_WIDGET_NAMES = ["Preview", "PreviewMedium"];
 
 export async function refreshAndroidWidget(
   widgetId: number,
@@ -16,15 +20,17 @@ export async function refreshAndroidWidget(
 ): Promise<void> {
   if (Platform.OS !== "android") return;
 
-  await requestWidgetUpdateById({
-    widgetName: ANDROID_WIDGET_NAME,
-    widgetId,
-    renderWidget: (info) =>
-      renderWidgetTree(payload, widgetId, {
-        width: info.width,
-        height: info.height,
-      }),
-  });
+  for (const widgetName of ANDROID_WIDGET_NAMES) {
+    await requestWidgetUpdateById({
+      widgetName,
+      widgetId,
+      renderWidget: (info) =>
+        renderWidgetTree(payload, widgetId, {
+          width: info.width,
+          height: info.height,
+        }),
+    });
+  }
 }
 
 /** Headless Android task — resolve payload from binding + per-moment snapshot. */

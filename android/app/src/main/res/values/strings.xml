@@ -1,6 +1,7 @@
 <resources>
   <string name="app_name">Moment Tracker</string>
   <string name="widget_preview_description" translatable="false">Choose a moment to show on your home screen</string>
+  <string name="widget_previewmedium_description" translatable="false">Choose a moment to show on your home screen</string>
   <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
   <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
 </resources>
