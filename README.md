@@ -8,7 +8,7 @@ Whether you are counting down to a big day, tracking how long something has last
 
 ## Demo
 
-![Moment Keeper — Countdown & Elapsed Time Tracker](https://oktayshakirov.com/assets/images/projects/coming-soon.jpeg "Moment Keeper")
+![Moment Keeper — Countdown & Elapsed Time Tracker](https://oktayshakirov.com/assets/images/projects/moment-tracker.webp "Moment Keeper")
 
 <p align="center">
   <a href="">
